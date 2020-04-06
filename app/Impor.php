@@ -1,0 +1,66 @@
+<?php
+
+namespace App;
+
+use Auth;
+use Illuminate\Database\Eloquent\Model;
+use App\DimStatus;
+
+class Impor extends Model
+{
+    /**
+     * The table associated with the model.
+     *
+     * @var string
+     */
+    protected $table = 'impor';
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
+    protected $fillable = [
+        'awb', 'tgl_awb', 
+        'importir', 'npwp', 'check_nib', 'dok_nib', 'status_importir', 'pengirim',
+        'pic', 'hp_pic', 'email_pic', 'perkiraan_clearance',
+        'check_lartas', 'dok_lartas',
+        'bebas', 'rekomendasi_bebas', 'dok_rekomendasi_bebas', 'check_bebas', 'dok_bebas',
+        'rekomendasi_clearance', 'status_terakhir',
+    ];
+
+    /**
+     * The attributes that should be cast to native types.
+     *
+     * @var array
+     */
+    // protected $casts = [
+    //     'tgl_awb' => 'date',
+    //     'perkiraan_clearance' => 'datetime',
+    // ];
+
+    /**
+     * Records user id at data manipulation
+     */
+    public static function boot() {
+        parent::boot();
+
+        // create a event to happen on updating
+        static::updating(function($table)  {
+            $table->updated_by = Auth::user()->id;
+        });
+
+        // create a event to happen on saving
+        static::creating(function($table)  {
+            $table->created_by = Auth::user()->id;
+        });
+    }
+
+    /**
+     * Get status description.
+     */
+    public function status()
+    {
+        return $this->belongsTo(DimStatus::class, 'status_terakhir', 'kd_status');
+    }
+}
