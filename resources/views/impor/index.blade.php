@@ -489,7 +489,7 @@ $(document).ready(function() {
 			}
 		});
 
-		// Handling Rekomendasi Bebas
+		// Handling SKEP Bebas
 		$(document).on('change', '#formEdit input[type="checkbox"][name="check_bebas"]', function() {
 			if(this.checked) {
 				$('#formEdit input[type="text"][name="dok_bebas"]').prop('disabled',false);

@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use Redirect;
 use DateTime;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use App\DimJenisImportir;
 use App\DimRekomendasi;
 use App\Impor;
@@ -112,8 +114,6 @@ class ImporController extends Controller
 
         // Save data
         $impor = Impor::create($input);
-
-        // return $impor;
     }
 
     /**
@@ -124,9 +124,127 @@ class ImporController extends Controller
      */
     public function show($id)
     {
-        // $importasi = Impor::with('rekomendasiImpor:id,rekomendasi')->get()->find($id);
+        // Get impor data
         $importasi = Impor::detail()->find($id);
-        // $importasi = Impor::Find($id);
-        return view('impor.show',compact('importasi'));
+        $importasi->tgl_awb = DateTime::createFromFormat('Y-m-d', $importasi->tgl_awb)->format('d-m-Y');
+        if ($importasi->perkiraan_clearance != null) {
+            $importasi->tgl_clearance = DateTime::createFromFormat('Y-m-d H:i:s', $importasi->perkiraan_clearance)->format('d-m-Y');
+            $importasi->wkt_clearance = DateTime::createFromFormat('Y-m-d H:i:s', $importasi->perkiraan_clearance)->format('H:i');
+        }
+
+        // Get reference for edit form
+        $jnsImportir = DimJenisImportir::All();
+        $rekomendasi = DimRekomendasi::All();
+
+        return view('impor.show',compact('importasi','jnsImportir','rekomendasi'));
+    }
+
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function update(Request $request, $id)
+    {
+		// Convert data
+        $input = $request->all();
+
+		$input['tgl_awb'] = DateTime::createFromFormat('d-m-Y', $input['tgl_awb'])->format('Y-m-d');
+
+		if ($input['tgl_clearance'] != "") {
+			$tglClearance = DateTime::createFromFormat('d-m-Y', $input['tgl_clearance'])->format('Y-m-d');
+
+			if ($input['wkt_clearance'] != "") {
+				$input['perkiraan_clearance'] = $tglClearance . ' ' . $input['wkt_clearance'];
+			} else {
+				$input['perkiraan_clearance'] = $tglClearance;
+			}
+		}
+
+		$input['check_nib'] = isset($input['check_nib']) ? $input['check_nib'] : 0;
+		$input['dok_nib'] = isset($input['dok_nib']) ? $input['dok_nib'] : null;
+
+		$input['check_lartas'] = isset($input['check_lartas']) ? $input['check_lartas'] : 0;
+		$input['dok_lartas'] = isset($input['dok_lartas']) ? $input['dok_lartas'] : null;
+
+		$input['rekomendasi_bebas'] = isset($input['rekomendasi_bebas']) ? $input['rekomendasi_bebas'] : 0;
+		$input['dok_rekomendasi_bebas'] = isset($input['dok_rekomendasi_bebas']) ? $input['dok_rekomendasi_bebas'] : null;
+
+		$input['check_bebas'] = isset($input['check_bebas']) ? $input['check_bebas'] : 0;
+		$input['dok_bebas'] = isset($input['dok_bebas']) ? $input['dok_bebas'] : null;
+
+		// Validation
+		$awb = $input['awb'];
+		$tgl_awb = $input['tgl_awb'];
+		
+        $customMessages = [
+            'awb.regex' => 'Only numbers and letters are allowed in awb.',
+            'npwp.regex' => 'Only numbers are allowed in npwp.',
+            'hp_pic.regex' => 'Only numbers are allowed phone number.',
+            'awb.unique' => 'No AWB dan tanggal AWB sudah ada di database',
+            'tgl_awb.unique' => 'No AWB dan tanggal AWB sudah ada di database',
+        ];
+        
+        Validator::make(
+            $input, 
+            [
+                'awb' => 
+                    [
+                        'required',
+                        'string',
+                        'max:64',
+                        'regex:/(^[A-Za-z0-9]+$)+/',
+                        Rule::unique('impor')->where(function ($query) use($awb,$tgl_awb) {
+                            return $query->where('awb', $awb)
+                            ->where('tgl_awb', $tgl_awb);
+                        })->ignore($id)
+                    ],
+                'tgl_awb' => 
+                    [
+                        'required',
+                        'date',
+                        Rule::unique('impor')->where(function ($query) use($awb,$tgl_awb) {
+                            return $query->where('awb', $awb)
+                            ->where('tgl_awb', $tgl_awb);
+                        })->ignore($id)
+                    ],
+                'importir' => ['required','string','max:64'],
+                'npwp' => ['nullable','string','regex:/^[0-9]+$/'],
+                'hp_pic' => ['nullable','regex:/(^[0-9]+$)+/'],
+                'email_pic' => ['nullable','email'],
+                'tgl_clearance' => ['nullable', 'date'],
+                'wkt_clearance' => ['nullable', 'date_format:G:i']
+            ], 
+            $customMessages
+        )->validate();
+
+        // Get impor model
+        $impor = Impor::find($id);
+        foreach ($input as $key => $value) {
+            if (!in_array($key,['_method', '_token', 'tgl_clearance', 'wkt_clearance'])) {
+                $impor->$key = $value;
+            }
+        }
+        $impor->save();
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     */
+    public function detail($id)
+    {
+        // Get impor data
+        $importasi = Impor::detail()->find($id);
+        $importasi->tgl_awb = DateTime::createFromFormat('Y-m-d', $importasi->tgl_awb)->format('d-m-Y');
+        if ($importasi->perkiraan_clearance != null) {
+            $importasi->tgl_clearance = DateTime::createFromFormat('Y-m-d H:i:s', $importasi->perkiraan_clearance)->format('d-m-Y');
+            $importasi->wkt_clearance = DateTime::createFromFormat('Y-m-d H:i:s', $importasi->perkiraan_clearance)->format('H:i');
+        }
+    
+        return $importasi;
     }
 }
