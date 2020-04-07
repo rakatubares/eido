@@ -298,7 +298,7 @@ $(document).ready(function() {
 								<td>${dat.importir}</td>
 								<td>${dat.status.ur_status}</td>
 								<td>
-									<a class="btn btn-primary btn-xs" href="/importasi/${dat.id}">Detail</a>
+									<a class="btn btn-primary btn-xs" href="importasi/${dat.id}">Detail</a>
 								</td>
 							</tr>
 						`;
@@ -343,10 +343,10 @@ $(document).ready(function() {
 			var formType = $('#formEdit input#route').val();
 			if (formType == 'update') {
 				var userId = formType = $('#formEdit input#dataId').val();
-				var ajaxUrl = `/importasi/${userId}`; 
+				var ajaxUrl = `importasi/${userId}`; 
 				var ajaxType = "PUT";
 			} else {
-				var ajaxUrl = `/importasi`; 
+				var ajaxUrl = `importasi`; 
 				var ajaxType = "POST";
 			}
 
@@ -391,7 +391,7 @@ $(document).ready(function() {
 				var idUser = $(this).attr("id");
 				
 				$.ajax({
-					url: `/importasi/${idUser}/edit`,
+					url: `importasi/${idUser}/edit`,
 					type: "GET",
 					data: { _token: "{{ csrf_token() }}" },
 					success: function (response) {
@@ -530,7 +530,7 @@ $(document).ready(function() {
 			e.preventDefault();
 			var idUser = $('#modalDelete input#deleteId').val();
 			$.ajax({
-				url: `/importasi/${idUser}`,
+				url: `importasi/${idUser}`,
 				type: "DELETE",
 				data: { _token: "{{ csrf_token() }}" },
 				success: function() {
