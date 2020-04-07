@@ -55,7 +55,7 @@
 	$importasi->check_lartas != 1 || 
 	($importasi->bebas == 1 && $importasi->check_bebas != 1) 
 )
-<section id="notif-syarat" class="panel panel-warning">
+<section id="notif-syarat" class="panel panel-warning col-sm-12">
 	<header class="panel-heading">
 		<div class="panel-actions">
 			<a href="#" class="fa fa-caret-down"></a>
@@ -91,20 +91,25 @@
 @endif
 
 <!-- Detail dokumen -->
-<section id="display-data" class="panel">
+<section id="display-data" class="panel col-sm-12 col-md-8">
 	<div class="panel-body">
 		<div class="invoice">
 			<header class="clearfix">
 				<div class="row">
-					<div class="col-sm-12 mt-md mb-md">
+					<div class="col-sm-12 col-md-8 mt-md mb-md">
 						<h3 class="h3 mt-none mb-sm text-dark text-bold">AWB <span id="display_awb">{{ $importasi->awb }}</span></h3>
 						<h5 class="h5 m-none text-dark">Tanggal <span id="display_tgl_awb">{{ $importasi->tgl_awb }}</span></h5>
+					</div>
+					<div class="col-sm-12 col-md-4 mt-md mb-md">
+						<button class="btn btn-danger pull-right"> 
+							{{ $importasi->status->ur_status }}
+						</button>
 					</div>
 				</div>
 			</header>
 			<div class="bill-info">
 				<div class="row">
-					<div class="col-sm-12 col-md-4">
+					<div class="col-sm-12 col-md-6">
 						<div class="bill-data">
 							<h5 class="h5 mb-xs text-dark text-semibold">Importir:</h5>
 							<p class="mb-none">
@@ -151,7 +156,7 @@
 							</p>
 						</div>
 					</div>	
-					<div class="col-sm-12 col-md-4">
+					<div class="col-sm-12 col-md-6">
 						<div class="bill-data">
 							<h5 class="h5 mb-xs text-dark text-semibold">Lartas:</h5>
 							<p class="mb-none">
@@ -219,6 +224,21 @@
 		</div>
 		<div class="text-right mr-lg">
 		<a id="{{ $importasi->id }}" class="btn btn-primary btnEdit" href="#modalForm">Edit <i class="fa fa-edit"></i></a>
+		</div>
+	</div>
+</section>
+
+<!-- Detail status -->
+<section class="col-sm-12 col-md-4">
+	<div class="panel panel-featured">
+		<header class="panel-heading">
+			<div class="panel-actions">
+				<a href="#" class="fa fa-caret-down"></a>
+			</div>
+
+			<h2 class="panel-title">Status</h2>
+		</header>
+		<div class="panel-body">
 		</div>
 	</div>
 </section>
