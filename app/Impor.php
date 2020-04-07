@@ -4,6 +4,8 @@ namespace App;
 
 use Auth;
 use Illuminate\Database\Eloquent\Model;
+use App\DimJenisImportir;
+use App\DimRekomendasi;
 use App\DimStatus;
 
 class Impor extends Model
@@ -57,10 +59,34 @@ class Impor extends Model
     }
 
     /**
+     * Get importer status description.
+     */
+    public function jenis_importir()
+    {
+        return $this->belongsTo(DimJenisImportir::class, 'status_importir', 'id');
+    }
+
+    /**
+     * Get importer status description.
+     */
+    public function rekomendasi_impor()
+    {
+        return $this->belongsTo(DimRekomendasi::class, 'rekomendasi_clearance', 'id');
+    }
+
+    /**
      * Get status description.
      */
     public function status()
     {
         return $this->belongsTo(DimStatus::class, 'status_terakhir', 'kd_status');
+    }
+
+    /**
+     * Get importasi detail with reference description
+     */
+    public function scopeDetail($query)
+    {
+        return $query->with('jenis_importir:id,jns_importir', 'status:id,kd_status,ur_status', 'rekomendasi_impor:id,rekomendasi');
     }
 }

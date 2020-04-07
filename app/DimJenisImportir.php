@@ -21,4 +21,12 @@ class DimJenisImportir extends Model
     protected $fillable = [
         'jns_importir',
     ];
+
+    /**
+     * Get the docs for a status.
+     */
+    public function importasi()
+    {
+        return $this->hasMany(Impor::class, 'status_importir', 'id');
+    }
 }

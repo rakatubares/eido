@@ -124,7 +124,9 @@ class ImporController extends Controller
      */
     public function show($id)
     {
-        $importasi = Impor::find($id);
+        // $importasi = Impor::with('rekomendasiImpor:id,rekomendasi')->get()->find($id);
+        $importasi = Impor::detail()->find($id);
+        // $importasi = Impor::Find($id);
         return view('impor.show',compact('importasi'));
     }
 }

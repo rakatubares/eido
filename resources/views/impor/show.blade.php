@@ -43,6 +43,7 @@
 @endsection
 
 @section('content')
+<!-- Notifikasi persyaratan -->
 @if (
 	$importasi->check_nib == 0 || 
 	$importasi->check_lartas != 1 || 
@@ -82,6 +83,8 @@
 	</div>
 </section>
 @endif
+
+<!-- Detail dokumen -->
 <section class="panel">
 	<div class="panel-body">
 		<div class="invoice">
@@ -108,7 +111,7 @@
 							</p>
 							<p class="mb-none">
 								<span class="invoice-label text-dark">Status</span>
-								<span>{{ $importasi->status_importir }}</span>
+								<span>{{ $importasi->jenis_importir->jns_importir }}</span>
 							</p>
 							<p class="mb-none">
 								<span class="invoice-label text-dark">NIB</span>
@@ -188,12 +191,15 @@
 							<h5 class="h5 mb-xs text-dark text-semibold">Clearance:</h5>
 							<p class="mb-none">
 								<span class="invoice-label text-dark">Rekomendasi</span>
-								<span>{{ $importasi->rekomendasi_clearance }}</span>
+								<span>{{ $importasi->rekomendasi_impor->rekomendasi }}</span>
 							</p>
 						</div>
 					</div>
 				</div>
 			</div>
+		</div>
+		<div class="text-right mr-lg">
+			<a href="#" class="btn btn-primary">Edit</a>
 		</div>
 	</div>
 </section>

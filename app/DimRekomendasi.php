@@ -21,4 +21,12 @@ class DimRekomendasi extends Model
     protected $fillable = [
         'rekomendasi',
     ];
+
+    /**
+     * Get the docs for a status.
+     */
+    public function importasi()
+    {
+        return $this->hasMany(Impor::class, 'rekomendasi_clearance', 'id');
+    }
 }
