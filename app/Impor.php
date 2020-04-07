@@ -63,15 +63,15 @@ class Impor extends Model
      */
     public function jenis_importir()
     {
-        return $this->belongsTo(DimJenisImportir::class, 'status_importir', 'id');
+        return $this->belongsTo(DimJenisImportir::class, 'status_importir');
     }
 
     /**
-     * Get importer status description.
+     * Get import recommendation description.
      */
     public function rekomendasi_impor()
     {
-        return $this->belongsTo(DimRekomendasi::class, 'rekomendasi_clearance', 'id');
+        return $this->belongsTo(DimRekomendasi::class, 'rekomendasi_clearance');
     }
 
     /**
@@ -80,6 +80,14 @@ class Impor extends Model
     public function status()
     {
         return $this->belongsTo(DimStatus::class, 'status_terakhir', 'kd_status');
+    }
+
+    /**
+     * Get license officers' name.
+     */
+    public function officer()
+    {
+        return $this->belongsTo(User::class, 'created_by');
     }
 
     /**

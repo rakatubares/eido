@@ -206,6 +206,12 @@
 								<span class="invoice-label text-dark">Waktu</span>
 								<span id="display_perkiraan_clearance">{{ $importasi->tgl_clearance . ' ' . $importasi->wkt_clearance }}</span>
 							</p>
+
+							<h5 class="h5 mb-xs text-dark text-semibold">License Officer:</h5>
+							<p class="mb-none">
+								<span class="invoice-label text-dark">Nama</span>
+								<span id="display_officer">{{ $importasi->officer->name }}</span>
+							</p>
 						</div>
 					</div>
 				</div>

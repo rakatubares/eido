@@ -38,4 +38,12 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    /**
+     * Get the docs for each officer.
+     */
+    public function importasi()
+    {
+        return $this->hasMany(Impor::class, 'created_by');
+    }
 }
