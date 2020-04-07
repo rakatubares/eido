@@ -10,6 +10,7 @@ use Illuminate\Validation\Rule;
 use App\DimJenisImportir;
 use App\DimRekomendasi;
 use App\Impor;
+USE App\Status;
 
 class ImporController extends Controller
 {
@@ -113,7 +114,9 @@ class ImporController extends Controller
         }
 
         // Save data
-        $impor = Impor::create($input);
+		$impor = Impor::create($input);
+		Status::create(['impor_id' => $impor->id, 'kd_status' => 10]);
+		Status::create(['impor_id' => $impor->id, 'kd_status' => $input['status_terakhir']]);
     }
 
     /**
@@ -130,13 +133,16 @@ class ImporController extends Controller
         if ($importasi->perkiraan_clearance != null) {
             $importasi->tgl_clearance = DateTime::createFromFormat('Y-m-d H:i:s', $importasi->perkiraan_clearance)->format('d-m-Y');
             $importasi->wkt_clearance = DateTime::createFromFormat('Y-m-d H:i:s', $importasi->perkiraan_clearance)->format('H:i');
-        }
+		}
+		
+		// Get document history
+		$histories = Status::where('impor_id',$id)->get();
 
         // Get reference for edit form
         $jnsImportir = DimJenisImportir::All();
         $rekomendasi = DimRekomendasi::All();
 
-        return view('impor.show',compact('importasi','jnsImportir','rekomendasi'));
+        return view('impor.show',compact('importasi','jnsImportir','rekomendasi','histories'));
     }
 
     /**

@@ -33,6 +33,10 @@
 	width: 100px;
 	margin-left: 5px;
 }
+
+.timeline .tm-items > li {
+	margin: 15px 0;
+}
 </style>
 @endsection
 
@@ -239,6 +243,27 @@
 			<h2 class="panel-title">Status</h2>
 		</header>
 		<div class="panel-body">
+			<div class="timeline timeline-simple mb-md">
+				<div class="tm-body py-0">
+					<ol class="tm-items">
+						@foreach ($histories as $history)
+						<li>
+							<div class="tm-box">
+								<p class="text-muted mb-none">{{ $history->created_at->timezone('Asia/Jakarta')->format('d-m-Y H:i:s') }}</p>
+								<p>
+									{{ $history->uraian_status->ur_status }} {{ $history->no_dok_impor }}
+								</p>
+								@if( $history->detail != null )
+								<p>
+									{{ $history->detail }}
+								</p>
+								@endif
+							</div>
+						</li>
+						@endforeach
+					</ol>
+				</div>
+			</div>
 		</div>
 	</div>
 </section>

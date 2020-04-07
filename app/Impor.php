@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use App\DimJenisImportir;
 use App\DimRekomendasi;
 use App\DimStatus;
+use App\Status;
 
 class Impor extends Model
 {
@@ -88,6 +89,14 @@ class Impor extends Model
     public function officer()
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    /**
+     * Get the docs for each officer.
+     */
+    public function history()
+    {
+        return $this->hasMany(Status::class, 'impor_id');
     }
 
     /**

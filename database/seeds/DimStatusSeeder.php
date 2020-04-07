@@ -13,7 +13,8 @@ class DimStatusSeeder extends Seeder
     public function run()
     {
         $statuses = [
-            10 => 'BELUM LENGKAP',
+            10 => 'PEREKAMAN',
+            11 => 'BELUM LENGKAP',
             20 => 'BELUM RH',
             21 => 'PROSES RH',
             22 => 'SPPB RH',

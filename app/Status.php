@@ -3,6 +3,8 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
+use App\DimStatus;
+use App\Impor;
 
 class Status extends Model
 {
@@ -21,4 +23,20 @@ class Status extends Model
     protected $fillable = [
         'impor_id', 'kd_status', 'no_dok_impor', 'detail',
     ];
+
+    /**
+     * Get document.
+     */
+    public function importasi()
+    {
+        return $this->belongsTo(Impor::class, 'impor_id');
+    }
+
+    /**
+     * Get status description.
+     */
+    public function uraian_status()
+    {
+        return $this->belongsTo(DimStatus::class, 'kd_status', 'kd_status');
+    }
 }
