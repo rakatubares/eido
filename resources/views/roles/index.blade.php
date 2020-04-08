@@ -234,7 +234,6 @@ $(document).ready(function() {
 						rolePermissions = Object.values(response.rolePermission);
 						rolePermissions.forEach(function(permission) {
 							var checkbox = $(`#formRole input[type="checkbox"][value="${permission}"]`);
-							console.log(checkbox);
 							$(`#formRole input[type="checkbox"][value="${permission}"]`).prop('checked', true);
 						});
 						openForm(trigger);

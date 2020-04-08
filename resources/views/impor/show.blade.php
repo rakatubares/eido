@@ -37,6 +37,11 @@
 .timeline .tm-items > li {
 	margin: 15px 0;
 }
+
+textarea { 
+	resize:none;
+	max-height:100px;
+}
 </style>
 @endsection
 
@@ -227,13 +232,14 @@
 			</div>
 		</div>
 		<div class="text-right mr-lg">
-		<a id="{{ $importasi->id }}" class="btn btn-primary btnEdit" href="#modalForm">Edit <i class="fa fa-edit"></i></a>
+			<a id="{{ $importasi->id }}" class="btn btn-primary btnEdit" href="#modalForm">Edit <i class="fa fa-edit"></i></a>
 		</div>
 	</div>
 </section>
 
-<!-- Detail status -->
+<!-- Status -->
 <section class="col-sm-12 col-md-4">
+	<!-- Detail Status -->
 	<div class="panel panel-featured">
 		<header class="panel-heading">
 			<div class="panel-actions">
@@ -264,6 +270,45 @@
 					</ol>
 				</div>
 			</div>
+		</div>
+	</div>
+
+	<!-- Form Update Status -->
+	<div id="panel-update-status" class="panel">
+		<div class="panel-body center">
+			<button id="btn-status-update" class="btn btn-primary">Update status <i class="fa fa-clock-o"></i></button>
+			{!! Form::open(['id' => 'formStatus', 'method' => 'PUT', 'class' => 'form-horizontal form-bordered mb-lg', 'style' => 'display: none;']) !!}
+				<div class="form-group">
+					<div class="col-sm-12 col-md-12 mb-md">
+						<label class="col-sm-12 col-md-2 control-label">Status</label>
+						<div class="col-sm-12 col-md-10">
+							{!! Form::select('kd_status', $statOptions->pluck('ur_status','kd_status'),null, array('class' => 'form-control')) !!}
+							<div id="error_npwp" class="error_text"></div>
+						</div>
+					</div>
+					<div class="col-sm-12 col-md-12 mb-md">
+						<label class="col-sm-12 col-md-2 control-label">Dok</label>
+						<div class="col-sm-12 col-md-4">
+							{!! Form::select('jns_dok_impor', ['RH','PIB','CN','PIBK','CD','Lainnya'],null, array('class' => 'form-control')) !!}
+							<div id="error_npwp" class="error_text"></div>
+						</div>
+						<div class="col-sm-12 col-md-6">
+							{!! Form::text('no_dok_impor', null, array('placeholder' => 'No Dokumen','class' => 'form-control')) !!}
+							<div id="error_npwp" class="error_text"></div>
+						</div>
+					</div>
+					<div class="col-sm-12 col-md-12 mb-md">
+						<div class="col-sm-12">
+							{!! Form::textarea('detail', null, array('placeholder' => 'Keterangan','class' => 'form-control')) !!}
+							<div id="error_npwp" class="error_text"></div>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-12 text-right">
+					<button id="btn-status-submit" class="btn btn-primary">Submit</button>
+					<button id="btn-status-cancel" class="btn btn-default">Cancel</button>
+				</div>
+			{!! Form::close() !!}
 		</div>
 	</div>
 </section>
@@ -712,6 +757,7 @@ $(document).ready(function() {
 			}
 		});
 
+		///// Display Data ///// 
 		// Display data
 		function displayData(data) {
 			$.ajax({
@@ -727,7 +773,6 @@ $(document).ready(function() {
 
 		// Display main data
 		function displayMainData(data) {
-			console.log(data);
 			for (var key in data) {
 				$(`section#display-data #display_${key}`).html(data[key]);	
 			}		
@@ -799,6 +844,40 @@ $(document).ready(function() {
 			}
 		}
 
+		///// Display Status Form /////
+		// Show form
+		$(document).on('click', '#btn-status-update', function(e) {
+			e.preventDefault();
+			$(this).hide();
+			$('#formStatus').show();
+		});
+
+		// Close form
+		$(document).on('click', '#btn-status-cancel', function(e) {
+			e.preventDefault();
+			$('#btn-status-update').show();
+			$('#formStatus').hide();
+			$('#formStatus').trigger("reset");
+		});
+
+		// Submit form
+		$(document).on('click', '#btn-status-submit', function(e) {
+			e.preventDefault();
+			var data = $('#formStatus').serializeArray();
+			$.ajax({
+				url: '{{ route("status.store", $importasi->id) }}',
+				type: 'POST',
+				data: data,
+				success: function() {
+					displayStatus();
+				}
+			});
+		});
+
+		// Display status
+		function displayStatus() {
+			console.log('update status');
+		}
 	}).apply( this, [ jQuery ]);
 });
 </script>

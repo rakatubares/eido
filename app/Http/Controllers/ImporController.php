@@ -9,8 +9,9 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use App\DimJenisImportir;
 use App\DimRekomendasi;
+use App\DimStatus;
 use App\Impor;
-USE App\Status;
+use App\Status;
 
 class ImporController extends Controller
 {
@@ -21,7 +22,7 @@ class ImporController extends Controller
      */
     function __construct()
     {
-         $this->middleware('permission:impor-list|impor-create|impor-edit|impor-delete', ['only' => ['index','store']]);
+         $this->middleware('permission:impor-list|impor-create|impor-edit|impor-delete', ['only' => ['index','store','list','show','detail']]);
          $this->middleware('permission:impor-create', ['only' => ['create','store']]);
          $this->middleware('permission:impor-edit', ['only' => ['edit','update']]);
          $this->middleware('permission:impor-delete', ['only' => ['destroy']]);
@@ -136,8 +137,9 @@ class ImporController extends Controller
         // Get reference for edit form
         $jnsImportir = DimJenisImportir::All();
         $rekomendasi = DimRekomendasi::All();
+        $statOptions = DimStatus::whereIn('kd_status', [21, 22, 41, 50])->orderBy('kd_status')->get();
 
-        return view('impor.show',compact('importasi','jnsImportir','rekomendasi','histories'));
+        return view('impor.show',compact('importasi','jnsImportir','rekomendasi','histories','statOptions'));
     }
 
     /**
