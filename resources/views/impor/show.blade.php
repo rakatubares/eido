@@ -105,7 +105,7 @@
 						<h5 class="h5 m-none text-dark">Tanggal <span id="display_tgl_awb">{{ $importasi->tgl_awb }}</span></h5>
 					</div>
 					<div class="col-sm-12 col-md-4 mt-md mb-md">
-						<button class="btn btn-danger pull-right"> 
+						<button id="display_current_stat" class="btn btn-danger pull-right"> 
 							{{ $importasi->status->ur_status }}
 						</button>
 					</div>
@@ -535,7 +535,6 @@ $(document).ready(function() {
 						type: 'success'
 					});
 
-					displayNotif(data);
 					displayData(data);
 				},
 				error: function (response) {
@@ -713,6 +712,65 @@ $(document).ready(function() {
 			}
 		});
 
+		// Display data
+		function displayData(data) {
+			$.ajax({
+				url: '{{ route("impor.detail", $importasi->id) }}',
+				type: 'GET',
+				data: { _token: "{{ csrf_token() }}" },
+				success: function(data) {
+					displayNotif(data);
+					displayMainData(data);
+				}
+			});
+		}
+
+		// Display main data
+		function displayMainData(data) {
+			console.log(data);
+			for (var key in data) {
+				$(`section#display-data #display_${key}`).html(data[key]);	
+			}		
+			$('section#display-data #display_current_stat').html(data.status.ur_status);
+			$('section#display-data #display_jns_importir').html(data.jenis_importir.jns_importir);
+			if (data.check_nib == 1) {
+				$('section#display-data #display_nib').html(`OK - ${data.dok_nib}`);	
+			} else {
+				$('section#display-data #display_nib').html('Belum terpenuhi');	
+			}
+			if (data.check_lartas == 1) {
+				$('section#display-data #display_lartas').html(`OK - ${data.dok_lartas}`);	
+			} else {
+				$('section#display-data #display_lartas').html('Belum terpenuhi');	
+			}
+			if (data.bebas == 1) {
+				$('section#display-data #display_pungutan').html('Bebas');
+			} else {
+				$('section#display-data #display_pungutan').html('Dibayar');
+			}
+			if (data.rekomendasi_bebas == 1) {
+				$('section#display-data #display_rekomendasi').html(`Ada - ${data.rekomendasi_bebas}`);	
+			} else {
+				$('section#display-data #display_rekomendasi').html(`Tidak ada`);	
+			}
+			if (data.check_bebas == 1) {
+				$('section#display-data #display_pembebasan').html(`Ada - ${data.dok_bebas}`);	
+			} else {
+				$('section#display-data #display_pembebasan').html(`Tidak ada`);	
+			}
+			$('section#display-data #display_rekomendasi_clearance').html(data.rekomendasi_impor.rekomendasi);
+			if (typeof data.tgl_clearance !== 'undefined') {
+				if (data.wkt_clearance != '00:00') {
+					$('section#display-data #display_perkiraan_clearance').html(data.tgl_clearance + ' ' + data.wkt_clearance);	
+				} else {
+					$('section#display-data #display_perkiraan_clearance').html(data.tgl_clearance);
+				}
+			} else {
+				$('section#display-data #display_perkiraan_clearance').empty();
+			}
+			
+		}
+
 		// Display notifikasi
 		function displayNotif(data) {
 			if (
@@ -722,67 +780,25 @@ $(document).ready(function() {
 			) {
 				$('section#notif-syarat').show();
 				if (data.check_nib == 0) {
-					$('section#notif-nib').show();
+					$('section#notif-syarat #notif-nib').show();
 				} else {
-					$('section#notif-nib').hide();
+					$('section#notif-syarat #notif-nib').hide();
 				}
-				if (data.check_lartas != 0) {
-					$('section#notif-lartas').show();
+				if (data.check_lartas != 1) {
+					$('section#notif-syarat #notif-lartas').show();
 				} else {
-					$('section#notif-lartas').hide();
+					$('section#notif-syarat #notif-lartas').hide();
 				}
 				if (data.bebas == 1 && data.check_bebas != 1) {
-					$('section#notif-bebas').show();
+					$('section#notif-syarat #notif-bebas').show();
 				} else {
-					$('section#notif-bebas').hide();
+					$('section#notif-syarat #notif-bebas').hide();
 				}
 			} else {
 				$('section#notif-syarat').hide();
 			}
 		}
 
-		// Display data
-		function displayData(data) {
-			$.ajax({
-				url: '{{ route("impor.detail", $importasi->id) }}',
-				type: 'GET',
-				data: { _token: "{{ csrf_token() }}" },
-				success: function(data) {
-					console.log(data);
-					for (var key in data) {
-						$(`section#display-data #display_${key}`).html(data[key]);	
-					}
-					$('section#display-data #display_jns_importir').html(data.jenis_importir.jns_importir);
-					if (data.check_nib == 1) {
-						$('section#display-data #display_nib').html(`OK - ${data.dok_nib}`);	
-					} else {
-						$('section#display-data #display_nib').html('Belum terpenuhi');	
-					}
-					if (data.check_lartas == 1) {
-						$('section#display-data #display_lartas').html(`OK - ${data.dok_lartas}`);	
-					} else {
-						$('section#display-data #display_lartas').html('Belum terpenuhi');	
-					}
-					if (data.bebas == 1) {
-						$('section#display-data #display_pungutan').html('Bebas');
-					} else {
-						$('section#display-data #display_pungutan').html('Dibayar');
-					}
-					if (data.rekomendasi_bebas == 1) {
-						$('section#display-data #display_rekomendasi').html(`Ada - ${data.rekomendasi_bebas}`);	
-					} else {
-						$('section#display-data #display_rekomendasi').html(`Tidak ada`);	
-					}
-					if (data.check_bebas == 1) {
-						$('section#display-data #display_pembebasan').html(`Ada - ${data.dok_bebas}`);	
-					} else {
-						$('section#display-data #display_pembebasan').html(`Tidak ada`);	
-					}
-					$('section#display-data #display_rekomendasi_clearance').html(data.rekomendasi_impor.rekomendasi);
-					$('section#display-data #display_perkiraan_clearance').html(data.tgl_clearance + ' ' + data.wkt_clearance);
-				}
-			});
-		}
 	}).apply( this, [ jQuery ]);
 });
 </script>
