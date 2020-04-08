@@ -19,7 +19,8 @@ class DimStatusSeeder extends Seeder
             21 => 'PROSES RH',
             22 => 'SPPB RH',
             30 => 'PENDING PERSYARATAN',
-            40 => 'PROSES DOK. IMPOR',
+            40 => 'DOK. IMPOR BELUM DIAJUKAN',
+            41 => 'PROSES DOK. IMPOR',
             50 => 'SELESAI'
         ];
 
