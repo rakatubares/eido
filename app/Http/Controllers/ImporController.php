@@ -82,16 +82,12 @@ class ImporController extends Controller
         $input['tgl_awb'] = DateTime::createFromFormat('d-m-Y', $input['tgl_awb'])->format('Y-m-d');
 
         // Convert perkiraan waktu clearance
-        if ($input['tgl_clearance'] != "") {
-            $tglClearance = DateTime::createFromFormat('d-m-Y', $input['tgl_clearance'])->format('Y-m-d');
-
-            if ($input['wkt_clearance'] != "") {
-                $input['perkiraan_clearance'] = $tglClearance . ' ' . $input['wkt_clearance'];
-            } else {
-                $input['perkiraan_clearance'] = $tglClearance;
-            }
+        if (isset($input['tgl_clearance']) && $input['tgl_clearance'] != "") {
+            $input['tgl_clearance'] = DateTime::createFromFormat('d-m-Y', $input['tgl_clearance'])->format('Y-m-d');
+        } else {
+            $input['tgl_clearance'] = null;
+            $input['wkt_clearance'] = null;
         }
-        unset($input['tgl_clearance'], $input['wkt_clearance']);
         
         // Determine importation status
         if ($input['rekomendasi_clearance'] == 1) {
@@ -116,7 +112,7 @@ class ImporController extends Controller
         // Save data
 		$impor = Impor::create($input);
 		Status::create(['impor_id' => $impor->id, 'kd_status' => 10]);
-		Status::create(['impor_id' => $impor->id, 'kd_status' => $input['status_terakhir']]);
+        Status::create(['impor_id' => $impor->id, 'kd_status' => $input['status_terakhir']]);
     }
 
     /**
@@ -130,9 +126,8 @@ class ImporController extends Controller
         // Get impor data
         $importasi = Impor::detail()->find($id);
         $importasi->tgl_awb = DateTime::createFromFormat('Y-m-d', $importasi->tgl_awb)->format('d-m-Y');
-        if ($importasi->perkiraan_clearance != null) {
-            $importasi->tgl_clearance = DateTime::createFromFormat('Y-m-d H:i:s', $importasi->perkiraan_clearance)->format('d-m-Y');
-            $importasi->wkt_clearance = DateTime::createFromFormat('Y-m-d H:i:s', $importasi->perkiraan_clearance)->format('H:i');
+        if ($importasi->tgl_clearance != null) {
+            $importasi->tgl_clearance = DateTime::createFromFormat('Y-m-d', $importasi->tgl_clearance)->format('d-m-Y');
 		}
 		
 		// Get document history
@@ -159,15 +154,12 @@ class ImporController extends Controller
 
 		$input['tgl_awb'] = DateTime::createFromFormat('d-m-Y', $input['tgl_awb'])->format('Y-m-d');
 
-		if ($input['tgl_clearance'] != "") {
-			$tglClearance = DateTime::createFromFormat('d-m-Y', $input['tgl_clearance'])->format('Y-m-d');
-
-			if ($input['wkt_clearance'] != "") {
-				$input['perkiraan_clearance'] = $tglClearance . ' ' . $input['wkt_clearance'];
-			} else {
-				$input['perkiraan_clearance'] = $tglClearance;
-			}
-		}
+		if (isset($input['tgl_clearance']) && $input['tgl_clearance'] != "") {
+            $input['tgl_clearance'] = DateTime::createFromFormat('d-m-Y', $input['tgl_clearance'])->format('Y-m-d');
+        } else {
+            $input['tgl_clearance'] = null;
+            $input['wkt_clearance'] = null;
+        }
 
 		$input['check_nib'] = isset($input['check_nib']) ? $input['check_nib'] : 0;
 		$input['dok_nib'] = isset($input['dok_nib']) ? $input['dok_nib'] : null;
@@ -242,7 +234,7 @@ class ImporController extends Controller
 
         // Update data impor
         foreach ($input as $key => $value) {
-            if (!in_array($key,['_method', '_token', 'tgl_clearance', 'wkt_clearance'])) {
+            if (!in_array($key,['_method', '_token'])) {
                 $impor->$key = $value;
             }
         }
@@ -252,6 +244,8 @@ class ImporController extends Controller
         if (isset($dok_ready) && $dok_ready == true) {
             Status::create(['impor_id' => $impor->id, 'kd_status' => 40]);
         }
+
+        return $input;
     }
 
     /**
@@ -264,10 +258,12 @@ class ImporController extends Controller
         // Get impor data
         $importasi = Impor::detail()->find($id);
         $importasi->tgl_awb = DateTime::createFromFormat('Y-m-d', $importasi->tgl_awb)->format('d-m-Y');
-        if ($importasi->perkiraan_clearance != null) {
-            $importasi->tgl_clearance = DateTime::createFromFormat('Y-m-d H:i:s', $importasi->perkiraan_clearance)->format('d-m-Y');
-            $importasi->wkt_clearance = DateTime::createFromFormat('Y-m-d H:i:s', $importasi->perkiraan_clearance)->format('H:i');
+        if ($importasi->tgl_clearance != null) {
+            $importasi->tgl_clearance = DateTime::createFromFormat('Y-m-d', $importasi->tgl_clearance)->format('d-m-Y');
         }
+        if ($importasi->wkt_clearance != null) {
+            $importasi->wkt_clearance = DateTime::createFromFormat('H:i:s', $importasi->wkt_clearance)->format('H:i');
+		}
     
         return $importasi;
     }

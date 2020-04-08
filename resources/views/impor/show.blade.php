@@ -760,7 +760,7 @@ $(document).ready(function() {
 			}
 			$('section#display-data #display_rekomendasi_clearance').html(data.rekomendasi_impor.rekomendasi);
 			if (typeof data.tgl_clearance !== 'undefined') {
-				if (data.wkt_clearance != '00:00') {
+				if (data.wkt_clearance != null) {
 					$('section#display-data #display_perkiraan_clearance').html(data.tgl_clearance + ' ' + data.wkt_clearance);	
 				} else {
 					$('section#display-data #display_perkiraan_clearance').html(data.tgl_clearance);

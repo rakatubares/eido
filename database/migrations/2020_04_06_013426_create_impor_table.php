@@ -30,7 +30,8 @@ class CreateImporTable extends Migration
             $table->string('pic', 64)->nullable()->index();
             $table->string('hp_pic', 32)->nullable();
             $table->string('email_pic', 254)->nullable();
-            $table->dateTime('perkiraan_clearance')->nullable();
+            $table->date('tgl_clearance')->nullable();
+            $table->time('wkt_clearance')->nullable();
 
             $table->boolean('check_lartas')->nullable()->index();
             $table->string('dok_lartas', 64)->nullable()->index();

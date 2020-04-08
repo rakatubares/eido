@@ -26,7 +26,7 @@ class Impor extends Model
     protected $fillable = [
         'awb', 'tgl_awb', 
         'importir', 'npwp', 'check_nib', 'dok_nib', 'status_importir', 'pengirim',
-        'pic', 'hp_pic', 'email_pic', 'perkiraan_clearance',
+        'pic', 'hp_pic', 'email_pic', 'tgl_clearance', 'wkt_clearance',
         'check_lartas', 'dok_lartas',
         'bebas', 'rekomendasi_bebas', 'dok_rekomendasi_bebas', 'check_bebas', 'dok_bebas',
         'rekomendasi_clearance', 'status_terakhir',
