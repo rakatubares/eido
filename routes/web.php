@@ -35,5 +35,6 @@ Route::group(['middleware' => ['auth']], function() {
     Route::put('importasi/{impor}','ImporController@update')->name('impor.update');
     Route::delete('importasi/{impor}','ImporController@destroy')->name('impor.destroy');
 
+    Route::get('status/{impor}','StatusController@list')->name('status.list');
     Route::post('status/{impor}','StatusController@store')->name('status.store');
 });

@@ -251,7 +251,7 @@ textarea {
 		<div class="panel-body">
 			<div class="timeline timeline-simple mb-md">
 				<div class="tm-body py-0">
-					<ol class="tm-items">
+					<ol id="timeline-status" class="tm-items">
 						@foreach ($histories as $history)
 						<li>
 							<div class="tm-box">
@@ -277,7 +277,7 @@ textarea {
 	<div id="panel-update-status" class="panel">
 		<div class="panel-body center">
 			<button id="btn-status-update" class="btn btn-primary">Update status <i class="fa fa-clock-o"></i></button>
-			{!! Form::open(['id' => 'formStatus', 'method' => 'PUT', 'class' => 'form-horizontal form-bordered mb-lg', 'style' => 'display: none;']) !!}
+			{!! Form::open(['id' => 'formStatus', 'method' => 'POST', 'class' => 'form-horizontal form-bordered mb-lg', 'style' => 'display: none;']) !!}
 				<div class="form-group">
 					<div class="col-sm-12 col-md-12 mb-md">
 						<label class="col-sm-12 col-md-2 control-label">Status</label>
@@ -767,6 +767,7 @@ $(document).ready(function() {
 				success: function(data) {
 					displayNotif(data);
 					displayMainData(data);
+					displayStatus();
 				}
 			});
 		}
@@ -855,10 +856,13 @@ $(document).ready(function() {
 		// Close form
 		$(document).on('click', '#btn-status-cancel', function(e) {
 			e.preventDefault();
+			closeForm();
+		});
+		function closeForm() {
 			$('#btn-status-update').show();
 			$('#formStatus').hide();
 			$('#formStatus').trigger("reset");
-		});
+		}
 
 		// Submit form
 		$(document).on('click', '#btn-status-submit', function(e) {
@@ -869,6 +873,7 @@ $(document).ready(function() {
 				type: 'POST',
 				data: data,
 				success: function() {
+					closeForm();
 					displayStatus();
 				}
 			});
@@ -876,7 +881,41 @@ $(document).ready(function() {
 
 		// Display status
 		function displayStatus() {
-			console.log('update status');
+			$.ajax({
+				url: '{{ route("status.list", $importasi->id) }}',
+				type: 'GET',
+				data: { _token: "{{ csrf_token() }}" },
+				success: function(data) {
+					$('#timeline-status').empty();
+					(data.histories).forEach(function(history) {
+						if (history.no_dok_impor != null) {
+							var dok = history.no_dok_impor;
+						} else {
+							var dok = '';
+						}
+
+						if (history.detail != null) {
+							var detail = `<p>${history.detail}</p>`;	
+						} else {
+							var detail = '';
+						}
+						
+						var stat = `
+							<li>
+								<div class="tm-box">
+									<p class="text-muted mb-none">${history.time}</p>
+									<p>
+										${history.status} ${dok}
+									</p>
+									${detail}
+								</div>
+							</li>
+						`;
+						$('#timeline-status').append(stat);
+					});
+					$('#display_current_stat').html(data.status);
+				}
+			});
 		}
 	}).apply( this, [ jQuery ]);
 });

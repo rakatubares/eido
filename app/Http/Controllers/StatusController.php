@@ -23,13 +23,11 @@ class StatusController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
     public function store(Request $request, $idImpor)
     {
         // Validation
         $this->validate($request, [
-            'impor_id' => 'required|numeric',
             'kd_status' => 'required|numeric',
         ]);
 
@@ -40,30 +38,39 @@ class StatusController extends Controller
 
         $impor = Impor::find($idImpor);
         if ($input['kd_status'] == 22) {
-            $statusDokImpor = $input;
             if (
                 $impor->check_nib == 1 &&
                 $impor->check_lartas == 1 &&
                 (
-                    $impor->bebas == 1 ||
-                    $impor->bebas == 0 && $impor->check_bebas == 1
+                    $impor->bebas == 0 ||
+                    $impor->bebas == 1 && $impor->check_bebas == 1
                 )
             ) {
-                $statusDokImpor['kd_status'] = 40;
-                Status::create($statusDokImpor);
+                Status::create(['impor_id' => $idImpor, 'kd_status' => 40]);
 
                 $impor->status_terakhir = 40;
                 $impor->save();
             } else {
-                $statusDokImpor['kd_status'] = 30;
-                Status::create($statusDokImpor);
+                Status::create(['impor_id' => $idImpor, 'kd_status' => 30]);
 
-                $impor->status_terakhir = 40;
+                $impor->status_terakhir = 30;
                 $impor->save();
             }
         } else {
             $impor->status_terakhir = $input['kd_status'];
             $impor->save();
         }
+    }
+
+    public function list(Request $request, $idImpor)
+    {
+        $histories = Status::where('impor_id',$idImpor)->get();
+        for ($i=0; $i < count($histories); $i++) { 
+            $histories[$i]->time = $histories[$i]->created_at->timezone('Asia/Jakarta')->format('d-m-Y H:i:s');
+            $histories[$i]->status = $histories[$i]->uraian_status->ur_status;
+        }
+
+        $status = Impor::find($idImpor)->status->ur_status;
+        return ['status' => $status, 'histories' => $histories];
     }
 }
