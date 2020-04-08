@@ -228,12 +228,30 @@ class ImporController extends Controller
 
         // Get impor model
         $impor = Impor::find($id);
+        
+        // Check stataus change
+        if ($impor->status_terakhir == 30) {
+            if (
+                ($input['check_nib'] == 1 && $input['check_lartas'] == 1 && $input['bebas'] == 0) ||
+                ($input['check_nib'] == 1 && $input['check_lartas'] == 1 && $input['bebas'] == 1 && $input['check_bebas'] == 1)
+            ) {
+                $dok_ready = true;
+                $input['status_terakhir'] = 40;
+            }
+        }
+
+        // Update data impor
         foreach ($input as $key => $value) {
             if (!in_array($key,['_method', '_token', 'tgl_clearance', 'wkt_clearance'])) {
                 $impor->$key = $value;
             }
         }
         $impor->save();
+
+        // Update status
+        if (isset($dok_ready) && $dok_ready == true) {
+            Status::create(['impor_id' => $impor->id, 'kd_status' => 40]);
+        }
     }
 
     /**
