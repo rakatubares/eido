@@ -50,7 +50,7 @@
 	</div>
 </section>
 
-<!-- Modal tambah/edit -->
+<!-- Modal tambah -->
 <div id="modalForm" class="modal-block modal-block-lg mfp-hide">
 	<section class="panel">
     {!! Form::open(array('id' => 'formEdit', 'class' => 'form-horizontal form-bordered mb-lg')) !!}
@@ -218,11 +218,31 @@
 						</div>
 					</div>
 				</div>
+				
 				<div class="form-group mt-lg">
 					<div class="col-xs-12 col-sm-12 col-md-12 mb-md">
 						<label class="col-sm-12 col-md-3 control-label">Rekomendasi impor</label>
 						<div class="col-sm-12 col-md-4">
-						{!! Form::select('rekomendasi_clearance', $rekomendasi->pluck('rekomendasi','id'),null, array('class' => 'form-control')) !!}
+							{!! Form::select('rekomendasi_clearance', $rekomendasi->pluck('rekomendasi','id'),null, array('class' => 'form-control')) !!}
+						</div>
+					</div>
+				</div>
+				<div id="group-lampiran" class="form-group mt-lg">
+					<div class="col-xs-12 col-sm-12 col-md-12 mb-md">
+						<label class="col-sm-12 col-md-2 control-label">Lampiran</label>
+					</div>
+					<div class="col-xs-12 col-sm-12 col-md-12 mb-md">
+						<div class="col-xs-10 col-md-1"></div>
+						<div class="col-xs-10 col-md-4 mb-2">
+							{!! Form::file('lampiran[]', array('class' => 'form-control')) !!}
+							<div id="error_lampiran" class="error_text"></div>
+						</div>
+						<div class="col-xs-10 col-md-5">
+							{!! Form::text('ket_lampiran[]', null, array('placeholder' => 'Keterangan lampiran','class' => 'form-control')) !!}
+							<div id="error_ket_lampiran" class="error_text"></div>
+						</div>
+						<div class="col-xs-2 col-md-1">
+							<button class="btn btn-default add-lampiran"><i class="fa fa-plus"></i></button>
 						</div>
 					</div>
 				</div>
@@ -350,14 +370,17 @@ $(document).ready(function() {
 				var ajaxType = "POST";
 			}
 
-			var data = $('#formEdit').serializeArray();
+			// var data = $('#formEdit').serializeArray();
+			var data = new FormData($("#formEdit")[0]);
 			console.log(data);
 			
 			$.ajax({
 				url: ajaxUrl,
 				type: ajaxType,
-				data: $("#formEdit").serializeArray(),
-				success: function() {
+				data: data,
+				processData: false,
+				contentType: false,
+				success: function(data) {
 					$.magnificPopup.close();
 					new PNotify({
 						title: 'Success!',
@@ -382,38 +405,11 @@ $(document).ready(function() {
 			});
 		});
 
-		// Trigger Create/Edit Form
-		$(document).on('click', '.btnCreate, .btnEdit', function(e){
+		// Open Create/Edit Form
+		$(document).on('click', '.btnCreate', function(e){
 			e.preventDefault();
-			var trigger = $(this);
 
-			if ($(this).hasClass("btnEdit")) {
-				var idUser = $(this).attr("id");
-				
-				$.ajax({
-					url: `importasi/${idUser}/edit`,
-					type: "GET",
-					data: { _token: "{{ csrf_token() }}" },
-					success: function (response) {
-						// $('#formEdit input#route').val('update');
-						// $('#formUser input#userId').val(response['user']['id']);
-						// $('#formUser input[name="name"]').val(response['user']['name']);
-						// $('#formUser input[name="nip"]').val(response['user']['nip']);
-						// $('#formUser input[name="username"]').val(response['user']['username']);
-						// $('#formUser input[name="username"]').prop('disabled', true);
-						// userRoles = Object.values(response.userRole);
-						// openForm(trigger, userRoles);
-					}
-				});
-			} else {
-				openForm(trigger);
-			}
-
-		});
-
-		// Open Create/Edit Form Modal
-		function openForm(trigger, selected=[]) {
-			$(trigger).magnificPopup({
+			$(this).magnificPopup({
 				type: 'inline',
 				preloader: false,
 				focus: '#name',
@@ -439,7 +435,7 @@ $(document).ready(function() {
 					}
 				}
 			}).magnificPopup('open');
-		}
+		});
 
 		// Handling NIB
 		$(document).on('change', '#formEdit input[type="checkbox"][name="check_nib"]', function() {
@@ -499,6 +495,36 @@ $(document).ready(function() {
 			}
 		});
 
+		// Handling Add Lampiran
+		$(document).on('click', '.add-lampiran', function(e) {
+			e.preventDefault();
+			$(this).removeClass('add-lampiran').addClass('del-lampiran');
+			$(this).children('.fa').removeClass('fa-plus').addClass('fa-minus');
+			var form_lampiran = `
+				<div class="col-xs-12 col-sm-12 col-md-12 mb-md">
+					<div class="col-xs-12 col-md-1"></div>
+					<div class="col-xs-10 col-md-4 mb-2">
+						{!! Form::file('lampiran[]', array('class' => 'form-control')) !!}
+						<div id="error_lampiran" class="error_text"></div>
+					</div>
+					<div class="col-xs-10 col-md-5">
+						{!! Form::text('ket_lampiran[]', null, array('placeholder' => 'Keterangan lampiran','class' => 'form-control')) !!}
+						<div id="error_ket_lampiran" class="error_text"></div>
+					</div>
+					<div class="col-xs-2 col-md-1">
+						<button class="btn btn-default add-lampiran"><i class="fa fa-plus"></i></button>
+					</div>
+				</div>
+			`;
+			$('#group-lampiran').append(form_lampiran);
+		});
+
+		// Handling Delete Lampiran
+		$(document).on('click', '.del-lampiran', function(e) {
+			e.preventDefault();
+			$(this).parent().parent().remove();
+		});
+
 		// Trigger Delete
 		$(document).on('click', '.btnDelete', function(e){
 			e.preventDefault();
@@ -525,7 +551,7 @@ $(document).ready(function() {
 			}).magnificPopup('open');
 		}
 
-		// Delete User
+		// Delete Data
 		$(document).on('click', '.btnDeleteConfirm', function(e){
 			e.preventDefault();
 			var idUser = $('#modalDelete input#deleteId').val();
@@ -537,7 +563,7 @@ $(document).ready(function() {
 					$.magnificPopup.close();
 					new PNotify({
 						title: 'Success!',
-						text: 'User telah dihapus',
+						text: 'Data telah dihapus',
 						type: 'success'
 					});
 

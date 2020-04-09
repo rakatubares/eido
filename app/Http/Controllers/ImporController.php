@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Redirect;
 use DateTime;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use App\DimJenisImportir;
@@ -12,6 +13,7 @@ use App\DimRekomendasi;
 use App\DimStatus;
 use App\Impor;
 use App\Status;
+use App\UploadFiles;
 
 class ImporController extends Controller
 {
@@ -73,11 +75,14 @@ class ImporController extends Controller
                 'tgl_awb' => 'required|date',
                 'importir' => ['required','string','max:64'],
                 'npwp' => ['nullable','string','regex:/^[0-9]+$/'],
+                'lampiran' => ['nullable','file','max:5000','mimes:jpg,jpeg,png,pdf,rar,zip'],
+                'ket_lampiran' => ['nullable','required_with:lampiran','string','max:32']
             ], 
             $customMessages
         )->validate();
     
         $input = $request->all();
+        unset($input['lampiran']);
 
         // Convert tgl AWB
         $input['tgl_awb'] = DateTime::createFromFormat('d-m-Y', $input['tgl_awb'])->format('Y-m-d');
@@ -114,6 +119,11 @@ class ImporController extends Controller
 		$impor = Impor::create($input);
 		Status::create(['impor_id' => $impor->id, 'kd_status' => 10]);
         Status::create(['impor_id' => $impor->id, 'kd_status' => $input['status_terakhir']]);
+        if (isset($request->lampiran)) {
+            $path = Storage::putFile('docs', $request->file('lampiran'));
+            UploadFiles::create(['impor_id' => $impor->id, 'filename' => $path]);
+        }
+        
     }
 
     /**
