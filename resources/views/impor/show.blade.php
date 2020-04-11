@@ -542,20 +542,6 @@ textarea {
 					<div class="col-xs-12 col-sm-12 col-md-12 mb-md">
 						<label class="col-sm-12 col-md-2 control-label">Tambah Lampiran</label>
 					</div>
-					<div class="col-xs-12 col-sm-12 col-md-12 mb-md form-lampiran">
-						<div class="col-xs-10 col-md-1"></div>
-						<div class="col-xs-10 col-md-4 mb-2">
-							{!! Form::file('lampiran[]', array('class' => 'form-control')) !!}
-							<div id="error_lampiran" class="error_text"></div>
-						</div>
-						<div class="col-xs-10 col-md-5">
-							{!! Form::text('ket_lampiran[]', null, array('placeholder' => 'Keterangan lampiran','class' => 'form-control')) !!}
-							<div id="error_ket_lampiran" class="error_text"></div>
-						</div>
-						<div class="col-xs-2 col-md-1">
-							<button class="btn btn-default add-lampiran"><i class="fa fa-plus"></i></button>
-						</div>
-					</div>
 				</div>
 			</div>
 		</div>
@@ -583,6 +569,24 @@ textarea {
 $(document).ready(function() {
 	(function( $ ) {
 		///// Display Modal /////
+		// Modal component
+		var form_lampiran = `
+				<div class="col-xs-12 col-sm-12 col-md-12 mb-md form-lampiran">
+					<div class="col-xs-12 col-md-1"></div>
+					<div class="col-xs-10 col-md-4 mb-2">
+						{!! Form::file('lampiran[]', array('class' => 'form-control')) !!}
+						<div id="error_lampiran" class="error_text"></div>
+					</div>
+					<div class="col-xs-10 col-md-5">
+						{!! Form::text('ket_lampiran[]', null, array('placeholder' => 'Keterangan lampiran','class' => 'form-control')) !!}
+						<div id="error_ket_lampiran" class="error_text"></div>
+					</div>
+					<div class="col-xs-2 col-md-1">
+						<button class="btn btn-default add-lampiran"><i class="fa fa-plus"></i></button>
+					</div>
+				</div>
+			`;
+
 		// Clear form validation at modal close
 		function clearValidation() {
 			$("#formEdit .form-control").removeClass("is-invalid is-valid");
@@ -594,8 +598,7 @@ $(document).ready(function() {
 			e.preventDefault();
 			$.magnificPopup.close();
 			clearValidation();
-			$('#formEdit input[name="lampiran[]"]').val(null);
-			$('#formEdit input[name="ket_lampiran[]"]').val(null);
+			$('#formEdit .form-lampiran').remove();
 			$('#formEdit input[name="del_lampiran[]"]').remove();
 		});
 
@@ -614,6 +617,7 @@ $(document).ready(function() {
 				contentType: false,
 				success: function(data) {
 					$.magnificPopup.close();
+					$('#formEdit .form-lampiran').remove();
 					new PNotify({
 						title: 'Success!',
 						text: 'Data berhasil diupdate',
@@ -729,6 +733,8 @@ $(document).ready(function() {
 						$('#formEdit #form-current-lampiran').empty();
 					}
 
+					$('#group-lampiran').append(form_lampiran);
+
 					openForm(trigger);
 				}
 			});
@@ -826,22 +832,6 @@ $(document).ready(function() {
 			e.preventDefault();
 			$(this).removeClass('add-lampiran').addClass('del-lampiran');
 			$(this).children('.fa').removeClass('fa-plus').addClass('fa-minus');
-			var form_lampiran = `
-				<div class="col-xs-12 col-sm-12 col-md-12 mb-md form-lampiran">
-					<div class="col-xs-12 col-md-1"></div>
-					<div class="col-xs-10 col-md-4 mb-2">
-						{!! Form::file('lampiran[]', array('class' => 'form-control')) !!}
-						<div id="error_lampiran" class="error_text"></div>
-					</div>
-					<div class="col-xs-10 col-md-5">
-						{!! Form::text('ket_lampiran[]', null, array('placeholder' => 'Keterangan lampiran','class' => 'form-control')) !!}
-						<div id="error_ket_lampiran" class="error_text"></div>
-					</div>
-					<div class="col-xs-2 col-md-1">
-						<button class="btn btn-default add-lampiran"><i class="fa fa-plus"></i></button>
-					</div>
-				</div>
-			`;
 			$('#group-lampiran').append(form_lampiran);
 		});
 

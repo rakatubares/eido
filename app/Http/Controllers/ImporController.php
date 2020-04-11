@@ -62,73 +62,72 @@ class ImporController extends Controller
      */
     public function store(Request $request)
     {
-        // // Validation
-        // $customMessages = [
-        //     'awb.regex' => 'Only numbers and letters are allowed in awb.',
-        //     'npwp.regex' => 'Only numbers are allowed in npwp.',
-        //     'ket_lampiran.*.required_with' => 'Cantumkan keterangan lampiran'
-        // ];
+        // Validation
+        $customMessages = [
+            'awb.regex' => 'Only numbers and letters are allowed in awb.',
+            'npwp.regex' => 'Only numbers are allowed in npwp.',
+            'ket_lampiran.*.required_with' => 'Cantumkan keterangan lampiran'
+        ];
 
-        // Validator::make(
-        //     $request->all(), 
-        //     [
-        //         'awb' => ['required','string','max:64','regex:/(^[A-Za-z0-9]+$)+/'],
-        //         'tgl_awb' => 'required|date',
-        //         'importir' => ['required','string','max:64'],
-        //         'npwp' => ['nullable','string','regex:/^[0-9]+$/'],
-        //         'lampiran' => ['nullable','array'],
-        //         'lampiran.*' => ['nullable','file','max:10000','mimes:jpg,jpeg,png,pdf,rar,zip'],
-        //         'ket_lampiran' => ['nullable','required_with:lampiran','array'],
-        //         'ket_lampiran.*' => ['nullable','required_with:lampiran.*','string','max:32']
-        //     ], 
-        //     $customMessages
-        // )->validate();
+        Validator::make(
+            $request->all(), 
+            [
+                'awb' => ['required','string','max:64','regex:/(^[A-Za-z0-9]+$)+/'],
+                'tgl_awb' => 'required|date',
+                'importir' => ['required','string','max:64'],
+                'npwp' => ['nullable','string','regex:/^[0-9]+$/'],
+                'lampiran' => ['nullable','array'],
+                'lampiran.*' => ['nullable','file','max:10000','mimes:jpg,jpeg,png,pdf,rar,zip'],
+                'ket_lampiran' => ['nullable','required_with:lampiran','array'],
+                'ket_lampiran.*' => ['nullable','required_with:lampiran.*','string','max:32']
+            ], 
+            $customMessages
+        )->validate();
     
-        // $input = $request->all();
-        // unset($input['lampiran']);
+        $input = $request->all();
+        unset($input['lampiran']);
 
-        // // Convert tgl AWB
-        // $input['tgl_awb'] = DateTime::createFromFormat('d-m-Y', $input['tgl_awb'])->format('Y-m-d');
+        // Convert tgl AWB
+        $input['tgl_awb'] = DateTime::createFromFormat('d-m-Y', $input['tgl_awb'])->format('Y-m-d');
 
-        // // Convert perkiraan waktu clearance
-        // if (isset($input['tgl_clearance']) && $input['tgl_clearance'] != "") {
-        //     $input['tgl_clearance'] = DateTime::createFromFormat('d-m-Y', $input['tgl_clearance'])->format('Y-m-d');
-        // } else {
-        //     $input['tgl_clearance'] = null;
-        //     $input['wkt_clearance'] = null;
-        // }
+        // Convert perkiraan waktu clearance
+        if (isset($input['tgl_clearance']) && $input['tgl_clearance'] != "") {
+            $input['tgl_clearance'] = DateTime::createFromFormat('d-m-Y', $input['tgl_clearance'])->format('Y-m-d');
+        } else {
+            $input['tgl_clearance'] = null;
+            $input['wkt_clearance'] = null;
+        }
         
-        // // Determine importation status
-        // if ($input['rekomendasi_clearance'] == 1) {
-        //     $input['status_terakhir'] = 20;
-        // } else {
-        //     if (
-        //         (isset($input['check_nib']) && $input['check_nib'] == '1') && 
-        //         (isset($input['check_lartas']) && $input['check_lartas'] == '1') && (
-        //             $input['bebas'] == '0' || (
-        //                 $input['bebas'] == '1' && 
-        //                 (isset($input['rekomendasi_bebas']) && $input['rekomendasi_bebas'] == '1') && 
-        //                 (isset($input['check_bebas']) && $input['check_bebas'] == '1')
-        //             )
-        //         )
-        //     ) {
-        //         $input['status_terakhir'] = 40;
-        //     } else {
-        //         $input['status_terakhir'] = 30;
-        //     }
-        // }
+        // Determine importation status
+        if ($input['rekomendasi_clearance'] == 1) {
+            $input['status_terakhir'] = 20;
+        } else {
+            if (
+                (isset($input['check_nib']) && $input['check_nib'] == '1') && 
+                (isset($input['check_lartas']) && $input['check_lartas'] == '1') && (
+                    $input['bebas'] == '0' || (
+                        $input['bebas'] == '1' && 
+                        (isset($input['rekomendasi_bebas']) && $input['rekomendasi_bebas'] == '1') && 
+                        (isset($input['check_bebas']) && $input['check_bebas'] == '1')
+                    )
+                )
+            ) {
+                $input['status_terakhir'] = 40;
+            } else {
+                $input['status_terakhir'] = 30;
+            }
+        }
 
-        // // Save data
-		// $impor = Impor::create($input);
-		// Status::create(['impor_id' => $impor->id, 'kd_status' => 10]);
-        // Status::create(['impor_id' => $impor->id, 'kd_status' => $input['status_terakhir']]);
-        // if (isset($request->lampiran)) {
-        //     for ($i=0; $i < count($request->lampiran); $i++) { 
-        //         $path = Storage::putFile('public', $request->file("lampiran.$i"));
-        //         UploadFiles::create(['impor_id' => $impor->id, 'filename' => $path, 'comment' => $request->ket_lampiran[$i]]);
-        //     }
-        // }
-        return $request;
+        // Save data
+		$impor = Impor::create($input);
+		Status::create(['impor_id' => $impor->id, 'kd_status' => 10]);
+        Status::create(['impor_id' => $impor->id, 'kd_status' => $input['status_terakhir']]);
+        if (isset($request->lampiran)) {
+            for ($i=0; $i < count($request->lampiran); $i++) { 
+                $path = Storage::putFile('public', $request->file("lampiran.$i"));
+                UploadFiles::create(['impor_id' => $impor->id, 'filename' => $path, 'comment' => $request->ket_lampiran[$i]]);
+            }
+        }
     }
 
     /**
@@ -245,9 +244,11 @@ class ImporController extends Controller
 
         // Save lampiran
         if (isset($request->lampiran)) {
-            for ($i=0; $i < count($request->lampiran); $i++) { 
-                $path = Storage::putFile('public', $request->file("lampiran.$i"));
-                UploadFiles::create(['impor_id' => $id, 'filename' => $path, 'comment' => $request->ket_lampiran[$i]]);
+            $test = [];
+            foreach ($request->lampiran as $key => $value) {
+                $test[] = [$key, $value];
+                $path = Storage::putFile('public', $request->file("lampiran.$key"));
+                UploadFiles::create(['impor_id' => $id, 'filename' => $path, 'comment' => $request->ket_lampiran[$key]]);
             }
             unset($input['lampiran'],$input['ket_lampiran']);
         } else {
@@ -288,8 +289,6 @@ class ImporController extends Controller
         if (isset($dok_ready) && $dok_ready == true) {
             Status::create(['impor_id' => $impor->id, 'kd_status' => 40]);
         }
-
-        
     }
 
     /**
