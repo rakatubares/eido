@@ -8,6 +8,7 @@ use App\DimJenisImportir;
 use App\DimRekomendasi;
 use App\DimStatus;
 use App\Status;
+use App\UploadFiles;
 
 class Impor extends Model
 {
@@ -92,7 +93,7 @@ class Impor extends Model
     }
 
     /**
-     * Get the docs for each officer.
+     * Get docs' history.
      */
     public function history()
     {
@@ -100,10 +101,23 @@ class Impor extends Model
     }
 
     /**
+     * Get docs' attachments.
+     */
+    public function attachments()
+    {
+        return $this->hasMany(UploadFiles::class, 'impor_id');
+    }
+
+    /**
      * Get importasi detail with reference description
      */
     public function scopeDetail($query)
     {
-        return $query->with('jenis_importir:id,jns_importir', 'status:id,kd_status,ur_status', 'rekomendasi_impor:id,rekomendasi');
+        return $query->with(
+            'jenis_importir:id,jns_importir', 
+            'status:id,kd_status,ur_status', 
+            'rekomendasi_impor:id,rekomendasi', 
+            'attachments:id,impor_id,filename,comment'
+        );
     }
 }

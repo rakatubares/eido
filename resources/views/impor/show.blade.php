@@ -229,6 +229,19 @@ textarea {
 						</div>
 					</div>
 				</div>
+				<div class="row">
+					<div class="col-sm-12">
+						<div class="bill-data">
+							<h5 class="h5 mb-xs text-dark text-semibold">Lampiran:</h5>
+							<div id="list-lampiran">
+							@foreach( $attachments as $attachment )
+								<a target="_blank" href="{{ asset(Storage::url($attachment->filename)) }}">{{ '['.strtoupper(explode('.', $attachment->filename)[1]).']' }} {{ $attachment->comment }}</a>
+								<br>
+							@endforeach
+							</div>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 		<div class="text-right mr-lg">
@@ -316,7 +329,7 @@ textarea {
 <!-- Modal edit -->
 <div id="modalForm" class="modal-block modal-block-lg mfp-hide">
 	<section class="panel">
-    {!! Form::model($importasi, ['id' => 'formEdit', 'method' => 'PUT', 'route' => ['impor.update', $importasi->id], 'class' => 'form-horizontal form-bordered mb-lg']) !!}
+    {!! Form::model($importasi, ['id' => 'formEdit', 'class' => 'form-horizontal form-bordered mb-lg']) !!}
 		<header class="panel-heading">
 			<h2 class="panel-title">Form Impor</h2>
 		</header>
@@ -521,6 +534,29 @@ textarea {
 						</div>
 					</div>
 				</div>
+				<div id="group-lampiran" class="form-group mt-lg">
+					<div class="col-xs-12 col-sm-12 col-md-12 mb-md">
+						<label class="col-sm-12 col-md-2 control-label">Lampiran</label>
+					</div>
+					<div id="form-current-lampiran" class="col-xs-12 col-sm-12 col-md-12 mb-md"></div>
+					<div class="col-xs-12 col-sm-12 col-md-12 mb-md">
+						<label class="col-sm-12 col-md-2 control-label">Tambah Lampiran</label>
+					</div>
+					<div class="col-xs-12 col-sm-12 col-md-12 mb-md form-lampiran">
+						<div class="col-xs-10 col-md-1"></div>
+						<div class="col-xs-10 col-md-4 mb-2">
+							{!! Form::file('lampiran[]', array('class' => 'form-control')) !!}
+							<div id="error_lampiran" class="error_text"></div>
+						</div>
+						<div class="col-xs-10 col-md-5">
+							{!! Form::text('ket_lampiran[]', null, array('placeholder' => 'Keterangan lampiran','class' => 'form-control')) !!}
+							<div id="error_ket_lampiran" class="error_text"></div>
+						</div>
+						<div class="col-xs-2 col-md-1">
+							<button class="btn btn-default add-lampiran"><i class="fa fa-plus"></i></button>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 		<footer class="panel-footer">
@@ -558,6 +594,9 @@ $(document).ready(function() {
 			e.preventDefault();
 			$.magnificPopup.close();
 			clearValidation();
+			$('#formEdit input[name="lampiran[]"]').val(null);
+			$('#formEdit input[name="ket_lampiran[]"]').val(null);
+			$('#formEdit input[name="del_lampiran[]"]').remove();
 		});
 
 		// Modal Confirm
@@ -565,22 +604,23 @@ $(document).ready(function() {
 			e.preventDefault();
 			clearValidation();
 
-			var dataId = $('#formEdit input#dataId').val();
-			var data = $("#formEdit").serializeArray();
+			var formData = new FormData($("#formEdit")[0]);
 
 			$.ajax({
-				url: `${dataId}`,
-				type: 'PUT',
-				data: data,
+				url: '{{ route("impor.update", $importasi->id) }}',
+				type: 'POST',
+				data: formData,
+				processData: false,
+				contentType: false,
 				success: function(data) {
 					$.magnificPopup.close();
 					new PNotify({
 						title: 'Success!',
-						text: 'Dokumen berhasil diupdate',
+						text: 'Data berhasil diupdate',
 						type: 'success'
 					});
 
-					displayData(data);
+					displayData();
 				},
 				error: function (response) {
 					var errors = response["responseJSON"]["errors"];
@@ -588,8 +628,14 @@ $(document).ready(function() {
 						var messages = errors[type];
 						$(`.form-control[name='${type}`).addClass("is-invalid");
 						for (var idx in messages) {
-							$(`#error_${type}`).html(`<p class="text-danger">${messages[idx]}</p>`);
+							if (type.includes('ket_lampiran.')) {
+								var arr_type = type.split('.');
+								$(`.form-lampiran:nth-child(${Number(arr_type[1]) + 2}) #error_${arr_type[0]}`).html(`<p class="text-danger">${messages[idx]}</p>`);
+							} else {
+								$(`#error_${type}`).html(`<p class="text-danger">${messages[idx]}</p>`);
+							}
 						}
+						
 					}
 				},
 			});
@@ -599,11 +645,10 @@ $(document).ready(function() {
 		$(document).on('click', '.btnEdit', function(e){
 			e.preventDefault();
 			var trigger = $(this);
-			var dataId = $(this).attr('id');
 			$('#formEdit input#dataId').val(dataId);
 				
 			$.ajax({
-				url: `${dataId}/detail`,
+				url: '{{ route("impor.detail", $importasi->id) }}',
 				type: "GET",
 				data: { _token: "{{ csrf_token() }}" },
 				success: function (response) {
@@ -664,6 +709,26 @@ $(document).ready(function() {
 
 					$('#formEdit input[name="rekomendasi_clearance"]').val(response['rekomendasi_clearance']);
 
+					if (response['attachments'] != null) {
+						$('#formEdit #form-current-lampiran').empty();
+						var lampiran = '';
+						(response['attachments']).forEach(function(attachment) {
+							var att = `
+								<div class="current-lampiran col-xs-12">
+									<div class="col-xs-10 col-md-1"></div>
+									<div class="col-xs-10">
+										[${((((attachment.filename).split('.')).slice(-1))[0]).toUpperCase()}] ${attachment.comment} 
+										<a href="#" id="${attachment.id}" class="text-danger rem-lampiran"><i class="fa fa-times"></i>Remove</a>
+									</div>
+								</div>
+							`;
+							lampiran += att;
+						});
+						$('#formEdit #form-current-lampiran').html(lampiran);
+					} else {
+						$('#formEdit #form-current-lampiran').empty();
+					}
+
 					openForm(trigger);
 				}
 			});
@@ -693,7 +758,6 @@ $(document).ready(function() {
 					},
 					close: function() {
 						clearValidation();
-						// clearForm();
 					}
 				}
 			}).magnificPopup('open');
@@ -757,9 +821,50 @@ $(document).ready(function() {
 			}
 		});
 
+		// Handling Add Lampiran
+		$(document).on('click', '.add-lampiran', function(e) {
+			e.preventDefault();
+			$(this).removeClass('add-lampiran').addClass('del-lampiran');
+			$(this).children('.fa').removeClass('fa-plus').addClass('fa-minus');
+			var form_lampiran = `
+				<div class="col-xs-12 col-sm-12 col-md-12 mb-md form-lampiran">
+					<div class="col-xs-12 col-md-1"></div>
+					<div class="col-xs-10 col-md-4 mb-2">
+						{!! Form::file('lampiran[]', array('class' => 'form-control')) !!}
+						<div id="error_lampiran" class="error_text"></div>
+					</div>
+					<div class="col-xs-10 col-md-5">
+						{!! Form::text('ket_lampiran[]', null, array('placeholder' => 'Keterangan lampiran','class' => 'form-control')) !!}
+						<div id="error_ket_lampiran" class="error_text"></div>
+					</div>
+					<div class="col-xs-2 col-md-1">
+						<button class="btn btn-default add-lampiran"><i class="fa fa-plus"></i></button>
+					</div>
+				</div>
+			`;
+			$('#group-lampiran').append(form_lampiran);
+		});
+
+		// Handling Delete Lampiran
+		$(document).on('click', '.del-lampiran', function(e) {
+			e.preventDefault();
+			$(this).parent().parent().remove();
+		});
+
+		// Handling Remove Lampiran
+		$(document).on('click', '.rem-lampiran', function(e) {
+			e.preventDefault();
+			var idLampiran = $(this).attr('id');
+			$('<input type="hidden">').attr({
+				name: 'del_lampiran[]',
+				value: idLampiran
+			}).appendTo('#group-lampiran');
+			$(this).parent().parent().hide();
+		});
+
 		///// Display Data ///// 
 		// Display data
-		function displayData(data) {
+		function displayData() {
 			$.ajax({
 				url: '{{ route("impor.detail", $importasi->id) }}',
 				type: 'GET',
@@ -814,7 +919,21 @@ $(document).ready(function() {
 			} else {
 				$('section#display-data #display_perkiraan_clearance').empty();
 			}
-			
+
+			if (data.attachments != null) {
+				$('section#display-data #list-lampiran').empty();
+				var lampiran = '';
+				(data.attachments).forEach(function(attachment) {
+					var att = `
+						<a target="_blank" href="/${(attachment.filename).replace('public', 'storage')}">[${((((attachment.filename).split('.')).slice(-1))[0]).toUpperCase()}] ${attachment.comment}</a>
+						<br>
+					`;
+					lampiran += att;
+				});
+				$('section#display-data #list-lampiran').html(lampiran);
+			} else {
+				$('section#display-data #list-lampiran').empty();
+			}
 		}
 
 		// Display notifikasi

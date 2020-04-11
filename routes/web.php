@@ -32,7 +32,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::post('importasi','ImporController@store')->name('impor.store');
     Route::get('importasi/{impor}','ImporController@show')->name('impor.show');
     Route::get('importasi/{impor}/detail','ImporController@detail')->name('impor.detail');
-    Route::put('importasi/{impor}','ImporController@update')->name('impor.update');
+    Route::post('importasi/{impor}/update','ImporController@update')->name('impor.update');
     Route::delete('importasi/{impor}','ImporController@destroy')->name('impor.destroy');
 
     Route::get('status/{impor}','StatusController@list')->name('status.list');

@@ -17,7 +17,9 @@ class CreateUploadFilesTable extends Migration
             $table->id();
             $table->unsignedBigInteger('impor_id')->index();
             $table->string('filename', 64)->unique();
+            $table->string('comment', 32);
             $table->timestamps();
+            $table->softDeletes('deleted_at', 0);
             $table->foreign('impor_id')->references('id')->on('impor');
         });
     }

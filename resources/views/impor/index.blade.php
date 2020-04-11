@@ -218,7 +218,6 @@
 						</div>
 					</div>
 				</div>
-				
 				<div class="form-group mt-lg">
 					<div class="col-xs-12 col-sm-12 col-md-12 mb-md">
 						<label class="col-sm-12 col-md-3 control-label">Rekomendasi impor</label>
@@ -231,7 +230,7 @@
 					<div class="col-xs-12 col-sm-12 col-md-12 mb-md">
 						<label class="col-sm-12 col-md-2 control-label">Lampiran</label>
 					</div>
-					<div class="col-xs-12 col-sm-12 col-md-12 mb-md">
+					<div class="col-xs-12 col-sm-12 col-md-12 mb-md form-lampiran">
 						<div class="col-xs-10 col-md-1"></div>
 						<div class="col-xs-10 col-md-4 mb-2">
 							{!! Form::file('lampiran[]', array('class' => 'form-control')) !!}
@@ -372,11 +371,14 @@ $(document).ready(function() {
 
 			// var data = $('#formEdit').serializeArray();
 			var data = new FormData($("#formEdit")[0]);
-			console.log(data);
+			for (var pairs of data.entries()) {
+				console.log(pairs[0], pairs[1]); 
+			}
+			// console.log(data);
 			
 			$.ajax({
-				url: ajaxUrl,
-				type: ajaxType,
+				url: '{{ route("impor.store") }}',
+				type: 'POST',
 				data: data,
 				processData: false,
 				contentType: false,
@@ -384,7 +386,7 @@ $(document).ready(function() {
 					$.magnificPopup.close();
 					new PNotify({
 						title: 'Success!',
-						text: 'User berhasil dibuat',
+						text: 'Data berhasil diinput',
 						type: 'success'
 					});
 					clearForm();
@@ -398,8 +400,14 @@ $(document).ready(function() {
 						var messages = errors[type];
 						$(`.form-control[name='${type}`).addClass("is-invalid");
 						for (var idx in messages) {
-							$(`#error_${type}`).html(`<p class="text-danger">${messages[idx]}</p>`);
+							if (type.includes('ket_lampiran.')) {
+								var arr_type = type.split('.');
+								$(`.form-lampiran:nth-child(${Number(arr_type[1]) + 2}) #error_${arr_type[0]}`).html(`<p class="text-danger">${messages[idx]}</p>`);
+							} else {
+								$(`#error_${type}`).html(`<p class="text-danger">${messages[idx]}</p>`);
+							}
 						}
+						
 					}
 				},
 			});
@@ -501,7 +509,7 @@ $(document).ready(function() {
 			$(this).removeClass('add-lampiran').addClass('del-lampiran');
 			$(this).children('.fa').removeClass('fa-plus').addClass('fa-minus');
 			var form_lampiran = `
-				<div class="col-xs-12 col-sm-12 col-md-12 mb-md">
+				<div class="col-xs-12 col-sm-12 col-md-12 mb-md form-lampiran">
 					<div class="col-xs-12 col-md-1"></div>
 					<div class="col-xs-10 col-md-4 mb-2">
 						{!! Form::file('lampiran[]', array('class' => 'form-control')) !!}
