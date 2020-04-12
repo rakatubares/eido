@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Route;
 
 Auth::routes();
 
-Route::get('/', 'HomeController@index')->name('dashboard');
+Route::get('/', 'DashboardController@index')->name('dashboard');
 
 Route::group(['middleware' => ['auth']], function() {
     Route::resource('roles','RoleController');
@@ -37,4 +37,6 @@ Route::group(['middleware' => ['auth']], function() {
 
     Route::get('status/{impor}','StatusController@list')->name('status.list');
     Route::post('status/{impor}','StatusController@store')->name('status.store');
+
+    Route::get('dashboard/total','DashboardController@total')->name('dashboard.total');
 });
