@@ -64,20 +64,75 @@ class ImporController extends Controller
      */
     public function store(Request $request)
     {
+        // Convert data
+        $input = $request->all();
+        unset($input['lampiran']);
+
+        $input['tgl_awb'] = DateTime::createFromFormat('d-m-Y', $input['tgl_awb'])->format('Y-m-d');
+
+        if (isset($input['tgl_clearance']) && $input['tgl_clearance'] != "") {
+            $input['tgl_clearance'] = DateTime::createFromFormat('d-m-Y', $input['tgl_clearance'])->format('Y-m-d');
+        } else {
+            $input['tgl_clearance'] = null;
+            $input['wkt_clearance'] = null;
+        }
+
+        $input['check_rekomendasi'] = isset($input['check_rekomendasi']) ? $input['check_rekomendasi'] : 0;
+        $input['dok_rekomendasi'] = isset($input['dok_rekomendasi']) ? $input['dok_rekomendasi'] : null;
+        if (isset($input['tgl_rekomendasi']) && $input['tgl_rekomendasi'] != "") {
+            $input['tgl_rekomendasi'] = DateTime::createFromFormat('d-m-Y', $input['tgl_rekomendasi'])->format('Y-m-d');
+        } else {
+            $input['tgl_rekomendasi'] = null;
+        }
+
+		$input['check_bebas'] = isset($input['check_bebas']) ? $input['check_bebas'] : 0;
+        $input['dok_bebas'] = isset($input['dok_bebas']) ? $input['dok_bebas'] : null;
+        if (isset($input['tgl_bebas']) && $input['tgl_bebas'] != "") {
+            $input['tgl_bebas'] = DateTime::createFromFormat('d-m-Y', $input['tgl_bebas'])->format('Y-m-d');
+        } else {
+            $input['tgl_bebas'] = null;
+        }
+
         // Validation
+        $awb = $input['awb'];
+        $tgl_awb = $input['tgl_awb'];
+        
         $customMessages = [
             'awb.regex' => 'Only numbers and letters are allowed in awb.',
             'npwp.regex' => 'Only numbers are allowed in npwp.',
+            'hp_pic.regex' => 'Only numbers and ,+ are allowed in phone number.',
             'ket_lampiran.*.required_with' => 'Cantumkan keterangan lampiran'
         ];
 
         Validator::make(
             $request->all(), 
             [
-                'awb' => ['required','string','max:64','regex:/(^[A-Za-z0-9]+$)+/'],
-                'tgl_awb' => 'required|date',
+                'awb' => 
+                    [
+                        'required',
+                        'string',
+                        'max:64',
+                        'regex:/(^[A-Za-z0-9]+$)+/',
+                        Rule::unique('impor')->where(function ($query) use($awb,$tgl_awb) {
+                            return $query->where('awb', $awb)
+                            ->where('tgl_awb', $tgl_awb);
+                        })
+                    ],
+                'tgl_awb' => 
+                    [
+                        'required',
+                        'date',
+                        Rule::unique('impor')->where(function ($query) use($awb,$tgl_awb) {
+                            return $query->where('awb', $awb)
+                            ->where('tgl_awb', $tgl_awb);
+                        })
+                    ],
                 'importir' => ['required','string','max:64'],
                 'npwp' => ['nullable','string','regex:/^[0-9]+$/'],
+                'hp_pic' => ['nullable','regex:/(^[0-9+, ]+$)+/'],
+                'email_pic' => ['nullable','email'],
+                'tgl_rekomendasi' => ['nullable','required_with:dok_rekomendasi'],
+                'tgl_bebas' => ['nullable','required_with:dok_bebas'],
                 'lampiran' => ['nullable','array'],
                 'lampiran.*' => ['nullable','file','max:10000','mimes:jpg,jpeg,png,pdf,rar,zip'],
                 'ket_lampiran' => ['nullable','required_with:lampiran','array'],
@@ -86,43 +141,31 @@ class ImporController extends Controller
             $customMessages
         )->validate();
     
-        $input = $request->all();
-        unset($input['lampiran']);
-
-        // Convert tgl AWB
-        $input['tgl_awb'] = DateTime::createFromFormat('d-m-Y', $input['tgl_awb'])->format('Y-m-d');
-
-        // Convert perkiraan waktu clearance
-        if (isset($input['tgl_clearance']) && $input['tgl_clearance'] != "") {
-            $input['tgl_clearance'] = DateTime::createFromFormat('d-m-Y', $input['tgl_clearance'])->format('Y-m-d');
-        } else {
-            $input['tgl_clearance'] = null;
-            $input['wkt_clearance'] = null;
-        }
-        
         // Determine importation status
-        if ($input['rekomendasi_clearance'] == 1) {
-            $input['status_terakhir'] = 20;
+        $rekomendasi_clearance = DimRekomendasi::find($input['rekomendasi_clearance'])->rekomendasi;
+        if ($rekomendasi_clearance == 'PIB RH') {
+            $input['status_terakhir'] = DimStatus::where('ur_status','BELUM RH')->first()->kd_status;
         } else {
             if (
-                (isset($input['check_nib']) && $input['check_nib'] == '1') && 
-                (isset($input['check_lartas']) && $input['check_lartas'] == '1') && (
-                    $input['bebas'] == '0' || (
+                (isset($input['check_rekomendasi']) && $input['check_rekomendasi'] == '1') && 
+                (
+                    $input['bebas'] == '0' || 
+                    (
                         $input['bebas'] == '1' && 
-                        (isset($input['rekomendasi_bebas']) && $input['rekomendasi_bebas'] == '1') && 
                         (isset($input['check_bebas']) && $input['check_bebas'] == '1')
                     )
                 )
             ) {
-                $input['status_terakhir'] = 40;
+                $input['status_terakhir'] = DimStatus::where('ur_status','DOK. IMPOR BELUM DIAJUKAN')->first()->kd_status;
             } else {
-                $input['status_terakhir'] = 30;
+                $input['status_terakhir'] = DimStatus::where('ur_status','PERSYARATAN BELUM LENGKAP')->first()->kd_status;
             }
         }
 
         // Save data
-		$impor = Impor::create($input);
-		Status::create(['impor_id' => $impor->id, 'kd_status' => 10]);
+        $impor = Impor::create($input);
+        $kd_perekaman = DimStatus::where('ur_status','PEREKAMAN')->first()->kd_status;
+		Status::create(['impor_id' => $impor->id, 'kd_status' => $kd_perekaman]);
         Status::create(['impor_id' => $impor->id, 'kd_status' => $input['status_terakhir']]);
         if (isset($request->lampiran)) {
             for ($i=0; $i < count($request->lampiran); $i++) { 
@@ -145,6 +188,15 @@ class ImporController extends Controller
         $importasi->tgl_awb = DateTime::createFromFormat('Y-m-d', $importasi->tgl_awb)->format('d-m-Y');
         if ($importasi->tgl_clearance != null) {
             $importasi->tgl_clearance = DateTime::createFromFormat('Y-m-d', $importasi->tgl_clearance)->format('d-m-Y');
+            if ($importasi->wkt_clearance != null) {
+                $importasi->wkt_clearance = DateTime::createFromFormat('H:i:s', $importasi->wkt_clearance)->format('G:i');
+            }
+        }
+        if ($importasi->tgl_rekomendasi != null) {
+            $importasi->tgl_rekomendasi = DateTime::createFromFormat('Y-m-d', $importasi->tgl_rekomendasi)->format('d-m-Y');
+        }
+        if ($importasi->tgl_bebas != null) {
+            $importasi->tgl_bebas = DateTime::createFromFormat('Y-m-d', $importasi->tgl_bebas)->format('d-m-Y');
 		}
 		
 		// Get document history
@@ -183,17 +235,21 @@ class ImporController extends Controller
             $input['wkt_clearance'] = null;
         }
 
-		$input['check_nib'] = isset($input['check_nib']) ? $input['check_nib'] : 0;
-		$input['dok_nib'] = isset($input['dok_nib']) ? $input['dok_nib'] : null;
-
-		$input['check_lartas'] = isset($input['check_lartas']) ? $input['check_lartas'] : 0;
-		$input['dok_lartas'] = isset($input['dok_lartas']) ? $input['dok_lartas'] : null;
-
-		$input['rekomendasi_bebas'] = isset($input['rekomendasi_bebas']) ? $input['rekomendasi_bebas'] : 0;
-		$input['dok_rekomendasi_bebas'] = isset($input['dok_rekomendasi_bebas']) ? $input['dok_rekomendasi_bebas'] : null;
+		$input['check_rekomendasi'] = isset($input['check_rekomendasi']) ? $input['check_rekomendasi'] : 0;
+        $input['dok_rekomendasi'] = isset($input['dok_rekomendasi']) ? $input['dok_rekomendasi'] : null;
+        if (isset($input['tgl_rekomendasi']) && $input['tgl_rekomendasi'] != "") {
+            $input['tgl_rekomendasi'] = DateTime::createFromFormat('d-m-Y', $input['tgl_rekomendasi'])->format('Y-m-d');
+        } else {
+            $input['tgl_rekomendasi'] = null;
+        }
 
 		$input['check_bebas'] = isset($input['check_bebas']) ? $input['check_bebas'] : 0;
-		$input['dok_bebas'] = isset($input['dok_bebas']) ? $input['dok_bebas'] : null;
+        $input['dok_bebas'] = isset($input['dok_bebas']) ? $input['dok_bebas'] : null;
+        if (isset($input['tgl_bebas']) && $input['tgl_bebas'] != "") {
+            $input['tgl_bebas'] = DateTime::createFromFormat('d-m-Y', $input['tgl_bebas'])->format('Y-m-d');
+        } else {
+            $input['tgl_bebas'] = null;
+        }
 
 		// Validation
 		$awb = $input['awb'];
@@ -202,7 +258,7 @@ class ImporController extends Controller
         $customMessages = [
             'awb.regex' => 'Only numbers and letters are allowed in awb.',
             'npwp.regex' => 'Only numbers are allowed in npwp.',
-            'hp_pic.regex' => 'Only numbers are allowed phone number.',
+            'hp_pic.regex' => 'Only numbers and ,+ are allowed in phone number.',
             'awb.unique' => 'No AWB dan tanggal AWB sudah ada di database',
             'tgl_awb.unique' => 'No AWB dan tanggal AWB sudah ada di database',
             'ket_lampiran.*.required_with' => 'Cantumkan keterangan lampiran',
@@ -233,8 +289,10 @@ class ImporController extends Controller
                     ],
                 'importir' => ['required','string','max:64'],
                 'npwp' => ['nullable','string','regex:/^[0-9]+$/'],
-                'hp_pic' => ['nullable','regex:/(^[0-9]+$)+/'],
+                'hp_pic' => ['nullable','regex:/(^[0-9+, ]+$)+/'],
                 'email_pic' => ['nullable','email'],
+                'tgl_rekomendasi' => ['nullable','required_with:dok_rekomendasi'],
+                'tgl_bebas' => ['nullable','required_with:dok_bebas'],
                 'tgl_clearance' => ['nullable', 'date'],
                 'wkt_clearance' => ['nullable', 'date_format:G:i'],
                 'lampiran' => ['nullable','array'],
@@ -270,13 +328,14 @@ class ImporController extends Controller
         $impor = Impor::find($id);
         
         // Check status change
-        if ($impor->status_terakhir == 30) {
+        $kd_belum_lengkap = DimStatus::where('ur_status','PERSYARATAN BELUM LENGKAP')->first()->kd_status;
+        if ($impor->status_terakhir == $kd_belum_lengkap) {
             if (
-                ($input['check_nib'] == 1 && $input['check_lartas'] == 1 && $input['bebas'] == 0) ||
-                ($input['check_nib'] == 1 && $input['check_lartas'] == 1 && $input['bebas'] == 1 && $input['check_bebas'] == 1)
+                ($input['check_rekomendasi'] == 1 && $input['bebas'] == 0) ||
+                ($input['check_rekomendasi'] == 1 && $input['bebas'] == 1 && $input['check_bebas'] == 1)
             ) {
                 $dok_ready = true;
-                $input['status_terakhir'] = 40;
+                $input['status_terakhir'] = DimStatus::where('ur_status','DOK. IMPOR BELUM DIAJUKAN')->first()->kd_status;
             }
         }
 
@@ -290,7 +349,10 @@ class ImporController extends Controller
 
         // Update status
         if (isset($dok_ready) && $dok_ready == true) {
-            Status::create(['impor_id' => $impor->id, 'kd_status' => 40]);
+            Status::create([
+                'impor_id' => $impor->id, 
+                'kd_status' => DimStatus::where('ur_status','DOK. IMPOR BELUM DIAJUKAN')->first()->kd_status
+            ]);
         }
     }
 
@@ -306,9 +368,15 @@ class ImporController extends Controller
         $importasi->tgl_awb = DateTime::createFromFormat('Y-m-d', $importasi->tgl_awb)->format('d-m-Y');
         if ($importasi->tgl_clearance != null) {
             $importasi->tgl_clearance = DateTime::createFromFormat('Y-m-d', $importasi->tgl_clearance)->format('d-m-Y');
+            if ($importasi->wkt_clearance != null) {
+                $importasi->wkt_clearance = DateTime::createFromFormat('H:i:s', $importasi->wkt_clearance)->format('G:i');
+            }
         }
-        if ($importasi->wkt_clearance != null) {
-            $importasi->wkt_clearance = DateTime::createFromFormat('H:i:s', $importasi->wkt_clearance)->format('H:i');
+        if ($importasi->tgl_rekomendasi != null) {
+            $importasi->tgl_rekomendasi = DateTime::createFromFormat('Y-m-d', $importasi->tgl_rekomendasi)->format('d-m-Y');
+        }
+        if ($importasi->tgl_bebas != null) {
+            $importasi->tgl_bebas = DateTime::createFromFormat('Y-m-d', $importasi->tgl_bebas)->format('d-m-Y');
 		}
     
         return $importasi;

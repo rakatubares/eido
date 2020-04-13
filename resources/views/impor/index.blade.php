@@ -220,7 +220,7 @@
 					<div class="col-xs-12 col-sm-12 col-md-12 mb-md">
 						<label class="col-sm-12 col-md-3 control-label">License Officer</label>
 						<div class="col-sm-12 col-md-4">
-							{!! Form::select('officer', $officers->pluck('name','id'),null, array('class' => 'form-control')) !!}
+							{!! Form::select('officer_id', $officers->pluck('name','id'),null, array('class' => 'form-control')) !!}
 						</div>
 					</div>
 				</div>

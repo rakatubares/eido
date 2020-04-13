@@ -31,9 +31,9 @@ class Impor extends Model
         'awb', 'tgl_awb', 
         'importir', 'npwp', 'status_importir',
         'pic', 'hp_pic', 'email_pic', 'tgl_clearance', 'wkt_clearance',
-        'check_rekomendasi', 'dok_lartas', 'tgl_rekomendasi',
+        'check_rekomendasi', 'dok_rekomendasi', 'tgl_rekomendasi',
         'bebas', 'check_bebas', 'dok_bebas', 'tgl_bebas',
-        'rekomendasi_clearance', 'status_terakhir', 'officer',
+        'rekomendasi_clearance', 'status_terakhir', 'officer_id',
     ];
 
     /**

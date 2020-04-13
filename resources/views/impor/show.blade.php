@@ -60,8 +60,7 @@ textarea {
 @endif
 <!-- Notifikasi persyaratan -->
 @if (
-	$importasi->check_nib == 0 || 
-	$importasi->check_lartas != 1 || 
+	$importasi->check_rekomendasi != 1 || 
 	($importasi->bebas == 1 && $importasi->check_bebas != 1) 
 )
 <section id="notif-syarat" class="panel panel-warning col-sm-12">
@@ -74,17 +73,10 @@ textarea {
 		<h2 class="panel-title">Kurang persyaratan</h2>
 	</header>
 	<div class="panel-body">
-		@if ($importasi->check_nib == 0)
+		@if ($importasi->check_rekomendasi != 1)
 		<div class="col-sm-12 col-md-4">
 			<div id="notif-nib" class="alert alert-warning mx-1">
-				Syarat NIB belum dipenuhi.
-			</div>
-		</div>
-		@endif
-		@if ($importasi->check_lartas != 1)
-		<div class="col-sm-12 col-md-4">
-			<div id="notif-lartas" class="alert alert-warning mx-1">
-				Lartas belum dipenuhi.
+				Belum ada rekomendasi BNPB.
 			</div>
 		</div>
 		@endif
@@ -126,28 +118,8 @@ textarea {
 								<span id="display_importir">{{ $importasi->importir }}</span>
 							</p>
 							<p class="mb-none">
-								<span class="invoice-label text-dark">NPWP</span>
-								<span id="display_npwp">{{ $importasi->npwp }}</span>
-							</p>
-							<p class="mb-none">
 								<span class="invoice-label text-dark">Status</span>
 								<span id="display_jns_importir">{{ $importasi->jenis_importir->jns_importir }}</span>
-							</p>
-							<p class="mb-none">
-								<span class="invoice-label text-dark">NIB</span>
-								<span id="display_nib">
-								@if ( $importasi->check_nib == 1)
-									OK {{ $importasi->dok_nib }}
-								@else
-									Belum terpenuhi
-								@endif
-								</span>
-							</p>
-
-							<h5 class="h5 mb-xs text-dark text-semibold">Pengirim:</h5>
-							<p class="mb-none">
-								<span class="invoice-label text-dark">Nama</span>
-								<span id="display_pengirim">{{ $importasi->pengirim }}</span>
 							</p>
 
 							<h5 class="h5 mb-xs text-dark text-semibold">PIC:</h5>
@@ -163,53 +135,6 @@ textarea {
 								<span class="invoice-label text-dark">Email</span>
 								<span id="display_email_pic">{{ $importasi->email_pic }}</span>
 							</p>
-						</div>
-					</div>	
-					<div class="col-sm-12 col-md-6">
-						<div class="bill-data">
-							<h5 class="h5 mb-xs text-dark text-semibold">Lartas:</h5>
-							<p class="mb-none">
-								<span class="invoice-label text-dark">Syarat lartas</span>
-								<span id="display_lartas">
-								@if ( $importasi->check_lartas == 1)
-									OK {{ $importasi->dok_lartas }}
-								@else
-									Belum terpenuhi
-								@endif
-								</span>
-							</p>
-
-							<h5 class="h5 mb-xs text-dark text-semibold">Pungutan:</h5>
-							<p class="mb-none">
-								<span class="invoice-label text-dark">Pembayaran</span>
-								<span id="display_pungutan">
-								@if ( $importasi->bebas == 1)
-									Pembebasan
-								@else
-									Dibayar
-								@endif
-								</span>
-							</p>
-							<p class="mb-none">
-								<span class="invoice-label text-dark">Rekomendasi</span>
-								<span id="display_rekomendasi">
-								@if ( $importasi->rekomendasi_bebas == 1)
-									Ada {{ $importasi->dok_rekomendasi_bebas }}
-								@else
-									Tidak ada
-								@endif
-								</span>
-							</p>
-							<p class="mb-none">
-								<span class="invoice-label text-dark">Skep Bebas</span>
-								<span id="display_pembebasan">
-								@if ( $importasi->check_bebas == 1)
-									Ada {{ $importasi->dok_bebas}}
-								@else
-									TIdak ada
-								@endif
-								</span>
-							</p>
 
 							<h5 class="h5 mb-xs text-dark text-semibold">Clearance:</h5>
 							<p class="mb-none">
@@ -219,6 +144,63 @@ textarea {
 							<p class="mb-none">
 								<span class="invoice-label text-dark">Waktu</span>
 								<span id="display_perkiraan_clearance">{{ $importasi->tgl_clearance . ' ' . $importasi->wkt_clearance }}</span>
+							</p>
+						</div>
+					</div>	
+					<div class="col-sm-12 col-md-6">
+						<div class="bill-data">
+							<h5 class="h5 mb-xs text-dark text-semibold">Rekomendasi BNPB:</h5>
+							<p class="mb-none">
+								<span class="invoice-label text-dark">No. Surat</span>
+								<span id="display_dok_rekomendasi">
+								@if ( $importasi->check_rekomendasi == 1)
+									{{ $importasi->dok_rekomendasi }}
+								@else
+									-
+								@endif
+								</span>
+							</p>
+							<p class="mb-none">
+								<span class="invoice-label text-dark">Tanggal</span>
+								<span id="display_tgl_rekomendasi">
+								@if ( $importasi->check_rekomendasi == 1)
+									{{ $importasi->tgl_rekomendasi }}
+								@else
+									-
+								@endif
+								</span>
+							</p>
+
+							<h5 class="h5 mb-xs text-dark text-semibold">Pungutan:</h5>
+							<p class="mb-none">
+								<span class="invoice-label text-dark">Pembayaran</span>
+								<span id="display_pungutan">
+								@if ( $importasi->bebas == 1)
+									Bebas
+								@else
+									Dibayar
+								@endif
+								</span>
+							</p>
+							<p class="mb-none">
+								<span class="invoice-label text-dark">SKMK</span>
+								<span id="display_dok_bebas">
+								@if ( $importasi->check_bebas == 1)
+									{{ $importasi->dok_bebas }}
+								@else
+									-
+								@endif
+								</span>
+							</p>
+							<p class="mb-none">
+								<span class="invoice-label text-dark">Tanggal</span>
+								<span id="display_tgl_bebas">
+								@if ( $importasi->check_bebas == 1)
+									Ada {{ $importasi->tgl_bebas}}
+								@else
+									-
+								@endif
+								</span>
 							</p>
 
 							<h5 class="h5 mb-xs text-dark text-semibold">License Officer:</h5>
@@ -443,6 +425,20 @@ textarea {
 							@else
 								{!! Form::text('dok_rekomendasi', null, array('placeholder' => 'No. Rekomendasi BNPB','class' => 'form-control','disabled')) !!}
 							@endif
+							<div id="error_dok_rekomendasi" class="error_text"></div>
+						</div>
+						<label class="col-sm-12 col-md-1 control-label">Tgl</label>
+						<div class="col-sm-12 col-md-3">
+							<div class="input-group">
+								<span class="input-group-addon">
+									<i class="fa fa-calendar"></i>
+								</span>
+								@if( $importasi->check_rekomendasi == 1 )
+									{!! Form::text('tgl_rekomendasi', null, array('placeholder' => 'Tgl Surat','class' => 'form-control','data-plugin-datepicker','data-plugin-options' => '{ "format": "dd-mm-yyyy"}')) !!}
+								@else
+									{!! Form::text('tgl_rekomendasi', null, array('placeholder' => 'Tgl Surat','class' => 'form-control','data-plugin-datepicker','data-plugin-options' => '{ "format": "dd-mm-yyyy"}','disabled')) !!}
+								@endif
+							</div>
 							<div id="error_tgl_rekomendasi" class="error_text"></div>
 						</div>
 					</div>
@@ -506,7 +502,7 @@ textarea {
 					<div class="col-xs-12 col-sm-12 col-md-12 mb-md">
 						<label class="col-sm-12 col-md-3 control-label">License Officer</label>
 						<div class="col-sm-12 col-md-4">
-							{!! Form::select('officer', $officers->pluck('name','id'),null, array('class' => 'form-control')) !!}
+							{!! Form::select('officer_id', $officers->pluck('name','id'),null, array('class' => 'form-control')) !!}
 						</div>
 					</div>
 				</div>
@@ -621,7 +617,7 @@ $(document).ready(function() {
 			});
 		});
 
-		// Trigger Create/Edit Form
+		// Trigger Edit Form
 		$(document).on('click', '.btnEdit', function(e){
 			e.preventDefault();
 			var trigger = $(this);
@@ -637,57 +633,45 @@ $(document).ready(function() {
 					$('#formEdit input[name="importir"]').val(response['importir']);
 					$('#formEdit input[name="npwp"]').val(response['npwp']);
 					$('#formEdit select[name="status_importir"]').val(response['status_importir']);
-					if (response['check_nib'] == 1) {
-						$('#formEdit input[name="check_nib"]').prop('checked',true);
-						$('#formEdit input[name="dok_nib"]').prop('disabled',false);
-					} else {
-						$('#formEdit input[name="check_nib"]').prop('checked',false);
-						$('#formEdit input[name="dok_nib"]').prop('disabled',true);
-					}
-					$('#formEdit input[name="dok_nib"]').val(response['dok_nib']);
-					$('#formEdit input[name="pengirim"]').val(response['pengirim']);
 
 					$('#formEdit input[name="pic"]').val(response['pic']);
 					$('#formEdit input[name="hp_pic"]').val(response['hp_pic']);
 					$('#formEdit input[name="tgl_clearance"]').val(response['tgl_clearance']);
 					$('#formEdit input[name="wkt_clearance"]').val(response['wkt_clearance']);
 
-					if (response['check_lartas'] == 1) {
-						$('#formEdit input[name="check_lartas"]').prop('checked',true);
-						$('#formEdit input[name="dok_lartas"]').prop('disabled',false);
+					if (response['check_rekomendasi'] == 1) {
+						$('#formEdit input[name="check_rekomendasi"]').prop('checked',true);
+						$('#formEdit input[name="dok_rekomendasi"]').prop('disabled',false);
+						$('#formEdit input[name="tgl_rekomendasi"]').prop('disabled',false);
 					} else {
-						$('#formEdit input[name="check_lartas"]').prop('checked',false);
-						$('#formEdit input[name="dok_lartas"]').prop('disabled',true);
+						$('#formEdit input[name="check_rekomendasi"]').prop('checked',false);
+						$('#formEdit input[name="dok_rekomendasi"]').prop('disabled',true);
+						$('#formEdit input[name="tgl_rekomendasi"]').prop('disabled',true);
 					}
-					$('#formEdit input[name="dok_lartas"]').val(response['dok_lartas']);
+					$('#formEdit input[name="dok_rekomendasi"]').val(response['dok_rekomendasi']);
+					$('#formEdit input[name="tgl_rekomendasi"]').val(response['tgl_rekomendasi']);
 
 					$(`#formEdit input[name="bebas"]`).prop('checked', false);
 					$(`#formEdit input[name="bebas"][value=${response['bebas']}]`).prop('checked', true);
 					if (response['bebas'] == 1) {
-						$('#formEdit input[name="rekomendasi_bebas"]').prop('disabled',false);
 						$('#formEdit input[name="check_bebas"]').prop('disabled',false);
 					} else {
-						$('#formEdit input[name="rekomendasi_bebas"]').prop('disabled',true);
 						$('#formEdit input[name="check_bebas"]').prop('disabled',true);
 					}
-					if (response['rekomendasi_bebas'] == 1) {
-						$('#formEdit input[name="rekomendasi_bebas"]').prop('checked',true);
-						$('#formEdit input[name="dok_rekomendasi_bebas"]').prop('disabled',false);
-					} else {
-						$('#formEdit input[name="rekomendasi_bebas"]').prop('checked',false);
-						$('#formEdit input[name="dok_rekomendasi_bebas"]').prop('disabled',true);
-					}
-					$('#formEdit input[name="dok_rekomendasi_bebas"]').val(response['dok_rekomendasi_bebas']);
 					if (response['check_bebas'] == 1) {
 						$('#formEdit input[name="check_bebas"]').prop('checked',true);
 						$('#formEdit input[name="dok_bebas"]').prop('disabled',false);
+						$('#formEdit input[name="tgl_bebas"]').prop('disabled',false);
 					} else {
 						$('#formEdit input[name="check_bebas"]').prop('checked',false);
 						$('#formEdit input[name="dok_bebas"]').prop('disabled',true);
+						$('#formEdit input[name="tgl_bebas"]').prop('disabled',true);
 					}
 					$('#formEdit input[name="dok_bebas"]').val(response['dok_bebas']);
+					$('#formEdit input[name="tgl_bebas"]').val(response['tgl_bebas']);
 
 					$('#formEdit input[name="rekomendasi_clearance"]').val(response['rekomendasi_clearance']);
+					$('#formEdit input[name="officer_id"]').val(response['officer_id']);
 
 					if (response['attachments'] != null) {
 						$('#formEdit #form-current-lampiran').empty();
@@ -745,51 +729,30 @@ $(document).ready(function() {
 			}).magnificPopup('open');
 		};
 
-		// Handling NIB
-		$(document).on('change', '#formEdit input[type="checkbox"][name="check_nib"]', function() {
+		// Handling Rekomendasi
+		$(document).on('change', '#formEdit input[type="checkbox"][name="check_rekomendasi"]', function() {
 			if(this.checked) {
-				$('#formEdit input[type="text"][name="dok_nib"]').prop('disabled',false);
+				$('#formEdit input[type="text"][name="dok_rekomendasi"]').prop('disabled',false);
+				$('#formEdit input[type="text"][name="tgl_rekomendasi"]').prop('disabled',false);
 			} else {
-				$('#formEdit input[type="text"][name="dok_nib"]').prop('disabled',true);
-				$('#formEdit input[type="text"][name="dok_nib"]').val(null);
-			}
-		});
-
-		// Handling Lartas
-		$(document).on('change', '#formEdit input[type="checkbox"][name="check_lartas"]', function() {
-			if(this.checked) {
-				$('#formEdit input[type="text"][name="dok_lartas"]').prop('disabled',false);
-			} else {
-				$('#formEdit input[type="text"][name="dok_lartas"]').prop('disabled',true);
-				$('#formEdit input[type="text"][name="dok_lartas"]').val(null);
+				$('#formEdit input[type="text"][name="dok_rekomendasi"]').prop('disabled',true);
+				$('#formEdit input[type="text"][name="dok_rekomendasi"]').val(null);
+				$('#formEdit input[type="text"][name="tgl_rekomendasi"]').prop('disabled',true);
+				$('#formEdit input[type="text"][name="tgl_rekomendasi"]').val(null);
 			}
 		});
 
 		// Handling Pungutan
 		$(document).on('change', '#formEdit input[type="radio"][name="bebas"]', function() {
 			if (this.value == '1') {
-				$('#formEdit input[type="checkbox"][name="rekomendasi_bebas"]').prop('disabled',false);
 				$('#formEdit input[type="checkbox"][name="check_bebas"]').prop('disabled',false);
 			} else if (this.value == '0') {
-				$('#formEdit input[type="checkbox"][name="rekomendasi_bebas"]').prop('disabled',true);
-				$('#formEdit input[type="checkbox"][name="rekomendasi_bebas"]').prop('checked',false);
-				$('#formEdit input[type="text"][name="dok_rekomendasi_bebas"]').prop('disabled',true);
-				$('#formEdit input[type="text"][name="dok_rekomendasi_bebas"]').val(null);
-
 				$('#formEdit input[type="checkbox"][name="check_bebas"]').prop('disabled',true);
 				$('#formEdit input[type="checkbox"][name="check_bebas"]').prop('checked',false);
 				$('#formEdit input[type="text"][name="dok_bebas"]').prop('disabled',true);
 				$('#formEdit input[type="text"][name="dok_bebas"]').val(null);
-			}
-		});
-
-		// Handling Rekomendasi Bebas
-		$(document).on('change', '#formEdit input[type="checkbox"][name="rekomendasi_bebas"]', function() {
-			if(this.checked) {
-				$('#formEdit input[type="text"][name="dok_rekomendasi_bebas"]').prop('disabled',false);
-			} else {
-				$('#formEdit input[type="text"][name="dok_rekomendasi_bebas"]').prop('disabled',true);
-				$('#formEdit input[type="text"][name="dok_rekomendasi_bebas"]').val(null);
+				$('#formEdit input[type="text"][name="tgl_bebas"]').prop('disabled',true);
+				$('#formEdit input[type="text"][name="tgl_bebas"]').val(null);
 			}
 		});
 
@@ -797,9 +760,12 @@ $(document).ready(function() {
 		$(document).on('change', '#formEdit input[type="checkbox"][name="check_bebas"]', function() {
 			if(this.checked) {
 				$('#formEdit input[type="text"][name="dok_bebas"]').prop('disabled',false);
+				$('#formEdit input[type="text"][name="tgl_bebas"]').prop('disabled',false);
 			} else {
 				$('#formEdit input[type="text"][name="dok_bebas"]').prop('disabled',true);
 				$('#formEdit input[type="text"][name="dok_bebas"]').val(null);
+				$('#formEdit input[type="text"][name="tgl_bebas"]').prop('disabled',true);
+				$('#formEdit input[type="text"][name="tgl_bebas"]').val(null);
 			}
 		});
 
@@ -850,28 +816,18 @@ $(document).ready(function() {
 			}		
 			$('section#display-data #display_current_stat').html(data.status.ur_status);
 			$('section#display-data #display_jns_importir').html(data.jenis_importir.jns_importir);
-			if (data.check_nib == 1) {
-				$('section#display-data #display_nib').html(`OK - ${data.dok_nib}`);	
+			if (data.check_rekomendasi == 1) {
+				$('section#display-data #display_rekomendasi').html(`Ada - ${data.dok_rekomendasi} tgl ${data.tgl_rekomendasi}`);
 			} else {
-				$('section#display-data #display_nib').html('Belum terpenuhi');	
-			}
-			if (data.check_lartas == 1) {
-				$('section#display-data #display_lartas').html(`OK - ${data.dok_lartas}`);	
-			} else {
-				$('section#display-data #display_lartas').html('Belum terpenuhi');	
+				$('section#display-data #display_rekomendasi').html('Tidak ada');	
 			}
 			if (data.bebas == 1) {
 				$('section#display-data #display_pungutan').html('Bebas');
 			} else {
 				$('section#display-data #display_pungutan').html('Dibayar');
 			}
-			if (data.rekomendasi_bebas == 1) {
-				$('section#display-data #display_rekomendasi').html(`Ada - ${data.rekomendasi_bebas}`);	
-			} else {
-				$('section#display-data #display_rekomendasi').html(`Tidak ada`);	
-			}
 			if (data.check_bebas == 1) {
-				$('section#display-data #display_pembebasan').html(`Ada - ${data.dok_bebas}`);	
+				$('section#display-data #display_pembebasan').html(`Ada - ${data.dok_bebas} tgl ${data.tgl_bebas}`);	
 			} else {
 				$('section#display-data #display_pembebasan').html(`Tidak ada`);	
 			}
@@ -905,20 +861,14 @@ $(document).ready(function() {
 		// Display notifikasi
 		function displayNotif(data) {
 			if (
-				data.check_nib == 0 || 
-				data.check_lartas != 1 || 
+				data.check_rekomendasi != 1 || 
 				(data.bebas == 1 && data.check_bebas != 1) 
 			) {
 				$('section#notif-syarat').show();
-				if (data.check_nib == 0) {
-					$('section#notif-syarat #notif-nib').show();
+				if (data.check_rekomendasi != 1) {
+					$('section#notif-syarat #notif-rekomendasi').show();
 				} else {
-					$('section#notif-syarat #notif-nib').hide();
-				}
-				if (data.check_lartas != 1) {
-					$('section#notif-syarat #notif-lartas').show();
-				} else {
-					$('section#notif-syarat #notif-lartas').hide();
+					$('section#notif-syarat #notif-rekomendasi').hide();
 				}
 				if (data.bebas == 1 && data.check_bebas != 1) {
 					$('section#notif-syarat #notif-bebas').show();
