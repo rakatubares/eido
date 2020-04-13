@@ -13,6 +13,7 @@ class DimRekomendasiSeeder extends Seeder
     public function run()
     {
         $documents = [
+            'PIB RH',
             'PIB',
             'BARANG KIRIMAN',
             'BARANG PENUMPANG'

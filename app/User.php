@@ -45,6 +45,6 @@ class User extends Authenticatable
      */
     public function importasi()
     {
-        return $this->hasMany(Impor::class, 'created_by');
+        return $this->hasMany(Impor::class, 'officer_id');
     }
 }

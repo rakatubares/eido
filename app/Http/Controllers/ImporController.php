@@ -14,6 +14,7 @@ use App\DimStatus;
 use App\Impor;
 use App\Status;
 use App\UploadFiles;
+use App\User;
 
 class ImporController extends Controller
 {
@@ -39,7 +40,8 @@ class ImporController extends Controller
     {
         $jnsImportir = DimJenisImportir::All();
         $rekomendasi = DimRekomendasi::All();
-        return view('impor.index',compact('jnsImportir','rekomendasi'));
+        $officers = User::role('License Officer')->get();
+        return view('impor.index',compact('jnsImportir','rekomendasi','officers'));
     }
 
     /**
@@ -154,9 +156,10 @@ class ImporController extends Controller
         // Get reference for edit form
         $jnsImportir = DimJenisImportir::All();
         $rekomendasi = DimRekomendasi::All();
+        $officers = User::role('License Officer')->get();
         $statOptions = DimStatus::whereIn('kd_status', [21, 22, 41, 50])->orderBy('kd_status')->get();
 
-        return view('impor.show',compact('importasi','jnsImportir','rekomendasi','histories','statOptions','attachments'));
+        return view('impor.show',compact('importasi','jnsImportir','rekomendasi','histories','statOptions','attachments','officers'));
     }
 
     /**

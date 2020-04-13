@@ -357,44 +357,20 @@ textarea {
 					</div>
 					<div class="col-xs-12 col-sm-12 col-md-12 mb-md">
 						<label class="col-sm-12 col-md-2 control-label">Importir</label>
-						<div class="col-sm-12 col-md-4">
+						<div class="col-sm-12 col-md-9">
 							{!! Form::text('importir', null, array('placeholder' => 'Nama importir','class' => 'form-control')) !!}
 							<div id="error_importir" class="error_text"></div>
 						</div>
-						<label class="col-sm-12 col-md-2 control-label">NPWP</label>
+						<!-- <label class="col-sm-12 col-md-2 control-label">NPWP</label>
 						<div class="col-sm-12 col-md-3">
 							{!! Form::text('npwp', null, array('placeholder' => 'NPWP importir','class' => 'form-control')) !!}
 							<div id="error_npwp" class="error_text"></div>
-						</div>
+						</div> -->
 					</div>
 					<div class="col-xs-12 col-sm-12 col-md-12 mb-md">
 						<label class="col-sm-12 col-md-2 control-label">Status</label>
 						<div class="col-sm-12 col-md-4">
 							{!! Form::select('status_importir', $jnsImportir->pluck('jns_importir','id'),null, array('class' => 'form-control')) !!}
-						</div>
-					</div>
-					<div class="col-xs-12 col-sm-12 col-md-12 mb-md">
-						<label class="col-sm-12 col-md-2 control-label">NIB</label>
-						<div class="col-sm-12 col-md-4 checkbox">
-							<label>
-								{{ Form::checkbox('check_nib', '1', $importasi->check_nib, array('class' => 'name')) }}
-								Memiliki NIB/pengecualian NIB
-							</label>
-						</div>
-						<div class="col-sm-12 col-md-5">
-							@if( $importasi->check_nib == 1 )
-								{!! Form::text('dok_nib', null, array('placeholder' => 'Keterangan dok. NIB','class' => 'form-control')) !!}
-							@else
-								{!! Form::text('dok_nib', null, array('placeholder' => 'Keterangan dok. NIB','class' => 'form-control', 'disabled')) !!}
-							@endif
-							<div id="error_dok_nib" class="error_text"></div>
-						</div>
-					</div>
-					<div class="col-xs-12 col-sm-12 col-md-12 mb-md">
-						<label class="col-sm-12 col-md-2 control-label">Pengirim</label>
-						<div class="col-sm-12 col-md-4">
-							{!! Form::text('pengirim', null, array('placeholder' => 'Pengirim barang','class' => 'form-control')) !!}
-							<div id="error_pengirim" class="error_text"></div>
 						</div>
 					</div>
 				</div>
@@ -434,7 +410,7 @@ textarea {
 								<span class="input-group-addon">
 									<i class="fa fa-calendar"></i>
 								</span>
-								{!! Form::text('tgl_clearance', null, array('placeholder' => 'Tgl pengurusan barang','class' => 'form-control','data-plugin-datepicker','data-plugin-options' => '{ "format": "dd-mm-yyyy"}')) !!}
+								{!! Form::text('tgl_clearance', null, array('placeholder' => 'Tgl pengeluaran barang','class' => 'form-control','data-plugin-datepicker','data-plugin-options' => '{ "format": "dd-mm-yyyy"}')) !!}
 							</div>
 							<div id="error_tgl_clearance" class="error_text"></div>
 						</div>
@@ -451,27 +427,25 @@ textarea {
 				</div>
 				<div class="form-group mt-lg">
 					<div class="col-xs-12 col-sm-12 col-md-12 mb-md">
-						<label class="col-sm-12 col-md-2 control-label">Lartas</label>
+						<label class="col-sm-12 col-md-2 control-label">Rekomendasi</label>
 						<div class="col-sm-12 col-md-6 checkbox">
 							<label>
-								{{ Form::checkbox('check_lartas', '1', $importasi->check_lartas, array('class' => 'name')) }}
-								Bukan lartas / Ada izin lartas atau pengecualian lartas
+								{{ Form::checkbox('check_rekomendasi', '1', $importasi->check_rekomendasi, array('class' => 'name')) }}
+								Ada rekomendasi BNPB
 							</label>
 						</div>
 					</div>
 					<div class="col-xs-12 col-sm-12 col-md-12 mb-md">
 						<label class="col-sm-12 col-md-2 control-label"></label>
 						<div class="col-sm-12 col-md-5">
-							@if( $importasi->check_lartas == 1 )
-								{!! Form::text('dok_lartas', null, array('placeholder' => 'Keterangan dok. Lartas','class' => 'form-control')) !!}
+							@if( $importasi->check_rekomendasi == 1 )
+								{!! Form::text('dok_rekomendasi', null, array('placeholder' => 'No. Rekomendasi BNPB','class' => 'form-control')) !!}
 							@else
-								{!! Form::text('dok_lartas', null, array('placeholder' => 'Keterangan dok. Lartas','class' => 'form-control','disabled')) !!}
+								{!! Form::text('dok_rekomendasi', null, array('placeholder' => 'No. Rekomendasi BNPB','class' => 'form-control','disabled')) !!}
 							@endif
-							<div id="error_dok_lartas" class="error_text"></div>
+							<div id="error_tgl_rekomendasi" class="error_text"></div>
 						</div>
 					</div>
-				</div>
-				<div class="form-group mt-lg">
 					<div class="col-xs-12 col-sm-12 col-md-12 mb-md">
 						<label class="col-xs-12 col-sm-12 col-md-2 control-label">Pungutan</label>
 						<div class="col-xs-6 col-sm-6 col-md-2 radio">
@@ -484,27 +458,6 @@ textarea {
 						</div>
 					</div>
 					<div class="col-xs-12 col-sm-12 col-md-12 mb-md">
-						<label class="col-sm-12 col-md-2 control-label">Rekomendasi</label>
-						<div class="col-sm-12 col-md-4 checkbox">
-							<label>
-								@if( $importasi->bebas == 1 )
-									{{ Form::checkbox('rekomendasi_bebas', '1', $importasi->rekomendasi_bebas, array('class' => 'name')) }}
-								@else
-									{{ Form::checkbox('rekomendasi_bebas', '1', $importasi->rekomendasi_bebas, array('class' => 'name','disabled')) }}
-								@endif
-								Ada rekomendasi bebas
-							</label>
-						</div>
-						<div class="col-sm-12 col-md-5">
-							@if( $importasi->rekomendasi_bebas == 1 )
-								{!! Form::text('dok_rekomendasi_bebas', null, array('placeholder' => 'Keterangan dok. rekomendasi','class' => 'form-control')) !!}
-							@else
-								{!! Form::text('dok_rekomendasi_bebas', null, array('placeholder' => 'Keterangan dok. rekomendasi','class' => 'form-control','disabled')) !!}
-							@endif
-							<div id="error_dok_rekomendasi_bebas" class="error_text"></div>
-						</div>
-					</div>
-					<div class="col-xs-12 col-sm-12 col-md-12 mb-md">
 						<label class="col-sm-12 col-md-2 control-label">SKEP bebas</label>
 						<div class="col-sm-12 col-md-4 checkbox">
 							<label>
@@ -513,16 +466,33 @@ textarea {
 								@else
 									{{ Form::checkbox('check_bebas', '1', $importasi->check_bebas, array('class' => 'name','disabled')) }}
 								@endif
-								Ada SKEP pembebasan
+								Ada SKMK
 							</label>
 						</div>
+					</div>
+					<div class="col-xs-12 col-sm-12 col-md-12 mb-md">
+						<label class="col-sm-12 col-md-2 control-label"></label>
 						<div class="col-sm-12 col-md-5">
 							@if( $importasi->check_bebas == 1 )
-								{!! Form::text('dok_bebas', null, array('placeholder' => 'Keterangan dok. pembebasan','class' => 'form-control')) !!}
+								{!! Form::text('dok_bebas', null, array('placeholder' => 'No. SKMK','class' => 'form-control')) !!}
 							@else
 								{!! Form::text('dok_bebas', null, array('placeholder' => 'Keterangan dok. pembebasan','class' => 'form-control','disabled')) !!}
 							@endif
 							<div id="error_dok_bebas" class="error_text"></div>
+						</div>
+						<label class="col-sm-12 col-md-1 control-label">Tgl</label>
+						<div class="col-sm-12 col-md-3">
+							<div class="input-group">
+								<span class="input-group-addon">
+									<i class="fa fa-calendar"></i>
+								</span>
+								@if( $importasi->check_bebas == 1 )
+									{!! Form::text('tgl_bebas', null, array('placeholder' => 'Tgl SKMK','class' => 'form-control','data-plugin-datepicker','data-plugin-options' => '{ "format": "dd-mm-yyyy"}')) !!}
+								@else
+									{!! Form::text('tgl_bebas', null, array('placeholder' => 'Tgl SKMK','class' => 'form-control','data-plugin-datepicker','data-plugin-options' => '{ "format": "dd-mm-yyyy"}','disabled')) !!}
+								@endif
+							</div>
+							<div id="error_tgl_bebas" class="error_text"></div>
 						</div>
 					</div>
 				</div>
@@ -531,6 +501,12 @@ textarea {
 						<label class="col-sm-12 col-md-3 control-label">Rekomendasi impor</label>
 						<div class="col-sm-12 col-md-4">
 						{!! Form::select('rekomendasi_clearance', $rekomendasi->pluck('rekomendasi','id'),null, array('class' => 'form-control')) !!}
+						</div>
+					</div>
+					<div class="col-xs-12 col-sm-12 col-md-12 mb-md">
+						<label class="col-sm-12 col-md-3 control-label">License Officer</label>
+						<div class="col-sm-12 col-md-4">
+							{!! Form::select('officer', $officers->pluck('name','id'),null, array('class' => 'form-control')) !!}
 						</div>
 					</div>
 				</div>

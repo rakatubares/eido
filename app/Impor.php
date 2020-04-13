@@ -4,6 +4,7 @@ namespace App;
 
 use Auth;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use App\DimJenisImportir;
 use App\DimRekomendasi;
 use App\DimStatus;
@@ -12,6 +13,8 @@ use App\UploadFiles;
 
 class Impor extends Model
 {
+    use SoftDeletes;
+
     /**
      * The table associated with the model.
      *
@@ -26,11 +29,11 @@ class Impor extends Model
      */
     protected $fillable = [
         'awb', 'tgl_awb', 
-        'importir', 'npwp', 'check_nib', 'dok_nib', 'status_importir', 'pengirim',
+        'importir', 'npwp', 'status_importir',
         'pic', 'hp_pic', 'email_pic', 'tgl_clearance', 'wkt_clearance',
-        'check_lartas', 'dok_lartas',
-        'bebas', 'rekomendasi_bebas', 'dok_rekomendasi_bebas', 'check_bebas', 'dok_bebas',
-        'rekomendasi_clearance', 'status_terakhir',
+        'check_rekomendasi', 'dok_lartas', 'tgl_rekomendasi',
+        'bebas', 'check_bebas', 'dok_bebas', 'tgl_bebas',
+        'rekomendasi_clearance', 'status_terakhir', 'officer',
     ];
 
     /**
@@ -57,6 +60,11 @@ class Impor extends Model
         // create a event to happen on saving
         static::creating(function($table)  {
             $table->created_by = Auth::user()->id;
+        });
+
+        // create a event to happen on deleting
+        static::deleting(function($table)  {
+            $table->deleted_by = Auth::user()->id;
         });
     }
 
@@ -89,7 +97,7 @@ class Impor extends Model
      */
     public function officer()
     {
-        return $this->belongsTo(User::class, 'created_by');
+        return $this->belongsTo(User::class, 'officer_id');
     }
 
     /**

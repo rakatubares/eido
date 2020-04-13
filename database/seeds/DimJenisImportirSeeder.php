@@ -15,7 +15,7 @@ class DimJenisImportirSeeder extends Seeder
         $types = [
             'LEMBAGA NEGARA',
             'LEMBAGA NON PROFIT',
-            'BADAN USAHA'
+            'BADAN USAHA / PERORANGAN'
         ];
 
         foreach ($types as $type) {

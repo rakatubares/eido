@@ -81,38 +81,20 @@
 					</div>
 					<div class="col-xs-12 col-sm-12 col-md-12 mb-md">
 						<label class="col-sm-12 col-md-2 control-label">Importir</label>
-						<div class="col-sm-12 col-md-4">
+						<div class="col-sm-12 col-md-9">
 							{!! Form::text('importir', null, array('placeholder' => 'Nama importir','class' => 'form-control')) !!}
 							<div id="error_importir" class="error_text"></div>
 						</div>
-						<label class="col-sm-12 col-md-2 control-label">NPWP</label>
+						<!-- <label class="col-sm-12 col-md-2 control-label">NPWP</label>
 						<div class="col-sm-12 col-md-3">
 							{!! Form::text('npwp', null, array('placeholder' => 'NPWP importir','class' => 'form-control')) !!}
 							<div id="error_npwp" class="error_text"></div>
-						</div>
+						</div> -->
 					</div>
 					<div class="col-xs-12 col-sm-12 col-md-12 mb-md">
 						<label class="col-sm-12 col-md-2 control-label">Status</label>
 						<div class="col-sm-12 col-md-4">
 							{!! Form::select('status_importir', $jnsImportir->pluck('jns_importir','id'),null, array('class' => 'form-control')) !!}
-						</div>
-					</div>
-					<div class="col-xs-12 col-sm-12 col-md-12 mb-md">
-						<label class="col-sm-12 col-md-2 control-label">NIB</label>
-						<div class="col-sm-12 col-md-4 checkbox">
-							<label>{{ Form::checkbox('check_nib', '1', false, array('class' => 'name')) }}
-							Memiliki NIB/pengecualian NIB</label>
-						</div>
-						<div class="col-sm-12 col-md-5">
-							{!! Form::text('dok_nib', null, array('placeholder' => 'Keterangan dok. NIB','class' => 'form-control', 'disabled')) !!}
-							<div id="error_dok_nib" class="error_text"></div>
-						</div>
-					</div>
-					<div class="col-xs-12 col-sm-12 col-md-12 mb-md">
-						<label class="col-sm-12 col-md-2 control-label">Pengirim</label>
-						<div class="col-sm-12 col-md-4">
-							{!! Form::text('pengirim', null, array('placeholder' => 'Pengirim barang','class' => 'form-control')) !!}
-							<div id="error_pengirim" class="error_text"></div>
 						</div>
 					</div>
 				</div>
@@ -152,7 +134,7 @@
 								<span class="input-group-addon">
 									<i class="fa fa-calendar"></i>
 								</span>
-								{!! Form::text('tgl_clearance', null, array('placeholder' => 'Tgl pengurusan barang','class' => 'form-control','data-plugin-datepicker','data-plugin-options' => '{ "format": "dd-mm-yyyy"}')) !!}
+								{!! Form::text('tgl_clearance', null, array('placeholder' => 'Tgl pengeluaran barang','class' => 'form-control','data-plugin-datepicker','data-plugin-options' => '{ "format": "dd-mm-yyyy"}')) !!}
 							</div>
 							<div id="error_tgl_clearance" class="error_text"></div>
 						</div>
@@ -169,21 +151,29 @@
 				</div>
 				<div class="form-group mt-lg">
 					<div class="col-xs-12 col-sm-12 col-md-12 mb-md">
-						<label class="col-sm-12 col-md-2 control-label">Lartas</label>
+						<label class="col-sm-12 col-md-2 control-label">Rekomendasi</label>
 						<div class="col-sm-12 col-md-6 checkbox">
-							<label>{{ Form::checkbox('check_lartas', '1', false, array('class' => 'name')) }}
-							Bukan lartas / Ada izin lartas atau pengecualian lartas</label>
+							<label>{{ Form::checkbox('check_rekomendasi', '1', false, array('class' => 'name')) }}
+							Ada rekomendasi BNPB</label>
 						</div>
 					</div>
 					<div class="col-xs-12 col-sm-12 col-md-12 mb-md">
 						<label class="col-sm-12 col-md-2 control-label"></label>
 						<div class="col-sm-12 col-md-5">
-							{!! Form::text('dok_lartas', null, array('placeholder' => 'Keterangan dok. Lartas','class' => 'form-control','disabled')) !!}
-							<div id="error_dok_lartas" class="error_text"></div>
+							{!! Form::text('dok_rekomendasi', null, array('placeholder' => 'No. Rekomendasi BNPB','class' => 'form-control','disabled')) !!}
+							<div id="error_dok_rekomendasi" class="error_text"></div>
+						</div>
+						<label class="col-sm-12 col-md-1 control-label">Tgl</label>
+						<div class="col-sm-12 col-md-3">
+							<div class="input-group">
+								<span class="input-group-addon">
+									<i class="fa fa-calendar"></i>
+								</span>
+								{!! Form::text('tgl_rekomendasi', null, array('placeholder' => 'Tgl rekomendasi','class' => 'form-control','data-plugin-datepicker','data-plugin-options' => '{ "format": "dd-mm-yyyy"}','disabled')) !!}
+							</div>
+							<div id="error_tgl_rekomendasi" class="error_text"></div>
 						</div>
 					</div>
-				</div>
-				<div class="form-group mt-lg">
 					<div class="col-xs-12 col-sm-12 col-md-12 mb-md">
 						<label class="col-xs-12 col-sm-12 col-md-2 control-label">Pungutan</label>
 						<div class="col-xs-6 col-sm-6 col-md-2 radio">
@@ -196,25 +186,27 @@
 						</div>
 					</div>
 					<div class="col-xs-12 col-sm-12 col-md-12 mb-md">
-						<label class="col-sm-12 col-md-2 control-label">Rekomendasi</label>
-						<div class="col-sm-12 col-md-4 checkbox">
-							<label>{{ Form::checkbox('rekomendasi_bebas', '1', false, array('class' => 'name','disabled')) }}
-							Ada rekomendasi bebas</label>
-						</div>
-						<div class="col-sm-12 col-md-5">
-							{!! Form::text('dok_rekomendasi_bebas', null, array('placeholder' => 'Keterangan dok. rekomendasi','class' => 'form-control','disabled')) !!}
-							<div id="error_dok_rekomendasi_bebas" class="error_text"></div>
-						</div>
-					</div>
-					<div class="col-xs-12 col-sm-12 col-md-12 mb-md">
 						<label class="col-sm-12 col-md-2 control-label">SKEP bebas</label>
 						<div class="col-sm-12 col-md-4 checkbox">
 							<label>{{ Form::checkbox('check_bebas', '1', false, array('class' => 'name','disabled')) }}
-							Ada SKEP pembebasan</label>
+							Ada SKMK</label>
 						</div>
+					</div>
+					<div class="col-xs-12 col-sm-12 col-md-12 mb-md">
+						<label class="col-sm-12 col-md-2 control-label"></label>
 						<div class="col-sm-12 col-md-5">
-							{!! Form::text('dok_bebas', null, array('placeholder' => 'Keterangan dok. pembebasan','class' => 'form-control','disabled')) !!}
+							{!! Form::text('dok_bebas', null, array('placeholder' => 'No. SKMK','class' => 'form-control','disabled')) !!}
 							<div id="error_dok_bebas" class="error_text"></div>
+						</div>
+						<label class="col-sm-12 col-md-1 control-label">Tgl</label>
+						<div class="col-sm-12 col-md-3">
+							<div class="input-group">
+								<span class="input-group-addon">
+									<i class="fa fa-calendar"></i>
+								</span>
+								{!! Form::text('tgl_bebas', null, array('placeholder' => 'Tgl SKMK','class' => 'form-control','data-plugin-datepicker','data-plugin-options' => '{ "format": "dd-mm-yyyy"}','disabled')) !!}
+							</div>
+							<div id="error_tgl_bebas" class="error_text"></div>
 						</div>
 					</div>
 				</div>
@@ -223,6 +215,12 @@
 						<label class="col-sm-12 col-md-3 control-label">Rekomendasi impor</label>
 						<div class="col-sm-12 col-md-4">
 							{!! Form::select('rekomendasi_clearance', $rekomendasi->pluck('rekomendasi','id'),null, array('class' => 'form-control')) !!}
+						</div>
+					</div>
+					<div class="col-xs-12 col-sm-12 col-md-12 mb-md">
+						<label class="col-sm-12 col-md-3 control-label">License Officer</label>
+						<div class="col-sm-12 col-md-4">
+							{!! Form::select('officer', $officers->pluck('name','id'),null, array('class' => 'form-control')) !!}
 						</div>
 					</div>
 				</div>
@@ -346,12 +344,11 @@ $(document).ready(function() {
 		$(document).on('click', '.modal-dismiss', function (e) {
 			e.preventDefault();
 			$.magnificPopup.close();
-			$('#formEdit input[type="text"][name="dok_nib"]').prop('disabled',true);
-			$('#formEdit input[type="text"][name="dok_nib"]').prop('disabled',true);
-			$('#formEdit input[type="checkbox"][name="rekomendasi_bebas"]').prop('disabled',true);
-			$('#formEdit input[type="text"][name="dok_rekomendasi_bebas"]').prop('disabled',true);
+			$('#formEdit input[type="text"][name="dok_rekomendasi"]').prop('disabled',true);
+			$('#formEdit input[type="text"][name="tgl_rekomendasi"]').prop('disabled',true);
 			$('#formEdit input[type="checkbox"][name="check_bebas"]').prop('disabled',true);
 			$('#formEdit input[type="text"][name="dok_bebas"]').prop('disabled',true);
+			$('#formEdit input[type="text"][name="tgl_bebas"]').prop('disabled',true);
 		});
 
 		// Modal Confirm
@@ -359,22 +356,7 @@ $(document).ready(function() {
 			e.preventDefault();
 			clearValidation();
 
-			var formType = $('#formEdit input#route').val();
-			if (formType == 'update') {
-				var userId = formType = $('#formEdit input#dataId').val();
-				var ajaxUrl = `importasi/${userId}`; 
-				var ajaxType = "PUT";
-			} else {
-				var ajaxUrl = `importasi`; 
-				var ajaxType = "POST";
-			}
-
-			// var data = $('#formEdit').serializeArray();
 			var data = new FormData($("#formEdit")[0]);
-			for (var pairs of data.entries()) {
-				console.log(pairs[0], pairs[1]); 
-			}
-			// console.log(data);
 			
 			$.ajax({
 				url: '{{ route("impor.store") }}',
@@ -445,51 +427,30 @@ $(document).ready(function() {
 			}).magnificPopup('open');
 		});
 
-		// Handling NIB
-		$(document).on('change', '#formEdit input[type="checkbox"][name="check_nib"]', function() {
+		// Handling Rekomendasi
+		$(document).on('change', '#formEdit input[type="checkbox"][name="check_rekomendasi"]', function() {
 			if(this.checked) {
-				$('#formEdit input[type="text"][name="dok_nib"]').prop('disabled',false);
+				$('#formEdit input[type="text"][name="dok_rekomendasi"]').prop('disabled',false);
+				$('#formEdit input[type="text"][name="tgl_rekomendasi"]').prop('disabled',false);
 			} else {
-				$('#formEdit input[type="text"][name="dok_nib"]').prop('disabled',true);
-				$('#formEdit input[type="text"][name="dok_nib"]').val(null);
-			}
-		});
-
-		// Handling Lartas
-		$(document).on('change', '#formEdit input[type="checkbox"][name="check_lartas"]', function() {
-			if(this.checked) {
-				$('#formEdit input[type="text"][name="dok_lartas"]').prop('disabled',false);
-			} else {
-				$('#formEdit input[type="text"][name="dok_lartas"]').prop('disabled',true);
-				$('#formEdit input[type="text"][name="dok_lartas"]').val(null);
+				$('#formEdit input[type="text"][name="dok_rekomendasi"]').prop('disabled',true);
+				$('#formEdit input[type="text"][name="dok_rekomendasi"]').val(null);
+				$('#formEdit input[type="text"][name="tgl_rekomendasi"]').prop('disabled',true);
+				$('#formEdit input[type="text"][name="tgl_rekomendasi"]').val(null);
 			}
 		});
 
 		// Handling Pungutan
 		$(document).on('change', '#formEdit input[type="radio"][name="bebas"]', function() {
 			if (this.value == '1') {
-				$('#formEdit input[type="checkbox"][name="rekomendasi_bebas"]').prop('disabled',false);
 				$('#formEdit input[type="checkbox"][name="check_bebas"]').prop('disabled',false);
 			} else if (this.value == '0') {
-				$('#formEdit input[type="checkbox"][name="rekomendasi_bebas"]').prop('disabled',true);
-				$('#formEdit input[type="checkbox"][name="rekomendasi_bebas"]').prop('checked',false);
-				$('#formEdit input[type="text"][name="dok_rekomendasi_bebas"]').prop('disabled',true);
-				$('#formEdit input[type="text"][name="dok_rekomendasi_bebas"]').val(null);
-
 				$('#formEdit input[type="checkbox"][name="check_bebas"]').prop('disabled',true);
 				$('#formEdit input[type="checkbox"][name="check_bebas"]').prop('checked',false);
 				$('#formEdit input[type="text"][name="dok_bebas"]').prop('disabled',true);
 				$('#formEdit input[type="text"][name="dok_bebas"]').val(null);
-			}
-		});
-
-		// Handling Rekomendasi Bebas
-		$(document).on('change', '#formEdit input[type="checkbox"][name="rekomendasi_bebas"]', function() {
-			if(this.checked) {
-				$('#formEdit input[type="text"][name="dok_rekomendasi_bebas"]').prop('disabled',false);
-			} else {
-				$('#formEdit input[type="text"][name="dok_rekomendasi_bebas"]').prop('disabled',true);
-				$('#formEdit input[type="text"][name="dok_rekomendasi_bebas"]').val(null);
+				$('#formEdit input[type="text"][name="tgl_bebas"]').prop('disabled',true);
+				$('#formEdit input[type="text"][name="tgl_bebas"]').val(null);
 			}
 		});
 
@@ -497,9 +458,12 @@ $(document).ready(function() {
 		$(document).on('change', '#formEdit input[type="checkbox"][name="check_bebas"]', function() {
 			if(this.checked) {
 				$('#formEdit input[type="text"][name="dok_bebas"]').prop('disabled',false);
+				$('#formEdit input[type="text"][name="tgl_bebas"]').prop('disabled',false);
 			} else {
 				$('#formEdit input[type="text"][name="dok_bebas"]').prop('disabled',true);
 				$('#formEdit input[type="text"][name="dok_bebas"]').val(null);
+				$('#formEdit input[type="text"][name="tgl_bebas"]').prop('disabled',true);
+				$('#formEdit input[type="text"][name="tgl_bebas"]').val(null);
 			}
 		});
 
@@ -531,54 +495,6 @@ $(document).ready(function() {
 		$(document).on('click', '.del-lampiran', function(e) {
 			e.preventDefault();
 			$(this).parent().parent().remove();
-		});
-
-		// Trigger Delete
-		$(document).on('click', '.btnDelete', function(e){
-			e.preventDefault();
-			var trigger = $(this);
-			var idUser = $(this).attr("id");
-			var username = $(this).parent().siblings(".td-username").html();
-			$('#modalDelete input#deleteId').val(idUser);
-			$('#modalDelete strong#deleteUsername').html(username);
-			openModal(trigger);
-		});
-
-		// Open Delete Modal
-		function openModal(trigger) {
-			$(trigger).magnificPopup({
-				type: 'inline',
-				preloader: false,
-				modal: true,
-				callbacks: {
-					close: function() {
-						$('#modalDelete input#deleteId').val(null);
-						$('#modalDelete strong#deleteUsername').empty();
-					}
-				}
-			}).magnificPopup('open');
-		}
-
-		// Delete Data
-		$(document).on('click', '.btnDeleteConfirm', function(e){
-			e.preventDefault();
-			var idUser = $('#modalDelete input#deleteId').val();
-			$.ajax({
-				url: `importasi/${idUser}`,
-				type: "DELETE",
-				data: { _token: "{{ csrf_token() }}" },
-				success: function() {
-					$.magnificPopup.close();
-					new PNotify({
-						title: 'Success!',
-						text: 'Data telah dihapus',
-						type: 'success'
-					});
-
-					$('#table-data').DataTable().clear().destroy();
-					showData();
-				}
-			});
 		});
 
 		///// Execute at page load /////
