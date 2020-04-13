@@ -4,6 +4,18 @@
 @endsection
 
 @section('pagestyle')
+<style>
+#flotPlaceholder div.xAxis div.tickLabel 
+{    
+    transform: rotate(-90deg);
+    -ms-transform:rotate(-90deg); /* IE 9 */
+    -moz-transform:rotate(-90deg); /* Firefox */
+    -webkit-transform:rotate(-90deg); /* Safari and Chrome */
+    -o-transform:rotate(-90deg); /* Opera */
+    /*rotation-point:50% 50%;*/ /* CSS3 */
+    /*rotation:270deg;*/ /* CSS3 */
+}
+</style>
 @endsection
 
 @section('breadcrumbs')
@@ -100,39 +112,41 @@
                         <a href="#" class="fa fa-caret-down"></a>
                     </div>
 
-                    <h2 class="panel-title">Dokumen Outstanding</h2>
-                    <p class="panel-subtitle">Jumlah dokumen belum selesai berdasarkan status</p>
+                    <h2 class="panel-title">Dokumen Harian</h2>
+                    <p class="panel-subtitle">Jumlah yang masuk dan selesai per hari</p>
                 </header>
                 <div class="panel-body">
 
                     <!-- Flot: Pie -->
-                    <div class="chart chart-md" id="chartHarian"></div>
+                    <div class="chart chart-md" id="neCoBar"></div>
                 </div>
             </section>
         </div>
     </div>
-    
-    @foreach( $dateAgg['new'] as $key => $val )
-    {{ $key }} {{ $val->count() }}
-    @endforeach
-    
-
 </div>
 @endsection
 
 @section('vendorscript')
 <script src="{{ asset('vendor/flot/jquery.flot.js') }}"></script>
 <script src="{{ asset('vendor/flot-tooltip/jquery.flot.tooltip.js') }}"></script>
+<script src="{{ asset('vendor/flot/jquery.flot.stack.js') }}"></script>
 <script src="{{ asset('vendor/flot/jquery.flot.pie.js') }}"></script>
+<script src="{{ asset('vendor/flot/jquery.flot.time.js') }}"></script>
+<script src="{{ asset('vendor/flot/jquery.flot.tickrotor.js') }}"></script>
 <script src="{{ asset('vendor/flot/jquery.flot.categories.js') }}"></script>
 <script src="{{ asset('vendor/flot/jquery.flot.resize.js') }}"></script>
+<script src="{{ asset('vendor/flot/jquery.flot.orderBars.js') }}"></script>
 @endsection
 
 @section('pagescript')
 <script>
 $(document).ready(function() {
 	(function( $ ) {
-
+        // Get date function
+        function gd(date) {
+            return new Date(date);
+        }
+        // Pie chart total outstanding
         var flotPieData = [
             @foreach ( $statusAgg as $status => $val )
                 { 
@@ -162,6 +176,40 @@ $(document).ready(function() {
 				clickable: true
 			}
 		});
+
+        // Bar chart
+        var newDocData = [
+            @foreach ( $neCoChart as $key => $val )
+                [gd("{{ $val[0] }}"),"{{ $val[1] }}"],
+            @endforeach
+        ];
+        var comDocData = [
+            @foreach ( $neCoChart as $key => $val )
+                [gd("{{ $val[0] }}"),"-{{ $val[2] }}"],
+            @endforeach
+        ];
+        var neCoBarData = [newDocData, comDocData];
+        $.plot($("#neCoBar"), neCoBarData, {
+            series: {
+                bars: {
+                    show: 'bars',
+                    barWidth: 0.6
+                }
+            },
+            bars: {
+                align: "center",
+                barWidth: 24 * 60 * 60 * 600,
+                lineWidth: 1,
+                order: 1
+            },
+            xaxis: {
+                mode: "time",
+                tickSize: [1, "day"],
+                timeformat: "%d %b"
+            }
+        });
+        console.log(newDocData);
+        console.log(comDocData);
 	}).apply( this, [ jQuery ]);
 });
 </script>
