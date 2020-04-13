@@ -14,9 +14,7 @@ class DimStatusSeeder extends Seeder
     {
         $statuses = [
             10 => 'PEREKAMAN',
-            11 => 'BELUM LENGKAP',
             20 => 'BELUM RH',
-            21 => 'PROSES RH',
             22 => 'SPPB RH',
             30 => 'PENDING PERSYARATAN',
             40 => 'DOK. IMPOR BELUM DIAJUKAN',

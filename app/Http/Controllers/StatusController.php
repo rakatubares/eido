@@ -39,8 +39,7 @@ class StatusController extends Controller
         $impor = Impor::find($idImpor);
         if ($input['kd_status'] == 22) {
             if (
-                $impor->check_nib == 1 &&
-                $impor->check_lartas == 1 &&
+                $impor->check_rekoemndasi == 1 &&
                 (
                     $impor->bebas == 0 ||
                     $impor->bebas == 1 && $impor->check_bebas == 1

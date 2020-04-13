@@ -242,12 +242,6 @@
 							<ul class="list-unstyled">
 								<li class="divider"></li>
 								<li>
-									<a role="menuitem" tabindex="-1" href="pages-user-profile.html"><i class="fa fa-user"></i> My Profile</a>
-								</li>
-								<li>
-									<a role="menuitem" tabindex="-1" href="#" data-lock-screen="true"><i class="fa fa-lock"></i> Lock Screen</a>
-								</li>
-								<li>
 								{!! Form::open(['id' => 'logoutForm', 'method' => 'POST', 'route' => 'logout']) !!}
 									<a id="logoutBtn" role="menuitem" tabindex="-1" href="#"><i class="fa fa-power-off"></i> Logout</a>
 								{!! Form::close() !!}

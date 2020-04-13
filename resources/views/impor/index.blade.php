@@ -40,7 +40,10 @@
 					<th>AWB</th>
 					<th>Tgl AWB</th>
 					<th>Importir</th>
+					<th>LO</th>
+					<th>Kekurangan</th>
 					<th>Status</th>
+					<th>kd_status</th>
 					<th width="280px">Action</th>
 				</tr>
 			</thead>
@@ -308,13 +311,25 @@ $(document).ready(function() {
 				data: { _token: "{{ csrf_token() }}" },
 				success: function(data) {
 					data.forEach(function(dat) {
+						var rekomendasi = null;
+						var bebas = null;
+						if (dat.check_rekomendasi != 1) {
+							rekomendasi = 'Rekomendasi BNPB';
+						}
+						if (dat.bebas == 1 && dat.check_bebas !=1) {
+							bebas = 'SKEP Pembebasan';
+						}
+						var syarat = [rekomendasi, bebas].filter(Boolean).join('<br>');
 						var rows = `
 							<tr>
 								<td>${dat.awb}</td>
 								<td>${dat.tgl_awb}</td>
 								<td>${dat.importir}</td>
+								<td>${dat.officer.name}</td>
+								<td>${syarat}</td>
 								<td>${dat.status.ur_status}</td>
-								<td>
+								<td>${dat.status.kd_status}</td>
+								<td class="center">
 									<a class="btn btn-primary btn-xs" href="importasi/${dat.id}">Detail</a>
 								</td>
 							</tr>
@@ -322,7 +337,16 @@ $(document).ready(function() {
 						$('#table-data tbody').append(rows);
 					});
 					
-					$('#table-data').dataTable()
+					$('#table-data').dataTable({
+						columnDefs: [
+							{width: "5%", targets: 7},
+							{sortable: false, targets: 7},
+							{visible: false, targets: 6},
+							{searchable: false, targets: [6,7]},
+							{orderData: [6], targets: 5}
+						],
+						order: [[ 5, "asc" ]]
+					});
 				}
 			});
 		};

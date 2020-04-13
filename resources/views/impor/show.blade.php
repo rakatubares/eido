@@ -284,7 +284,7 @@ textarea {
 					<div class="col-sm-12 col-md-12 mb-md">
 						<label class="col-sm-12 col-md-2 control-label">Dok</label>
 						<div class="col-sm-12 col-md-4">
-							{!! Form::select('jns_dok_impor', ['RH','PIB','CN','PIBK','CD','Lainnya'],null, array('class' => 'form-control')) !!}
+							{!! Form::select('jns_dok_impor', ['RH'=>'RH','PIB'=>'PIB','CN'=>'CN','PIBK'=>'PIBK','CD'=>'CD','Lainnya'=>'Lainnya'],null, array('class' => 'form-control')) !!}
 							<div id="error_npwp" class="error_text"></div>
 						</div>
 						<div class="col-sm-12 col-md-6">

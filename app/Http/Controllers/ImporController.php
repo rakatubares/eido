@@ -51,7 +51,8 @@ class ImporController extends Controller
      */
     public function list()
     {
-        $importasi = Impor::select('id','awb','tgl_awb','importir','status_terakhir')->with('status:id,kd_status,ur_status')->get();
+        // $importasi = Impor::select('id','awb','tgl_awb','importir','status_terakhir')->with('status:id,kd_status,ur_status')->get();
+        $importasi = Impor::detail()->get();
  
         return $importasi;
     }
@@ -209,7 +210,7 @@ class ImporController extends Controller
         $jnsImportir = DimJenisImportir::All();
         $rekomendasi = DimRekomendasi::All();
         $officers = User::role('License Officer')->get();
-        $statOptions = DimStatus::whereIn('kd_status', [21, 22, 41, 50])->orderBy('kd_status')->get();
+        $statOptions = DimStatus::whereIn('kd_status', [22, 41, 50])->orderBy('kd_status')->get();
 
         return view('impor.show',compact('importasi','jnsImportir','rekomendasi','histories','statOptions','attachments','officers'));
     }

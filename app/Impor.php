@@ -125,7 +125,8 @@ class Impor extends Model
             'jenis_importir:id,jns_importir', 
             'status:id,kd_status,ur_status', 
             'rekomendasi_impor:id,rekomendasi', 
-            'attachments:id,impor_id,filename,comment'
+            'attachments:id,impor_id,filename,comment',
+            'officer:id,name'
         );
     }
 }
