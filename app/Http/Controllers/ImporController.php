@@ -71,6 +71,12 @@ class ImporController extends Controller
 
         $input['tgl_awb'] = DateTime::createFromFormat('d-m-Y', $input['tgl_awb'])->format('Y-m-d');
 
+        if (isset($input['tgl_permohonan']) && $input['tgl_permohonan'] != "") {
+            $input['tgl_permohonan'] = DateTime::createFromFormat('d-m-Y', $input['tgl_permohonan'])->format('Y-m-d');
+        } else {
+            $input['tgl_permohonan'] = null;
+        }
+
         if (isset($input['tgl_clearance']) && $input['tgl_clearance'] != "") {
             $input['tgl_clearance'] = DateTime::createFromFormat('d-m-Y', $input['tgl_clearance'])->format('Y-m-d');
         } else {
@@ -128,6 +134,7 @@ class ImporController extends Controller
                             ->where('tgl_awb', $tgl_awb);
                         })
                     ],
+                'tgl_permohonan' => ['nullable','required_with:no_permohonan'],
                 'importir' => ['required','string','max:64'],
                 'npwp' => ['nullable','string','regex:/^[0-9]+$/'],
                 'hp_pic' => ['nullable','regex:/(^[0-9+, ]+$)+/'],
@@ -187,6 +194,9 @@ class ImporController extends Controller
         // Get impor data
         $importasi = Impor::detail()->find($id);
         $importasi->tgl_awb = DateTime::createFromFormat('Y-m-d', $importasi->tgl_awb)->format('d-m-Y');
+        if ($importasi->tgl_permohonan != null) {
+            $importasi->tgl_permohonan = DateTime::createFromFormat('Y-m-d', $importasi->tgl_permohonan)->format('d-m-Y');
+        }
         if ($importasi->tgl_clearance != null) {
             $importasi->tgl_clearance = DateTime::createFromFormat('Y-m-d', $importasi->tgl_clearance)->format('d-m-Y');
             if ($importasi->wkt_clearance != null) {
@@ -227,7 +237,13 @@ class ImporController extends Controller
 		// Convert data
         $input = $request->all();
 
-		$input['tgl_awb'] = DateTime::createFromFormat('d-m-Y', $input['tgl_awb'])->format('Y-m-d');
+        $input['tgl_awb'] = DateTime::createFromFormat('d-m-Y', $input['tgl_awb'])->format('Y-m-d');
+        
+        if (isset($input['tgl_permohonan']) && $input['tgl_permohonan'] != "") {
+            $input['tgl_permohonan'] = DateTime::createFromFormat('d-m-Y', $input['tgl_permohonan'])->format('Y-m-d');
+        } else {
+            $input['tgl_permohonan'] = null;
+        }
 
 		if (isset($input['tgl_clearance']) && $input['tgl_clearance'] != "") {
             $input['tgl_clearance'] = DateTime::createFromFormat('d-m-Y', $input['tgl_clearance'])->format('Y-m-d');
@@ -288,6 +304,7 @@ class ImporController extends Controller
                             ->where('tgl_awb', $tgl_awb);
                         })->ignore($id)
                     ],
+                'tgl_permohonan' => ['nullable','required_with:no_permohonan'],
                 'importir' => ['required','string','max:64'],
                 'npwp' => ['nullable','string','regex:/^[0-9]+$/'],
                 'hp_pic' => ['nullable','regex:/(^[0-9+, ]+$)+/'],
@@ -367,6 +384,9 @@ class ImporController extends Controller
         // Get impor data
         $importasi = Impor::detail()->find($id);
         $importasi->tgl_awb = DateTime::createFromFormat('Y-m-d', $importasi->tgl_awb)->format('d-m-Y');
+        if ($importasi->tgl_permohonan != null) {
+            $importasi->tgl_permohonan = DateTime::createFromFormat('Y-m-d', $importasi->tgl_permohonan)->format('d-m-Y');
+        }
         if ($importasi->tgl_clearance != null) {
             $importasi->tgl_clearance = DateTime::createFromFormat('Y-m-d', $importasi->tgl_clearance)->format('d-m-Y');
             if ($importasi->wkt_clearance != null) {

@@ -149,6 +149,16 @@ textarea {
 					</div>	
 					<div class="col-sm-12 col-md-6">
 						<div class="bill-data">
+							<h5 class="h5 mb-xs text-dark text-semibold">No Aju Permohonan Covid:</h5>
+							<p class="mb-none">
+								<span class="invoice-label text-dark">No. Aju</span>
+								<span id="display_no_permohonan">{{ $importasi->no_permohonan }}</span>
+							</p>
+							<p class="mb-none">
+								<span class="invoice-label text-dark">Tanggal</span>
+								<span id="display_tgl_permohonan">{{ $importasi->tgl_permohonan }}</span>
+							</p>
+
 							<h5 class="h5 mb-xs text-dark text-semibold">Rekomendasi BNPB:</h5>
 							<p class="mb-none">
 								<span class="invoice-label text-dark">No. Surat</span>
@@ -226,9 +236,11 @@ textarea {
 				</div>
 			</div>
 		</div>
+		@can('impor-edit')
 		<div class="text-right mr-lg">
 			<a id="{{ $importasi->id }}" class="btn btn-primary btnEdit" href="#modalForm">Edit <i class="fa fa-edit"></i></a>
 		</div>
+		@endcan
 	</div>
 </section>
 
@@ -268,6 +280,7 @@ textarea {
 		</div>
 	</div>
 
+	@can('status-create')
 	<!-- Form Update Status -->
 	<div id="panel-update-status" class="panel">
 		<div class="panel-body center">
@@ -306,8 +319,10 @@ textarea {
 			{!! Form::close() !!}
 		</div>
 	</div>
+	@endcan
 </section>
 
+@can('impor-edit')
 <!-- Modal edit -->
 <div id="modalForm" class="modal-block modal-block-lg mfp-hide">
 	<section class="panel">
@@ -335,6 +350,23 @@ textarea {
 								{!! Form::text('tgl_awb', null, array('placeholder' => 'Isikan tgl AWB','class' => 'form-control','data-plugin-datepicker','data-plugin-options' => '{ "format": "dd-mm-yyyy"}')) !!}
 							</div>
 							<div id="error_tgl_awb" class="error_text"></div>
+						</div>
+					</div>
+					<div class="col-xs-12 col-sm-12 col-md-12 mb-md">
+						<label class="col-sm-12 col-md-2 control-label">Permohonan</label>
+						<div class="col-sm-12 col-md-4">
+							{!! Form::text('no_permohonan', null, array('placeholder' => 'No aju COVID','class' => 'form-control')) !!}
+							<div id="error_no_permohonan" class="error_text"></div>
+						</div>
+						<label class="col-sm-12 col-md-2 control-label">Tgl</label>
+						<div class="col-sm-12 col-md-3">
+							<div class="input-group">
+								<span class="input-group-addon">
+									<i class="fa fa-calendar"></i>
+								</span>
+								{!! Form::text('tgl_permohonan', null, array('placeholder' => 'Tgl permohonan','class' => 'form-control','data-plugin-datepicker','data-plugin-options' => '{ "format": "dd-mm-yyyy"}')) !!}
+							</div>
+							<div id="error_tgl_permohonan" class="error_text"></div>
 						</div>
 					</div>
 					<div class="col-xs-12 col-sm-12 col-md-12 mb-md">
@@ -528,6 +560,7 @@ textarea {
     {!! Form::close() !!}
 	</section>
 </div>
+@endcan
 @endsection
 
 @section('vendorscript')
@@ -630,6 +663,8 @@ $(document).ready(function() {
 				success: function (response) {
 					$('#formEdit input[name="awb"]').val(response['awb']);
 					$('#formEdit input[name="tgl_awb"]').val(response['tgl_awb']);
+					$('#formEdit input[name="no_permohonan"]').val(response['no_permohonan']);
+					$('#formEdit input[name="tgl_permohonan"]').val(response['tgl_permohonan']);
 					$('#formEdit input[name="importir"]').val(response['importir']);
 					$('#formEdit input[name="npwp"]').val(response['npwp']);
 					$('#formEdit select[name="status_importir"]').val(response['status_importir']);

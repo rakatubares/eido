@@ -27,6 +27,7 @@
 		<h2 class="panel-title">Importasi</h2>
 	</header>
 	<div class="panel-body">
+		@can('impor-create')
 		<div class="row">
 			<div class="col-sm-6">
 				<div class="mb-md">
@@ -34,6 +35,7 @@
 				</div>
 			</div>
 		</div>
+		@endcan
 		<table class="table table-bordered table-striped mb-none" id="table-data">
 			<thead>
 				<tr>
@@ -53,6 +55,7 @@
 	</div>
 </section>
 
+@can('impor-create')
 <!-- Modal tambah -->
 <div id="modalForm" class="modal-block modal-block-lg mfp-hide">
 	<section class="panel">
@@ -80,6 +83,23 @@
 								{!! Form::text('tgl_awb', null, array('placeholder' => 'Isikan tgl AWB','class' => 'form-control','data-plugin-datepicker','data-plugin-options' => '{ "format": "dd-mm-yyyy"}')) !!}
 							</div>
 							<div id="error_tgl_awb" class="error_text"></div>
+						</div>
+					</div>
+					<div class="col-xs-12 col-sm-12 col-md-12 mb-md">
+						<label class="col-sm-12 col-md-2 control-label">Permohonan</label>
+						<div class="col-sm-12 col-md-4">
+							{!! Form::text('no_permohonan', null, array('placeholder' => 'No aju COVID','class' => 'form-control')) !!}
+							<div id="error_no_permohonan" class="error_text"></div>
+						</div>
+						<label class="col-sm-12 col-md-2 control-label">Tgl</label>
+						<div class="col-sm-12 col-md-3">
+							<div class="input-group">
+								<span class="input-group-addon">
+									<i class="fa fa-calendar"></i>
+								</span>
+								{!! Form::text('tgl_permohonan', null, array('placeholder' => 'Tgl permohonan','class' => 'form-control','data-plugin-datepicker','data-plugin-options' => '{ "format": "dd-mm-yyyy"}')) !!}
+							</div>
+							<div id="error_tgl_permohonan" class="error_text"></div>
 						</div>
 					</div>
 					<div class="col-xs-12 col-sm-12 col-md-12 mb-md">
@@ -259,35 +279,7 @@
     {!! Form::close() !!}
 	</section>
 </div>
-
-<!-- Modal delete user -->
-<div id="modalDelete" class="modal-block modal-header-color modal-block-warning mfp-hide">
-	<section class="panel">
-		<header class="panel-heading">
-			<h2 class="panel-title">Hapus User!</h2>
-		</header>
-		<div class="panel-body">
-			<div class="modal-wrapper">
-				<div class="modal-icon">
-					<i class="fa fa-warning"></i>
-				</div>
-				<div class="modal-text">
-					<h4>Perhatian</h4>
-					<p>Apakah yakin <strong id="deleteUsername"></strong> akan dihapus?</p>
-				</div>
-			</div>
-			<input id="deleteId" type="hidden">
-		</div>
-		<footer class="panel-footer">
-			<div class="row">
-				<div class="col-md-12 text-right">
-					<button class="btn btn-danger btnDeleteConfirm">Hapus</button>
-					<button class="btn btn-default modal-dismiss">Batal</button>
-				</div>
-			</div>
-		</footer>
-	</section>
-</div>
+@endcan
 @endsection
 
 @section('vendorscript')
