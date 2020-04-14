@@ -46,7 +46,13 @@ class DashboardController extends Controller
             // total new and completed documents by date
             $minDate = $lsImpor->min('created_at')->format('Y-m-d');
             $maxDateNew = $lsImpor->max('created_at')->format('Y-m-d');
-            $maxDateComplete = $lsImpor->where('status.ur_status', 'SELESAI')->max('updated_at')->format('Y-m-d');
+            $maxDateComplete = $lsImpor->where('status.ur_status', 'SELESAI')->max('updated_at');
+            if ($maxDateComplete != null) {
+                $maxDateComplete = $maxDateComplete->format('Y-m-d');
+            } else {
+                $maxDateComplete = $maxDateNew;
+            }
+            
             $maxDate = max($maxDateNew, $maxDateComplete);
 
             $minDate = new DateTime($minDate);
