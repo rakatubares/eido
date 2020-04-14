@@ -159,7 +159,7 @@ class ImporController extends Controller
             ) {
                 $input['status_terakhir'] = DimStatus::where('ur_status','DOK. IMPOR BELUM DIAJUKAN')->first()->kd_status;
             } else {
-                $input['status_terakhir'] = DimStatus::where('ur_status','PERSYARATAN BELUM LENGKAP')->first()->kd_status;
+                $input['status_terakhir'] = DimStatus::where('ur_status','PENDING PERSYARATAN')->first()->kd_status;
             }
         }
 
@@ -329,7 +329,7 @@ class ImporController extends Controller
         $impor = Impor::find($id);
         
         // Check status change
-        $kd_belum_lengkap = DimStatus::where('ur_status','PERSYARATAN BELUM LENGKAP')->first()->kd_status;
+        $kd_belum_lengkap = DimStatus::where('ur_status','PENDING PERSYARATAN')->first()->kd_status;
         if ($impor->status_terakhir == $kd_belum_lengkap) {
             if (
                 ($input['check_rekomendasi'] == 1 && $input['bebas'] == 0) ||
