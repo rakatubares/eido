@@ -30,51 +30,56 @@ class DashboardController extends Controller
     {
         // total documents
         $lsImpor = Impor::All();
-        $total['all'] = $lsImpor->count();
-        foreach ($lsImpor as $impor) {
-            $impor->status();
-            $impor->created_date = $impor->created_at->format('Y-m-d');
-            $impor->updated_date = $impor->updated_at->format('Y-m-d');
+        if (count($lsImpor) > 0) {
+            $total['all'] = $lsImpor->count();
+            foreach ($lsImpor as $impor) {
+                $impor->status();
+                $impor->created_date = $impor->created_at->format('Y-m-d');
+                $impor->updated_date = $impor->updated_at->format('Y-m-d');
+            }
+            $total['outstanding'] = $lsImpor->where('status.ur_status', '!=', 'SELESAI')->count();
+            $total['selesai'] = $lsImpor->where('status.ur_status', 'SELESAI')->count();
+
+            // total by status
+            $statusAgg = $lsImpor->where('status.ur_status', '!=', 'SELESAI')->groupBy('status.ur_status');
+
+            // total new and completed documents by date
+            $minDate = $lsImpor->min('created_at')->format('Y-m-d');
+            $maxDateNew = $lsImpor->max('created_at')->format('Y-m-d');
+            $maxDateComplete = $lsImpor->where('status.ur_status', 'SELESAI')->max('updated_at')->format('Y-m-d');
+            $maxDate = max($maxDateNew, $maxDateComplete);
+
+            $minDate = new DateTime($minDate);
+            $maxDate = new DateTime($maxDate);
+            $maxDate->modify('+1 day');
+
+            $period = new DatePeriod(
+                $minDate,
+                new DateInterval('P1D'),
+                $maxDate
+            );
+            $dateRange = [];
+            foreach ($period as $p) {
+                $dateRange[] = $p->format('Y-m-d');
+            }
+
+            $dateAgg['new'] = $lsImpor->groupBy('created_date');
+            $dateAgg['complete'] = $lsImpor->where('status.ur_status', 'SELESAI')->groupBy('updated_date');
+
+            $neCoChart = [];
+            foreach ($dateRange as $d) {
+                $neCoChart[] = [
+                    $d, 
+                    (isset($dateAgg['new'][$d]) ? ($dateAgg['new'][$d])->count() : null), 
+                    (isset($dateAgg['complete'][$d]) ? ($dateAgg['complete'][$d])->count() : null)
+                ];
+            }
+        
+            return view('dashboard',compact('total','statusAgg','dateAgg','dateRange','neCoChart'));
+        } else {
+            return redirect()->route('impor.index');
         }
-        $total['outstanding'] = $lsImpor->where('status.ur_status', '!=', 'SELESAI')->count();
-        $total['selesai'] = $lsImpor->where('status.ur_status', 'SELESAI')->count();
-
-        // total by status
-        $statusAgg = $lsImpor->where('status.ur_status', '!=', 'SELESAI')->groupBy('status.ur_status');
-
-        // total new and completed documents by date
-        $minDate = $lsImpor->min('created_at')->format('Y-m-d');
-        $maxDateNew = $lsImpor->max('created_at')->format('Y-m-d');
-        $maxDateComplete = $lsImpor->where('status.ur_status', 'SELESAI')->max('updated_at')->format('Y-m-d');
-        $maxDate = max($maxDateNew, $maxDateComplete);
-
-        $minDate = new DateTime($minDate);
-        $maxDate = new DateTime($maxDate);
-        $maxDate->modify('+1 day');
-
-        $period = new DatePeriod(
-            $minDate,
-            new DateInterval('P1D'),
-            $maxDate
-        );
-        $dateRange = [];
-        foreach ($period as $p) {
-            $dateRange[] = $p->format('Y-m-d');
-        }
-
-        $dateAgg['new'] = $lsImpor->groupBy('created_date');
-        $dateAgg['complete'] = $lsImpor->where('status.ur_status', 'SELESAI')->groupBy('updated_date');
-
-        $neCoChart = [];
-        foreach ($dateRange as $d) {
-            $neCoChart[] = [
-                $d, 
-                (isset($dateAgg['new'][$d]) ? ($dateAgg['new'][$d])->count() : null), 
-                (isset($dateAgg['complete'][$d]) ? ($dateAgg['complete'][$d])->count() : null)
-            ];
-        }
-
-        return view('dashboard',compact('total','statusAgg','dateAgg','dateRange','neCoChart'));
+        
     }
 
     /**
