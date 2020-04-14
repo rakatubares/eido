@@ -179,10 +179,10 @@ $(document).ready(function() {
 			var formType = $('#formRole input#route').val();
 			if (formType == 'update') {
 				var roleId = formType = $('#formRole input#roleId').val();
-				var ajaxUrl = `/roles/${roleId}`; 
+				var ajaxUrl = `roles/${roleId}`; 
 				var ajaxType = "PUT";
 			} else {
-				var ajaxUrl = `/roles`; 
+				var ajaxUrl = `{{ route("roles.store") }}`; 
 				var ajaxType = "POST";
 			}
 			
@@ -224,7 +224,7 @@ $(document).ready(function() {
 				var roleId = $(this).attr("id");
 				
 				$.ajax({
-					url: `/roles/${roleId}/edit`,
+					url: `roles/${roleId}/edit`,
 					type: "GET",
 					data: { _token: "{{ csrf_token() }}" },
 					success: function (response) {
@@ -302,7 +302,7 @@ $(document).ready(function() {
 			e.preventDefault();
 			var roleId = $('#modalDelete input#deleteId').val();
 			$.ajax({
-				url: `/roles/${roleId}`,
+				url: `roles/${roleId}`,
 				type: "DELETE",
 				data: { _token: "{{ csrf_token() }}" },
 				success: function() {

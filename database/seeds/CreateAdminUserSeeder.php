@@ -18,7 +18,7 @@ class CreateAdminUserSeeder extends Seeder
             'name' => 'Raka Tubares', 
             'nip' => '123456789',
             'username' => 'rakatubares',
-        	'password' => bcrypt('123456')
+        	'password' => bcrypt('112233445566')
         ]);
   
         $role = Role::create(['name' => 'Superuser']);

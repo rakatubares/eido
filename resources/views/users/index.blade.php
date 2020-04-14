@@ -221,11 +221,11 @@ $(document).ready(function() {
 
 			var formType = $('#formUser input#route').val();
 			if (formType == 'update') {
-				var userId = formType = $('#formUser input#userId').val();
-				var ajaxUrl = `/users/${userId}`; 
+				var userId = $('#formUser input#userId').val();
+				var ajaxUrl = `users/${userId}`; 
 				var ajaxType = "PUT";
 			} else {
-				var ajaxUrl = `/users`; 
+				var ajaxUrl = `{{ route("users.store") }}`; 
 				var ajaxType = "POST";
 			}
 			
@@ -267,7 +267,7 @@ $(document).ready(function() {
 				var idUser = $(this).attr("id");
 				
 				$.ajax({
-					url: `/users/${idUser}/edit`,
+					url: `users/${idUser}/edit`,
 					type: "GET",
 					data: { _token: "{{ csrf_token() }}" },
 					success: function (response) {
@@ -350,7 +350,7 @@ $(document).ready(function() {
 			e.preventDefault();
 			var idUser = $('#modalDelete input#deleteId').val();
 			$.ajax({
-				url: `/users/${idUser}`,
+				url: `users/${idUser}`,
 				type: "DELETE",
 				data: { _token: "{{ csrf_token() }}" },
 				success: function() {

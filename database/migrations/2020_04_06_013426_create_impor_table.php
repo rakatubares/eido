@@ -39,7 +39,7 @@ class CreateImporTable extends Migration
 
             $table->unsignedBigInteger('rekomendasi_clearance')->index();
             $table->unsignedSmallInteger('status_terakhir')->index();
-            $table->unsignedBigInteger('officer')->index();
+            $table->unsignedBigInteger('officer_id')->index();
 
             $table->unsignedBigInteger('created_by')->index();
             $table->unsignedBigInteger('updated_by')->nullable()->index();

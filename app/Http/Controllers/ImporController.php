@@ -237,6 +237,12 @@ class ImporController extends Controller
 		// Convert data
         $input = $request->all();
 
+        foreach ($input as $key => $value) {
+            if (strpos($key, "/") === 0) {
+                unset($input[$key]);
+            }
+        }
+
         $input['tgl_awb'] = DateTime::createFromFormat('d-m-Y', $input['tgl_awb'])->format('Y-m-d');
         
         if (isset($input['tgl_permohonan']) && $input['tgl_permohonan'] != "") {
