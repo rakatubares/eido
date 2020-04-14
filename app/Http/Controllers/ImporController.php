@@ -40,7 +40,7 @@ class ImporController extends Controller
     {
         $jnsImportir = DimJenisImportir::All();
         $rekomendasi = DimRekomendasi::All();
-        $officers = User::role('License Officer')->get();
+        $officers = User::role('License Officer')->orderBy('name')->get();
         return view('impor.index',compact('jnsImportir','rekomendasi','officers'));
     }
 
