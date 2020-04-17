@@ -236,11 +236,15 @@ textarea {
 				</div>
 			</div>
 		</div>
-		@can('impor-edit')
+		
 		<div class="text-right mr-lg">
+		@can('impor-edit')
 			<a id="{{ $importasi->id }}" class="btn btn-primary btnEdit" href="#modalForm">Edit <i class="fa fa-edit"></i></a>
-		</div>
 		@endcan
+		@can('impor-delete')
+			<a id="{{ $importasi->id }}" class="btn btn-danger btnDelete" href="#modalDelete">Hapus <i class="fa fa-trash-o"></i></a>
+		@endcan
+		</div>
 	</div>
 </section>
 
@@ -558,6 +562,40 @@ textarea {
 			</div>
     </footer>
     {!! Form::close() !!}
+	</section>
+</div>
+@endcan
+
+@can('impor-delete')
+<!-- Modal delete -->
+<div id="modalDelete" class="modal-block modal-header-color modal-block-warning mfp-hide">
+	<section class="panel">
+		<header class="panel-heading">
+			<h2 class="panel-title">Hapus Importasi!</h2>
+		</header>
+		<div class="panel-body">
+			<div class="modal-wrapper">
+				<div class="modal-icon">
+					<i class="fa fa-warning"></i>
+				</div>
+				<div class="modal-text">
+					<h4>Perhatian</h4>
+					<p>Apakah yakin AWB <strong>{{ $importasi->awb }}</strong> akan dihapus?</p>
+				</div>
+			</div>
+			<input id="deleteId" type="hidden">
+		</div>
+		<footer class="panel-footer">
+			<div class="row">
+				<div class="col-md-12 text-right">
+				{!! Form::open(['id' => 'formDelete', 'route' => ['impor.destroy', $importasi->id]]) !!}
+					{{ method_field('DELETE') }}
+					<button type="submit" class="btn btn-danger">Hapus</button>
+					<button class="btn btn-default modal-dismiss">Batal</button>
+				{!! Form::close() !!}
+				</div>
+			</div>
+		</footer>
 	</section>
 </div>
 @endcan
@@ -914,6 +952,14 @@ $(document).ready(function() {
 				$('section#notif-syarat').hide();
 			}
 		}
+
+		///// Modal Delete //////
+		// Show confirmation
+		$(document).on('click', '.btnDelete', function (e) {
+			e.preventDefault();
+			var trigger = $(this);
+			openForm(trigger);
+		});
 
 		///// Display Status Form /////
 		// Show form

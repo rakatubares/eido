@@ -51,7 +51,6 @@ class ImporController extends Controller
      */
     public function list()
     {
-        // $importasi = Impor::select('id','awb','tgl_awb','importir','status_terakhir')->with('status:id,kd_status,ur_status')->get();
         $importasi = Impor::detail()->get();
  
         return $importasi;
@@ -184,7 +183,7 @@ class ImporController extends Controller
     public function show($id)
     {
         // Get impor data
-        $importasi = Impor::detail()->find($id);
+        $importasi = Impor::detail()->findOrFail($id);
         if ($importasi->tgl_awb != null) {
             $importasi->tgl_awb = DateTime::createFromFormat('Y-m-d', $importasi->tgl_awb)->format('d-m-Y');
         }
@@ -236,8 +235,7 @@ class ImporController extends Controller
             'awb.regex' => 'Only numbers and letters are allowed in awb.',
             'npwp.regex' => 'Only numbers are allowed in npwp.',
             'hp_pic.regex' => 'Only numbers and ,+ are allowed in phone number.',
-            'awb.unique' => 'No AWB dan tanggal AWB sudah ada di database',
-            'tgl_awb.unique' => 'No AWB dan tanggal AWB sudah ada di database',
+            'awb.unique' => 'No AWB sudah ada di database',
             'ket_lampiran.*.required_with' => 'Cantumkan keterangan lampiran',
         ];
         
@@ -389,5 +387,17 @@ class ImporController extends Controller
 		}
     
         return $importasi;
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        Impor::destroy($id);
+        return redirect()->route('impor.index');
     }
 }
