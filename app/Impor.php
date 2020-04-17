@@ -65,6 +65,7 @@ class Impor extends Model
         // create a event to happen on deleting
         static::deleting(function($table)  {
             $table->deleted_by = Auth::user()->id;
+            $table->save();
         });
     }
 

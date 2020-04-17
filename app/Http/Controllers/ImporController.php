@@ -397,7 +397,9 @@ class ImporController extends Controller
      */
     public function destroy($id)
     {
-        Impor::destroy($id);
+        // Impor::destroy($id);
+        // Impor::find($id)->delete();
+        Impor::where('id', $id)->first()->delete();
         return redirect()->route('impor.index');
     }
 }
