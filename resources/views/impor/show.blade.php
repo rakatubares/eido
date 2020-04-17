@@ -882,7 +882,7 @@ $(document).ready(function() {
 				var lampiran = '';
 				(data.attachments).forEach(function(attachment) {
 					var att = `
-						<a target="_blank" href="/${(attachment.filename).replace('public', 'storage')}">[${((((attachment.filename).split('.')).slice(-1))[0]).toUpperCase()}] ${attachment.comment}</a>
+						<a target="_blank" href="/eido/${(attachment.filename).replace('public', 'storage')}">[${((((attachment.filename).split('.')).slice(-1))[0]).toUpperCase()}] ${attachment.comment}</a>
 						<br>
 					`;
 					lampiran += att;

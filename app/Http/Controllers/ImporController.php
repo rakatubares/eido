@@ -65,11 +65,52 @@ class ImporController extends Controller
      */
     public function store(Request $request)
     {
+        // Validation
+        $awb = $request->awb;
+        $tgl_awb = $request->tgl_awb;
+
+        $customMessages = [
+            'awb.regex' => 'Only numbers and letters are allowed in awb.',
+            'npwp.regex' => 'Only numbers are allowed in npwp.',
+            'hp_pic.regex' => 'Only numbers and ,+ are allowed in phone number.',
+            'ket_lampiran.*.required_with' => 'Cantumkan keterangan lampiran'
+        ];
+
+        Validator::make(
+            $request->all(), 
+            [
+                'awb' => ['required','string','max:64','regex:/(^[A-Za-z0-9]+$)+/','unique:impor,awb'],
+                'tgl_awb' => ['nullable','date'],
+                'tgl_permohonan' => ['nullable','required_with:no_permohonan'],
+                'importir' => ['required','string','max:64'],
+                'npwp' => ['nullable','string','regex:/^[0-9]+$/'],
+                'hp_pic' => ['nullable','regex:/(^[0-9+, ]+$)+/'],
+                'email_pic' => ['nullable','email'],
+                'tgl_rekomendasi' => ['nullable','required_with:dok_rekomendasi'],
+                'tgl_bebas' => ['nullable','required_with:dok_bebas'],
+                'lampiran' => ['nullable','array'],
+                'lampiran.*' => ['nullable','file','max:10000','mimes:jpg,jpeg,png,pdf,rar,zip'],
+                'ket_lampiran' => ['nullable','required_with:lampiran','array'],
+                'ket_lampiran.*' => ['nullable','required_with:lampiran.*','string','max:32']
+            ], 
+            $customMessages
+        )->validate();
+
         // Convert data
         $input = $request->all();
         unset($input['lampiran']);
 
-        $input['tgl_awb'] = DateTime::createFromFormat('d-m-Y', $input['tgl_awb'])->format('Y-m-d');
+        foreach ($input as $key => $value) {
+            if (strpos($key, "/") === 0) {
+                unset($input[$key]);
+            }
+        }
+
+        if (isset($input['tgl_awb']) && $input['tgl_awb'] != "") {
+            $input['tgl_awb'] = DateTime::createFromFormat('d-m-Y', $input['tgl_awb'])->format('Y-m-d');
+        } else {
+            $input['tgl_awb'] = null;
+        }
 
         if (isset($input['tgl_permohonan']) && $input['tgl_permohonan'] != "") {
             $input['tgl_permohonan'] = DateTime::createFromFormat('d-m-Y', $input['tgl_permohonan'])->format('Y-m-d');
@@ -92,62 +133,13 @@ class ImporController extends Controller
             $input['tgl_rekomendasi'] = null;
         }
 
-		$input['check_bebas'] = isset($input['check_bebas']) ? $input['check_bebas'] : 0;
+        $input['check_bebas'] = isset($input['check_bebas']) ? $input['check_bebas'] : 0;
         $input['dok_bebas'] = isset($input['dok_bebas']) ? $input['dok_bebas'] : null;
         if (isset($input['tgl_bebas']) && $input['tgl_bebas'] != "") {
             $input['tgl_bebas'] = DateTime::createFromFormat('d-m-Y', $input['tgl_bebas'])->format('Y-m-d');
         } else {
             $input['tgl_bebas'] = null;
         }
-
-        // Validation
-        $awb = $input['awb'];
-        $tgl_awb = $input['tgl_awb'];
-        
-        $customMessages = [
-            'awb.regex' => 'Only numbers and letters are allowed in awb.',
-            'npwp.regex' => 'Only numbers are allowed in npwp.',
-            'hp_pic.regex' => 'Only numbers and ,+ are allowed in phone number.',
-            'ket_lampiran.*.required_with' => 'Cantumkan keterangan lampiran'
-        ];
-
-        Validator::make(
-            $request->all(), 
-            [
-                'awb' => 
-                    [
-                        'required',
-                        'string',
-                        'max:64',
-                        'regex:/(^[A-Za-z0-9]+$)+/',
-                        Rule::unique('impor')->where(function ($query) use($awb,$tgl_awb) {
-                            return $query->where('awb', $awb)
-                            ->where('tgl_awb', $tgl_awb);
-                        })
-                    ],
-                'tgl_awb' => 
-                    [
-                        'required',
-                        'date',
-                        Rule::unique('impor')->where(function ($query) use($awb,$tgl_awb) {
-                            return $query->where('awb', $awb)
-                            ->where('tgl_awb', $tgl_awb);
-                        })
-                    ],
-                'tgl_permohonan' => ['nullable','required_with:no_permohonan'],
-                'importir' => ['required','string','max:64'],
-                'npwp' => ['nullable','string','regex:/^[0-9]+$/'],
-                'hp_pic' => ['nullable','regex:/(^[0-9+, ]+$)+/'],
-                'email_pic' => ['nullable','email'],
-                'tgl_rekomendasi' => ['nullable','required_with:dok_rekomendasi'],
-                'tgl_bebas' => ['nullable','required_with:dok_bebas'],
-                'lampiran' => ['nullable','array'],
-                'lampiran.*' => ['nullable','file','max:10000','mimes:jpg,jpeg,png,pdf,rar,zip'],
-                'ket_lampiran' => ['nullable','required_with:lampiran','array'],
-                'ket_lampiran.*' => ['nullable','required_with:lampiran.*','string','max:32']
-            ], 
-            $customMessages
-        )->validate();
     
         // Determine importation status
         $rekomendasi_clearance = DimRekomendasi::find($input['rekomendasi_clearance'])->rekomendasi;
@@ -193,7 +185,9 @@ class ImporController extends Controller
     {
         // Get impor data
         $importasi = Impor::detail()->find($id);
-        $importasi->tgl_awb = DateTime::createFromFormat('Y-m-d', $importasi->tgl_awb)->format('d-m-Y');
+        if ($importasi->tgl_awb != null) {
+            $importasi->tgl_awb = DateTime::createFromFormat('Y-m-d', $importasi->tgl_awb)->format('d-m-Y');
+        }
         if ($importasi->tgl_permohonan != null) {
             $importasi->tgl_permohonan = DateTime::createFromFormat('Y-m-d', $importasi->tgl_permohonan)->format('d-m-Y');
         }
@@ -234,49 +228,9 @@ class ImporController extends Controller
      */
     public function update(Request $request, $id)
     {
-		// Convert data
-        $input = $request->all();
-
-        foreach ($input as $key => $value) {
-            if (strpos($key, "/") === 0) {
-                unset($input[$key]);
-            }
-        }
-
-        $input['tgl_awb'] = DateTime::createFromFormat('d-m-Y', $input['tgl_awb'])->format('Y-m-d');
-        
-        if (isset($input['tgl_permohonan']) && $input['tgl_permohonan'] != "") {
-            $input['tgl_permohonan'] = DateTime::createFromFormat('d-m-Y', $input['tgl_permohonan'])->format('Y-m-d');
-        } else {
-            $input['tgl_permohonan'] = null;
-        }
-
-		if (isset($input['tgl_clearance']) && $input['tgl_clearance'] != "") {
-            $input['tgl_clearance'] = DateTime::createFromFormat('d-m-Y', $input['tgl_clearance'])->format('Y-m-d');
-        } else {
-            $input['tgl_clearance'] = null;
-            $input['wkt_clearance'] = null;
-        }
-
-		$input['check_rekomendasi'] = isset($input['check_rekomendasi']) ? $input['check_rekomendasi'] : 0;
-        $input['dok_rekomendasi'] = isset($input['dok_rekomendasi']) ? $input['dok_rekomendasi'] : null;
-        if (isset($input['tgl_rekomendasi']) && $input['tgl_rekomendasi'] != "") {
-            $input['tgl_rekomendasi'] = DateTime::createFromFormat('d-m-Y', $input['tgl_rekomendasi'])->format('Y-m-d');
-        } else {
-            $input['tgl_rekomendasi'] = null;
-        }
-
-		$input['check_bebas'] = isset($input['check_bebas']) ? $input['check_bebas'] : 0;
-        $input['dok_bebas'] = isset($input['dok_bebas']) ? $input['dok_bebas'] : null;
-        if (isset($input['tgl_bebas']) && $input['tgl_bebas'] != "") {
-            $input['tgl_bebas'] = DateTime::createFromFormat('d-m-Y', $input['tgl_bebas'])->format('Y-m-d');
-        } else {
-            $input['tgl_bebas'] = null;
-        }
-
 		// Validation
-		$awb = $input['awb'];
-		$tgl_awb = $input['tgl_awb'];
+		$awb = $request->awb;
+		$tgl_awb = $request->tgl_awb;
 		
         $customMessages = [
             'awb.regex' => 'Only numbers and letters are allowed in awb.',
@@ -288,28 +242,10 @@ class ImporController extends Controller
         ];
         
         Validator::make(
-            $input, 
+            $request->all(), 
             [
-                'awb' => 
-                    [
-                        'required',
-                        'string',
-                        'max:64',
-                        'regex:/(^[A-Za-z0-9]+$)+/',
-                        Rule::unique('impor')->where(function ($query) use($awb,$tgl_awb) {
-                            return $query->where('awb', $awb)
-                            ->where('tgl_awb', $tgl_awb);
-                        })->ignore($id)
-                    ],
-                'tgl_awb' => 
-                    [
-                        'required',
-                        'date',
-                        Rule::unique('impor')->where(function ($query) use($awb,$tgl_awb) {
-                            return $query->where('awb', $awb)
-                            ->where('tgl_awb', $tgl_awb);
-                        })->ignore($id)
-                    ],
+                'awb' => ['required','string','max:64','regex:/(^[A-Za-z0-9]+$)+/','unique:impor,awb,'.$id],
+                'tgl_awb' => ['nullable','date'],
                 'tgl_permohonan' => ['nullable','required_with:no_permohonan'],
                 'importir' => ['required','string','max:64'],
                 'npwp' => ['nullable','string','regex:/^[0-9]+$/'],
@@ -326,6 +262,46 @@ class ImporController extends Controller
             ], 
             $customMessages
         )->validate();
+
+        // Convert data
+        $input = $request->all();
+
+        foreach ($input as $key => $value) {
+            if (strpos($key, "/") === 0) {
+                unset($input[$key]);
+            }
+        }
+
+        $input['tgl_awb'] = DateTime::createFromFormat('d-m-Y', $input['tgl_awb'])->format('Y-m-d');
+        
+        if (isset($input['tgl_permohonan']) && $input['tgl_permohonan'] != "") {
+            $input['tgl_permohonan'] = DateTime::createFromFormat('d-m-Y', $input['tgl_permohonan'])->format('Y-m-d');
+        } else {
+            $input['tgl_permohonan'] = null;
+        }
+
+        if (isset($input['tgl_clearance']) && $input['tgl_clearance'] != "") {
+            $input['tgl_clearance'] = DateTime::createFromFormat('d-m-Y', $input['tgl_clearance'])->format('Y-m-d');
+        } else {
+            $input['tgl_clearance'] = null;
+            $input['wkt_clearance'] = null;
+        }
+
+        $input['check_rekomendasi'] = isset($input['check_rekomendasi']) ? $input['check_rekomendasi'] : 0;
+        $input['dok_rekomendasi'] = isset($input['dok_rekomendasi']) ? $input['dok_rekomendasi'] : null;
+        if (isset($input['tgl_rekomendasi']) && $input['tgl_rekomendasi'] != "") {
+            $input['tgl_rekomendasi'] = DateTime::createFromFormat('d-m-Y', $input['tgl_rekomendasi'])->format('Y-m-d');
+        } else {
+            $input['tgl_rekomendasi'] = null;
+        }
+
+        $input['check_bebas'] = isset($input['check_bebas']) ? $input['check_bebas'] : 0;
+        $input['dok_bebas'] = isset($input['dok_bebas']) ? $input['dok_bebas'] : null;
+        if (isset($input['tgl_bebas']) && $input['tgl_bebas'] != "") {
+            $input['tgl_bebas'] = DateTime::createFromFormat('d-m-Y', $input['tgl_bebas'])->format('Y-m-d');
+        } else {
+            $input['tgl_bebas'] = null;
+        }
 
         // Save lampiran
         if (isset($request->lampiran)) {
@@ -389,7 +365,9 @@ class ImporController extends Controller
     {
         // Get impor data
         $importasi = Impor::detail()->find($id);
-        $importasi->tgl_awb = DateTime::createFromFormat('Y-m-d', $importasi->tgl_awb)->format('d-m-Y');
+        if ($importasi->tgl_awb != null) {
+            $importasi->tgl_awb = DateTime::createFromFormat('Y-m-d', $importasi->tgl_awb)->format('d-m-Y');
+        }
         if ($importasi->tgl_permohonan != null) {
             $importasi->tgl_permohonan = DateTime::createFromFormat('Y-m-d', $importasi->tgl_permohonan)->format('d-m-Y');
         }
