@@ -272,7 +272,11 @@ class ImporController extends Controller
             }
         }
 
-        $input['tgl_awb'] = DateTime::createFromFormat('d-m-Y', $input['tgl_awb'])->format('Y-m-d');
+        if (isset($input['tgl_awb']) && $input['tgl_awb'] != "") {
+            $input['tgl_awb'] = DateTime::createFromFormat('d-m-Y', $input['tgl_awb'])->format('Y-m-d');
+        } else {
+            $input['tgl_awb'] = null;
+        }
         
         if (isset($input['tgl_permohonan']) && $input['tgl_permohonan'] != "") {
             $input['tgl_permohonan'] = DateTime::createFromFormat('d-m-Y', $input['tgl_permohonan'])->format('Y-m-d');
