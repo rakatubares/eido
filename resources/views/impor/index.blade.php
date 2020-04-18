@@ -39,8 +39,8 @@
 		<table class="table table-bordered table-striped mb-none" id="table-data">
 			<thead>
 				<tr>
+					<th>Permohonan</th>
 					<th>AWB</th>
-					<th>Tgl AWB</th>
 					<th>Importir</th>
 					<th>LO</th>
 					<th>Kekurangan</th>
@@ -314,8 +314,8 @@ $(document).ready(function() {
 						var syarat = [rekomendasi, bebas].filter(Boolean).join('<br>');
 						var rows = `
 							<tr>
-								<td>${dat.awb}</td>
-								<td>${dat.tgl_awb}</td>
+								<td>${dat.no_permohonan}<br>${dat.tgl_permohonan}</td>
+								<td>${dat.awb}<br>${dat.tgl_awb}</td>
 								<td>${dat.importir}</td>
 								<td>${dat.officer.name}</td>
 								<td>${syarat}</td>
