@@ -20,7 +20,8 @@ class CreateCovidBebasStatusTable extends Migration
             $table->string('kode_status', 8)->nullable()->index();
             $table->text('keterangan')->nullable();
             $table->dateTime('waktu', 0)->nullable()->index();
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'));
 
             $table->unique(['idTanggap', 'seri_status']);
             $table->foreign('idTanggap')->references('idTanggap')->on('covid_bebas_header');

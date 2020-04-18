@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateCovidRefTable extends Migration
+class CreateCovidLogTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,14 @@ class CreateCovidRefTable extends Migration
      */
     public function up()
     {
-        Schema::create('covid_ref', function (Blueprint $table) {
+        Schema::create('covid_log', function (Blueprint $table) {
             $table->id();
-            $table->string('ref', 32)->unique();
-            $table->string('data', 64);
+            $table->string('hash', 32)->index();
+            $table->string('app', 32)->index();
+            $table->string('activity', 32)->index();
+            $table->string('status', 64)->index();
+            $table->string('detail', 256)->nullable();
             $table->timestamp('created_at')->useCurrent();
-            $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'));
         });
     }
 
@@ -29,6 +31,6 @@ class CreateCovidRefTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('covid_ref');
+        Schema::dropIfExists('covid_log');
     }
 }

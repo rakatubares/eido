@@ -21,7 +21,8 @@ class CreateCovidBebasDokumenTable extends Migration
             $table->date('tgl_dokumen')->nullable()->index();
             $table->text('keterangan')->nullable();
             $table->string('link', 256)->nullable();
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'));
 
             $table->unique(['idTanggap', 'seri_dokumen']);
             $table->foreign('idTanggap')->references('idTanggap')->on('covid_bebas_header');

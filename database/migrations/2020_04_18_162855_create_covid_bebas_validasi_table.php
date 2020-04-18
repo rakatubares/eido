@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateCovidRefTable extends Migration
+class CreateCovidBebasValidasiTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,12 +13,15 @@ class CreateCovidRefTable extends Migration
      */
     public function up()
     {
-        Schema::create('covid_ref', function (Blueprint $table) {
+        Schema::create('covid_bebas_validasi', function (Blueprint $table) {
             $table->id();
-            $table->string('ref', 32)->unique();
-            $table->string('data', 64);
+            $table->unsignedInteger('idTanggap')->index();
+            $table->string('keterangan', 64)->index();
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'));
+
+            $table->unique(['idTanggap', 'keterangan']);
+            $table->foreign('idTanggap')->references('idTanggap')->on('covid_bebas_header');
         });
     }
 
@@ -29,6 +32,6 @@ class CreateCovidRefTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('covid_ref');
+        Schema::dropIfExists('covid_bebas_validasi');
     }
 }

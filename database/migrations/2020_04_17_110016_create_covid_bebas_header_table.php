@@ -38,6 +38,8 @@ class CreateCovidBebasHeaderTable extends Migration
 
             $table->string('nama_pic', 256)->nullable();
             $table->string('telp_pic', 64)->nullable();
+            $table->string('telp2_pic', 64)->nullable();
+            $table->string('mail_pic', 256)->nullable();
             $table->string('nama_pemohon', 256)->nullable();
             $table->string('jabatan_pemohon', 64)->nullable();
 
@@ -86,7 +88,8 @@ class CreateCovidBebasHeaderTable extends Migration
             $table->string('file_pernyataan', 256)->nullable();
             $table->string('file_hibah', 256)->nullable();
 
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'));
             $table->softDeletes('deleted_at', 0);
         });
     }
