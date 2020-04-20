@@ -39,4 +39,8 @@ Route::group(['middleware' => ['auth']], function() {
     Route::post('status/{impor}','StatusController@store')->name('status.store');
 
     Route::get('dashboard/total','DashboardController@total')->name('dashboard.total');
+
+    Route::get('covid','CovidSoettaController@index')->name('covid.index');
+    Route::get('covid/list','CovidSoettaController@list')->name('covid.list');
+    Route::get('covid/{id_covid}','CovidSoettaController@show')->name('covid.show');
 });

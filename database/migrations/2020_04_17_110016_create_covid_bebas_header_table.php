@@ -41,7 +41,7 @@ class CreateCovidBebasHeaderTable extends Migration
             $table->string('telp2_pic', 64)->nullable();
             $table->string('mail_pic', 256)->nullable();
             $table->string('nama_pemohon', 256)->nullable();
-            $table->string('jabatan_pemohon', 64)->nullable();
+            $table->string('jabatan_pemohon', 256)->nullable();
 
             $table->string('kantor_pemasukan', 8)->nullable()->index();
 
@@ -49,11 +49,11 @@ class CreateCovidBebasHeaderTable extends Migration
             $table->string('no_dokumen_layanan', 64)->nullable()->index();
             $table->date('tgl_dokumen_layanan')->nullable()->index();
 
-            $table->string('nama_pengirim', 64)->nullable()->index();
-            $table->string('nama_penerima', 64)->nullable()->index();
+            $table->string('nama_pengirim', 256)->nullable()->index();
+            $table->string('nama_penerima', 256)->nullable()->index();
 
             $table->string('valuta', 8)->nullable()->index();
-            $table->string('ndpbm', 64)->nullable()->index();
+            $table->float('ndpbm')->nullable();
 
             $table->string('field_tpb', 32)->nullable()->index();
             $table->string('area_pemasukan_tpb', 32)->nullable()->index();

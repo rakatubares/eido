@@ -130,4 +130,9 @@ class Impor extends Model
             'officer:id,name'
         );
     }
+
+    public function covid()
+    {
+        return $this->hasOne('App\CovidHeader', 'idTanggap', 'idTanggap');
+    }
 }
