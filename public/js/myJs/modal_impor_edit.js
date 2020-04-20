@@ -53,7 +53,6 @@ function openForm(trigger,data=null) {
 };
 
 function getFormOptions() {
-	console.log(window.urlImporOptions);
 	$.ajax({
 		url: window.urlImporOptions,
 		type: "POST",
@@ -77,7 +76,6 @@ getFormOptions();
 
 // Fill form data for edit
 function fillForm(data) {
-	console.log(data);
 	$('#formEdit input[name="idTanggap"]').val(data['idTanggap']);
 	$('#formEdit input[name="awb"]').val(data['awb']);
 	$('#formEdit input[name="tgl_awb"]').val(data['tgl_awb']);
@@ -170,3 +168,53 @@ function clearValidation() {
 	$("#formEdit .form-control").removeClass("is-invalid is-valid");
 	$("#formEdit .error_text").empty();
 };
+
+// Modal Confirm
+$(document).on('click', '.modal-confirm', function (e) {
+	e.preventDefault();
+	clearValidation();
+
+	var formData = new FormData($("#formEdit")[0]);
+
+	// Display the key/value pairs
+	for (var pair of formData.entries()) {
+		console.log(pair[0]+ ', ' + pair[1]); 
+	}
+
+	$.ajax({
+		url: window.urlForm,
+		type: 'POST',
+		data: formData,
+		processData: false,
+		contentType: false,
+		success: function() {
+			$.magnificPopup.close();
+			$('#formEdit .form-lampiran').remove();
+			new PNotify({
+				title: 'Success!',
+				text: 'Data berhasil diupdate',
+				type: 'success'
+			});
+
+			if (window.formType == 'covid-monitor') {
+				location.href = window.urlRedirect;
+			}
+		},
+		error: function (response) {
+			var errors = response["responseJSON"]["errors"];
+			for (var type in errors) {
+				var messages = errors[type];
+				$(`.form-control[name='${type}`).addClass("is-invalid");
+				for (var idx in messages) {
+					if (type.includes('ket_lampiran.')) {
+						var arr_type = type.split('.');
+						$(`.form-lampiran:nth-child(${Number(arr_type[1]) + 2}) #error_${arr_type[0]}`).html(`<p class="text-danger">${messages[idx]}</p>`);
+					} else {
+						$(`#error_${type}`).html(`<p class="text-danger">${messages[idx]}</p>`);
+					}
+				}
+				
+			}
+		},
+	});
+});

@@ -7,7 +7,7 @@
 		</header>
 		<div class="panel-body">
 			<div class="row mx-0">
-				<input id="route" type="hidden">
+				<input name="formType" type="hidden">
 				<input id="dataId" type="hidden">
 				<input id="idTanggap" name="idTanggap" type="hidden">
 				<div class="form-group mt-lg">

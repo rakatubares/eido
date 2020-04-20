@@ -357,6 +357,8 @@
 <script>
 	window.urlImporOptions = "{{ route('impor.options') }}";
 	window.formType = "covid-monitor";
+	window.urlForm = "{{ route('impor.store') }}";
+	window.urlRedirect = "{{ route('covid.index') }}";
 </script>
 <script src="{{ asset('js/myJs/modal_impor_edit.js') }}"></script>
 <script>

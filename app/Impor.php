@@ -28,7 +28,7 @@ class Impor extends Model
      * @var array
      */
     protected $fillable = [
-        'awb', 'tgl_awb', 'no_permohonan', 'tgl_permohonan',
+        'idTanggap', 'awb', 'tgl_awb', 'no_permohonan', 'tgl_permohonan',
         'importir', 'npwp', 'status_importir',
         'pic', 'hp_pic', 'email_pic', 'tgl_clearance', 'wkt_clearance',
         'check_rekomendasi', 'dok_rekomendasi', 'tgl_rekomendasi',
