@@ -25,9 +25,9 @@ class ImporController extends Controller
      */
     function __construct()
     {
-         $this->middleware('permission:impor-list|impor-create|impor-edit|impor-delete', ['only' => ['index','store','list','show','detail']]);
-         $this->middleware('permission:impor-create', ['only' => ['create','store']]);
-         $this->middleware('permission:impor-edit', ['only' => ['edit','update']]);
+         $this->middleware('permission:impor-list|impor-create|impor-edit|impor-delete', ['only' => ['index','store','list','show','detail','displayOptions']]);
+         $this->middleware('permission:impor-create', ['only' => ['create','store','displayOptions']]);
+         $this->middleware('permission:impor-edit', ['only' => ['edit','update','displayOptions']]);
          $this->middleware('permission:impor-delete', ['only' => ['destroy']]);
     }
 
@@ -399,5 +399,13 @@ class ImporController extends Controller
     {
         Impor::destroy($id);
         return redirect()->route('impor.index');
+    }
+
+    public function displayOptions()
+    {
+        $options['jnsImportir'] = DimJenisImportir::All();
+        $options['rekomendasi'] = DimRekomendasi::All();
+        $options['officers'] = User::role('License Officer')->orderBy('name')->get();
+        return $options;
     }
 }

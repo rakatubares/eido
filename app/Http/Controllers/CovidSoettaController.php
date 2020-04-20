@@ -39,7 +39,14 @@ class CovidSoettaController extends Controller
     // Get data by id
     public function show($id)
     {
-        $covid = CovidSoetta::show($id);
+        $covid = CovidSoetta::get($id);
         return view('covid.show',compact('covid'));
+    }
+
+    // Monitor aju covid ke tabel importasi
+    public function monitor($id)
+    {
+        $test = CovidSoetta::monitor($id);
+        return $test;
     }
 }

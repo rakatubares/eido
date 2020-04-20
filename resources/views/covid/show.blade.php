@@ -3,6 +3,8 @@
 @section('vendorstyle')
 <link rel="stylesheet" href="{{ asset('vendor/select2/select2.css') }}" />
 <link rel="stylesheet" href="{{ asset('vendor/jquery-datatables-bs3/assets/css/datatables.css') }}" />
+<link rel="stylesheet" href="{{ asset('vendor/bootstrap-timepicker/css/bootstrap-timepicker.css') }}" />
+<link rel="stylesheet" href="{{ asset('vendor/pnotify/pnotify.custom.css') }}" />
 @endsection
 
 @section('pagestyle')
@@ -333,15 +335,13 @@
 		</div>
 		
 		<div class="text-right mr-lg">
-		@can('impor-edit')
-			<a id="" class="btn btn-primary btnEdit" href="#modalForm">Edit <i class="fa fa-edit"></i></a>
-		@endcan
-		@can('impor-delete')
-			<a id="" class="btn btn-danger btnDelete" href="#modalDelete">Hapus <i class="fa fa-trash-o"></i></a>
-		@endcan
+			<a class="btn btn-primary btnMonitor" href="#modalForm">Edit <i class="fa fa-edit"></i></a>
+			<a class="btn btn-danger btnDelete" href="#modalDelete">Hapus <i class="fa fa-trash-o"></i></a>
 		</div>
 	</div>
 </section>
+
+@include('impor.modal_edit')
 @endsection
 
 @section('vendorscript')
@@ -349,15 +349,23 @@
 <script src="{{ asset('vendor/jquery-datatables/media/js/jquery.dataTables.js') }}"></script>
 <script src="{{ asset('vendor/jquery-datatables/extras/TableTools/js/dataTables.tableTools.min.js') }}"></script>
 <script src="{{ asset('vendor/jquery-datatables-bs3/assets/js/datatables.js') }}"></script>
+<script src="{{ asset('vendor/bootstrap-timepicker/js/bootstrap-timepicker.js') }}"></script>
+<script src="{{ asset('vendor/pnotify/pnotify.custom.js') }}"></script>
 @endsection
 
 @section('pagescript')
+<script>
+	window.urlImporOptions = "{{ route('impor.options') }}";
+	window.formType = "covid-monitor";
+</script>
+<script src="{{ asset('js/myJs/modal_impor_edit.js') }}"></script>
 <script>
 $(document).ready(function() {
 	(function( $ ) {
 		$('#table-barang').dataTable({
 			columnDefs: [
 				{width: "5%", targets: 0},
+				{width: "35%", targets: 1},
 				{searchable: false, targets: 0}
 			]
 		});
@@ -368,6 +376,18 @@ $(document).ready(function() {
 				{searchable: false, targets: [0,4]}
 			]
 		});
+		$(document).on('click','.btnMonitor',function (e) {
+			e.preventDefault();
+			var trigger = $(this);
+			$.ajax({
+				url: '{{ route("covid.monitor", $covid->idTanggap) }}',
+				type: "POST",
+				data: { _token: "{{ csrf_token() }}" },
+				success: function (data) {
+					openForm(trigger, data);
+				}
+			});
+		})
 	}).apply( this, [ jQuery ]);
 });
 </script>

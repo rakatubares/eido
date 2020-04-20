@@ -34,6 +34,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('importasi/{impor}/detail','ImporController@detail')->name('impor.detail');
     Route::post('importasi/{impor}/update','ImporController@update')->name('impor.update');
     Route::delete('importasi/{impor}','ImporController@destroy')->name('impor.destroy');
+    Route::post('importasi/options','ImporController@displayOptions')->name('impor.options');
 
     Route::get('status/{impor}','StatusController@list')->name('status.list');
     Route::post('status/{impor}','StatusController@store')->name('status.store');
@@ -43,4 +44,5 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('covid','CovidSoettaController@index')->name('covid.index');
     Route::get('covid/list','CovidSoettaController@list')->name('covid.list');
     Route::get('covid/{id_covid}','CovidSoettaController@show')->name('covid.show');
+    Route::post('covid/{id_covid}/monitor','CovidSoettaController@monitor')->name('covid.monitor');
 });
