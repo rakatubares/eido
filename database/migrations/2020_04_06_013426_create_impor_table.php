@@ -17,7 +17,7 @@ class CreateImporTable extends Migration
             $table->id();
 
             $table->string('awb', 64)->index();
-            $table->date('tgl_awb')->index();
+            $table->date('tgl_awb')->nullable()->index();
 
             $table->string('importir', 64)->index();
             $table->string('npwp', 32)->nullable()->index();

@@ -385,8 +385,14 @@ $(document).ready(function() {
 				url: '{{ route("covid.monitor", $covid->idTanggap) }}',
 				type: "POST",
 				data: { _token: "{{ csrf_token() }}" },
-				success: function (data) {
-					openForm(trigger, data);
+				success: function (response) {
+					if (response['form'] == 'insert') {
+						window.urlForm = "{{ route('impor.store') }}";
+					} else if (response['form'] == 'update') {
+						var urlForm = "{{ route('impor.update',0) }}";
+						window.urlForm = urlForm.replace("/0/", `/${response['data']['idImpor']}/`);
+					}
+					openForm(trigger, response['data']);
 				}
 			});
 		})

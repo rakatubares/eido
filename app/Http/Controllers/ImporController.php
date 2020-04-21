@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use App\Models\ImporDetail;
 use App\DimJenisImportir;
 use App\DimRekomendasi;
 use App\DimStatus;
@@ -78,8 +79,9 @@ class ImporController extends Controller
         Validator::make(
             $request->all(), 
             [
-                'awb' => ['required','string','max:64','regex:/(^[A-Za-z0-9]+$)+/','unique:impor,awb'],
+                'awb' => ['required','string','max:64','regex:/(^[A-Za-z0-9]+$)+/'],
                 'tgl_awb' => ['nullable','date'],
+                'no_permohonan' => ['nullable','string','max:32','unique:impor,no_permohonan'],
                 'tgl_permohonan' => ['nullable','required_with:no_permohonan'],
                 'importir' => ['required','string','max:64'],
                 'npwp' => ['nullable','string','regex:/^[0-9]+$/'],
@@ -104,6 +106,8 @@ class ImporController extends Controller
                 unset($input[$key]);
             }
         }
+
+        $input['awb_duplicate'] = ImporDetail::checkDuplicate($input['awb']);
 
         if (isset($input['tgl_awb']) && $input['tgl_awb'] != "") {
             $input['tgl_awb'] = DateTime::createFromFormat('d-m-Y', $input['tgl_awb'])->format('Y-m-d');
@@ -263,6 +267,7 @@ class ImporController extends Controller
 
         // Convert data
         $input = $request->all();
+        unset($input['formType']);
 
         foreach ($input as $key => $value) {
             if (strpos($key, "/") === 0) {

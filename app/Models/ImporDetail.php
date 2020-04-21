@@ -6,8 +6,17 @@ use App\Impor;
 
 class ImporDetail
 {
-	public static function showWithTrahsed()
+	public static function checkDuplicate($awb)
 	{
-		# code...
+		$cekAwb = Impor::withTrashed()
+			->where('awb',$awb)
+			->orderBy('awb_duplicate', 'desc')
+			->first();
+
+		if ($cekAwb == null) {
+			return 0;
+		} else {
+			return (int)$cekAwb->awb_duplicate + 1;
+		}
 	}
 }

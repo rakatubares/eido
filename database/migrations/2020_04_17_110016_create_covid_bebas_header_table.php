@@ -49,8 +49,8 @@ class CreateCovidBebasHeaderTable extends Migration
             $table->string('no_dokumen_layanan', 64)->nullable()->index();
             $table->date('tgl_dokumen_layanan')->nullable()->index();
 
-            $table->string('nama_pengirim', 256)->nullable()->index();
-            $table->string('nama_penerima', 256)->nullable()->index();
+            $table->string('nama_pengirim', 128)->nullable()->index();
+            $table->string('nama_penerima', 128)->nullable()->index();
 
             $table->string('valuta', 8)->nullable()->index();
             $table->float('ndpbm')->nullable();
@@ -75,7 +75,7 @@ class CreateCovidBebasHeaderTable extends Migration
             $table->string('no_skmk', 64)->nullable()->index();
             $table->date('tgl_skmk')->nullable()->index();
             $table->string('file_skmk', 256)->nullable();
-            $table->string('penerbit_skmk', 256)->nullable()->index();
+            $table->string('penerbit_skmk', 128)->nullable()->index();
 
             $table->string('realisasi', 256)->nullable();
 

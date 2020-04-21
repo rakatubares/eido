@@ -98,7 +98,12 @@ textarea {
 			<header class="clearfix">
 				<div class="row">
 					<div class="col-sm-12 col-md-8 mt-md mb-md">
-						<h3 class="h3 mt-none mb-sm text-dark text-bold">AWB <span id="display_awb">{{ $importasi->awb }}</span></h3>
+						<h3 class="h3 mt-none mb-sm text-dark text-bold">AWB <span id="display_awb">
+							{{ $importasi->awb }}
+							@if( $importasi->awb_duplicate != 0 )
+								{{ ' - ' . $importasi->awb_duplicate }}
+							@endif
+						</span></h3>
 						<h5 class="h5 m-none text-dark">Tanggal <span id="display_tgl_awb">{{ $importasi->tgl_awb }}</span></h5>
 					</div>
 					<div class="col-sm-12 col-md-4 mt-md mb-md">
