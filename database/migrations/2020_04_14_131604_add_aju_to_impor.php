@@ -14,7 +14,7 @@ class AddAjuToImpor extends Migration
     public function up()
     {
         Schema::table('impor', function (Blueprint $table) {
-            $table->string('no_permohonan',32)->after('tgl_awb')->nullable()->index();
+            $table->string('no_permohonan',32)->after('tgl_awb')->nullable()->unique();
             $table->date('tgl_permohonan')->after('no_permohonan')->nullable()->index();
         });
     }

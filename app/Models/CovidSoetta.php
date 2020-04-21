@@ -15,13 +15,16 @@ class CovidSoetta
 
 	public static function list()
 	{
+		$linkedImpor = Impor::withTrashed()
+			->whereNotNull('idTanggap')
+			->pluck('idTanggap');
+
 		$covids = CovidHeader::details()
 			->where('kantor_permohonan', '050100')
 			->where('status_bebas','Y')
-			// ->with(['importasi' => function ($query) {
-			// 	$query->whereNull('impor.idTangga');
-			// }])
+			->whereNotIn('idTanggap',$linkedImpor)
 			->get();
+
 		return $covids;
 	}
 

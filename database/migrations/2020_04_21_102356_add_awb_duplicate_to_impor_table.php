@@ -15,7 +15,6 @@ class AddAwbDuplicateToImporTable extends Migration
     {
         Schema::table('impor', function (Blueprint $table) {
             $table->unsignedInteger('awb_duplicate')->after('awb')->default(0)->index();
-            $table->dropUnique(['awb', 'tgl_awb']);
             $table->unique(['awb', 'awb_duplicate']);
         });
     }
@@ -29,7 +28,6 @@ class AddAwbDuplicateToImporTable extends Migration
     {
         Schema::table('impor', function (Blueprint $table) {
             $table->dropUnique(['awb', 'awb_duplicate']);
-            $table->unique(['awb', 'tgl_awb']);
             $table->dropColumn(['awb_duplicate']);
         });
     }
