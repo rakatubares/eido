@@ -40,7 +40,15 @@
 			<header class="clearfix">
 				<div class="row">
 					<div class="col-sm-12 col-md-8 mt-md mb-md">
-						<h3 class="h3 mt-none mb-sm text-dark text-bold">Aju <span>{{ $covid->no_permohonan }}</span></h3>
+						<h3 class="h3 mt-none mb-sm text-dark text-bold">
+							Aju 
+							<span>
+								{{ $covid->no_permohonan }}
+								@if( $covid->importasi != null )
+									<a href="{{ route('impor.show',$covid->importasi->id) }}" class="ml-md btn btn-xs btn-default">Monitor Impor</a>
+								@endif
+							</span>
+						</h3>
 						<h5 class="h5 m-none text-dark">Tanggal <span>{{ $covid->tgl_permohonan }}</span></h5>
 					</div>
 				</div>
@@ -334,10 +342,12 @@
 			<div class="inv-line"></div>
 		</div>
 		
+		@if( $covid->importasi == null )
 		<div class="text-right mr-lg">
 			<a class="btn btn-primary btnMonitor" href="#modalForm">Edit <i class="fa fa-edit"></i></a>
 			<a class="btn btn-danger btnDelete" href="#modalDelete">Hapus <i class="fa fa-trash-o"></i></a>
 		</div>
+		@endif
 	</div>
 </section>
 

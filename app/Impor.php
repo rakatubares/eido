@@ -117,6 +117,11 @@ class Impor extends Model
         return $this->hasMany(UploadFiles::class, 'impor_id');
     }
 
+    public function covid()
+    {
+        return $this->hasOne('App\CovidHeader', 'idTanggap', 'idTanggap');
+    }
+
     /**
      * Get importasi detail with reference description
      */
@@ -127,12 +132,9 @@ class Impor extends Model
             'status:id,kd_status,ur_status', 
             'rekomendasi_impor:id,rekomendasi', 
             'attachments:id,impor_id,filename,comment',
-            'officer:id,name'
+            'officer:id,name',
+            'covid:id,idTanggap'
         );
     }
 
-    public function covid()
-    {
-        return $this->hasOne('App\CovidHeader', 'idTanggap', 'idTanggap');
-    }
 }

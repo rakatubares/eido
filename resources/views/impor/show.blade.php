@@ -103,6 +103,9 @@ textarea {
 							@if( $importasi->awb_duplicate != 0 )
 								{{ ' - ' . $importasi->awb_duplicate }}
 							@endif
+							@if( $importasi->covid != null )
+								<a href="{{ route('covid.show',$importasi->covid->idTanggap) }}" class="ml-md btn btn-xs btn-default">Aju COVID</a>
+							@endif
 						</span></h3>
 						<h5 class="h5 m-none text-dark">Tanggal <span id="display_tgl_awb">{{ $importasi->tgl_awb }}</span></h5>
 					</div>
