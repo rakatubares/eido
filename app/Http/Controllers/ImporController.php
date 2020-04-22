@@ -248,6 +248,7 @@ class ImporController extends Controller
             [
                 'awb' => ['required','string','max:64','regex:/(^[A-Za-z0-9]+$)+/','unique:impor,awb,'.$id],
                 'tgl_awb' => ['nullable','date'],
+                'no_permohonan' => ['nullable','string','max:32','unique:impor,no_permohonan,'.$id],
                 'tgl_permohonan' => ['nullable','required_with:no_permohonan'],
                 'importir' => ['required','string','max:64'],
                 'npwp' => ['nullable','string','regex:/^[0-9]+$/'],
