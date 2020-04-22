@@ -16,7 +16,7 @@
 @section('content')
 <section class="panel">
 	<header class="panel-heading">
-		<h2 class="panel-title">Importasi</h2>
+		<h2 class="panel-title">Aju Covid</h2>
 	</header>
 	<div class="panel-body">
 		<table class="table table-bordered table-striped mb-none" id="table-data">

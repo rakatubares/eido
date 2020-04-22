@@ -344,8 +344,10 @@
 		
 		@if( $covid->importasi == null )
 		<div class="text-right mr-lg">
-			<a class="btn btn-primary btnMonitor" href="#modalForm">Edit <i class="fa fa-edit"></i></a>
-			<a class="btn btn-danger btnDelete" href="#modalDelete">Hapus <i class="fa fa-trash-o"></i></a>
+			@can('covid-edit')
+				<a class="btn btn-primary btnMonitor" href="#modalForm">Monitor <i class="fa fa-edit"></i></a>
+			@endcan
+			<!-- <a class="btn btn-danger btnDelete" href="#modalDelete">Hapus <i class="fa fa-trash-o"></i></a> -->
 		</div>
 		@endif
 	</div>
