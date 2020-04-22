@@ -98,15 +98,19 @@ textarea {
 			<header class="clearfix">
 				<div class="row">
 					<div class="col-sm-12 col-md-8 mt-md mb-md">
-						<h3 class="h3 mt-none mb-sm text-dark text-bold">AWB <span id="display_awb">
-							{{ $importasi->awb }}
-							@if( $importasi->awb_duplicate != 0 )
-								{{ ' - ' . $importasi->awb_duplicate }}
-							@endif
-							@if( $importasi->covid != null )
-								<a href="{{ route('covid.show',$importasi->covid->idTanggap) }}" class="ml-md btn btn-xs btn-default">Aju COVID</a>
-							@endif
-						</span></h3>
+						<h3 class="h3 mt-none mb-sm text-dark text-bold">AWB 
+							<span id="display_awb_dup">
+								{{ $importasi->awb }}
+								@if( $importasi->awb_duplicate != 0 )
+									{{ ' - ' . $importasi->awb_duplicate }}
+								@endif
+							</span>
+							<span>
+								@if( $importasi->covid != null )
+									<a href="{{ route('covid.show',$importasi->covid->idTanggap) }}" class="ml-md btn btn-xs btn-default">Aju COVID</a>
+								@endif
+							</span>
+						</h3>
 						<h5 class="h5 m-none text-dark">Tanggal <span id="display_tgl_awb">{{ $importasi->tgl_awb }}</span></h5>
 					</div>
 					<div class="col-sm-12 col-md-4 mt-md mb-md">
@@ -346,6 +350,7 @@ textarea {
 			<div class="row mx-0">
 				<input id="route" type="hidden">
 				<input id="dataId" type="hidden">
+				<input name="awb_duplicate" type="hidden">
 				<div class="form-group mt-lg">
 					<div class="col-xs-12 col-sm-12 col-md-12 mb-md">
 						<label class="col-sm-12 col-md-2 control-label">AWB</label>
@@ -708,6 +713,7 @@ $(document).ready(function() {
 				data: { _token: "{{ csrf_token() }}" },
 				success: function (response) {
 					$('#formEdit input[name="awb"]').val(response['awb']);
+					$('#formEdit input[name="awb_duplicate"]').val(response['awb_duplicate']);
 					$('#formEdit input[name="tgl_awb"]').val(response['tgl_awb']);
 					$('#formEdit input[name="no_permohonan"]').val(response['no_permohonan']);
 					$('#formEdit input[name="tgl_permohonan"]').val(response['tgl_permohonan']);
@@ -893,8 +899,13 @@ $(document).ready(function() {
 		// Display main data
 		function displayMainData(data) {
 			for (var key in data) {
-				$(`section#display-data #display_${key}`).html(data[key]);	
-			}		
+				$(`section#display-data #display_${key}`).html(data[key]);
+			}
+			if (data.awb_duplicate == 0) {
+				$(`section#display-data #display_awb_dup`).html(data.awb);	
+			} else {
+				$(`section#display-data #display_awb_dup`).html(`${data.awb} - ${data.awb_duplicate}`);	
+			}
 			$('section#display-data #display_current_stat').html(data.status.ur_status);
 			$('section#display-data #display_jns_importir').html(data.jenis_importir.jns_importir);
 			if (data.check_rekomendasi == 1) {

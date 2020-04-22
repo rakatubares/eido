@@ -246,7 +246,7 @@ class ImporController extends Controller
         Validator::make(
             $request->all(), 
             [
-                'awb' => ['required','string','max:64','regex:/(^[A-Za-z0-9]+$)+/','unique:impor,awb,'.$id],
+                'awb' => ['required','string','max:64','regex:/(^[A-Za-z0-9]+$)+/'],
                 'tgl_awb' => ['nullable','date'],
                 'no_permohonan' => ['nullable','string','max:32','unique:impor,no_permohonan,'.$id],
                 'tgl_permohonan' => ['nullable','required_with:no_permohonan'],
@@ -275,6 +275,8 @@ class ImporController extends Controller
                 unset($input[$key]);
             }
         }
+
+        $input['awb_duplicate'] = ImporDetail::checkDuplicateUpdate($id, $input['awb'], $input['awb_duplicate']);
 
         if (isset($input['tgl_awb']) && $input['tgl_awb'] != "") {
             $input['tgl_awb'] = DateTime::createFromFormat('d-m-Y', $input['tgl_awb'])->format('Y-m-d');
