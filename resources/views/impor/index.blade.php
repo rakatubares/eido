@@ -305,6 +305,11 @@ $(document).ready(function() {
 					data.forEach(function(dat) {
 						var rekomendasi = null;
 						var bebas = null;
+						if (dat.awb_duplicate != 0) {
+							var duplicate = ` - ${dat.awb_duplicate}`;
+						} else {
+							var duplicate = '';
+						}
 						if (dat.check_rekomendasi != 1) {
 							rekomendasi = 'Rekomendasi BNPB';
 						}
@@ -315,7 +320,7 @@ $(document).ready(function() {
 						var rows = `
 							<tr>
 								<td>${dat.no_permohonan}<br>${dat.tgl_permohonan}</td>
-								<td>${dat.awb}<br>${dat.tgl_awb}</td>
+								<td>${dat.awb}${duplicate}</td>
 								<td>${dat.importir}</td>
 								<td>${dat.officer.name}</td>
 								<td>${syarat}</td>

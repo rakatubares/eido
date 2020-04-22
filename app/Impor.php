@@ -28,7 +28,7 @@ class Impor extends Model
      * @var array
      */
     protected $fillable = [
-        'awb', 'tgl_awb', 'no_permohonan', 'tgl_permohonan',
+        'idTanggap', 'awb', 'awb_duplicate', 'tgl_awb', 'no_permohonan', 'tgl_permohonan',
         'importir', 'npwp', 'status_importir',
         'pic', 'hp_pic', 'email_pic', 'tgl_clearance', 'wkt_clearance',
         'check_rekomendasi', 'dok_rekomendasi', 'tgl_rekomendasi',
@@ -117,6 +117,11 @@ class Impor extends Model
         return $this->hasMany(UploadFiles::class, 'impor_id');
     }
 
+    public function covid()
+    {
+        return $this->hasOne('App\CovidHeader', 'idTanggap', 'idTanggap');
+    }
+
     /**
      * Get importasi detail with reference description
      */
@@ -127,7 +132,9 @@ class Impor extends Model
             'status:id,kd_status,ur_status', 
             'rekomendasi_impor:id,rekomendasi', 
             'attachments:id,impor_id,filename,comment',
-            'officer:id,name'
+            'officer:id,name',
+            'covid:id,idTanggap'
         );
     }
+
 }

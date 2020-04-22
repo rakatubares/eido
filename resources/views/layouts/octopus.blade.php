@@ -310,6 +310,21 @@
 											</li>
 										</ul>
 									</li>
+									@can('covid-list')
+									<li class="nav-parent">
+										<a>
+											<i class="fa fa-file-text" aria-hidden="true"></i>
+											<span>Dokumen</span>
+										</a>
+										<ul class="nav nav-children">
+											<li>
+												<a href="{{ route('covid.index') }}">
+													 Aju Covid Baru
+												</a>
+											</li>
+										</ul>
+									</li>
+									@endcan
 								</ul>
 							</nav>
 						</div>

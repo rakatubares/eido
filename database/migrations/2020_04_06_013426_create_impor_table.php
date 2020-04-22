@@ -17,7 +17,7 @@ class CreateImporTable extends Migration
             $table->id();
 
             $table->string('awb', 64)->index();
-            $table->date('tgl_awb')->index();
+            $table->date('tgl_awb')->nullable()->index();
 
             $table->string('importir', 64)->index();
             $table->string('npwp', 32)->nullable()->index();
@@ -47,7 +47,6 @@ class CreateImporTable extends Migration
             $table->timestamps();
             $table->softDeletes('deleted_at', 0);
 
-            $table->unique(['awb', 'tgl_awb']);
             $table->foreign('status_importir')->references('id')->on('dim_jenis_importir');
             $table->foreign('rekomendasi_clearance')->references('id')->on('dim_rekomendasi');
             $table->foreign('status_terakhir')->references('kd_status')->on('dim_status');
