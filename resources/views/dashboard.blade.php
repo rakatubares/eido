@@ -135,25 +135,33 @@ $(document).ready(function() {
             return new Date(date);
         }
         // Pie chart total outstanding
-        var flotPieData = [
-            @foreach ( $statusAgg as $status => $val )
-                { 
-                    label: "{{ $status }}", 
-                    data: [
-                        [1,"{{ $val->count() }}"]
-                    ]
-                },
-            @endforeach
-        ];
+        var pieColor = ['#F47A1F', '#FDBB2F', '#377B2B', '#7AC142', '#007CC3', '#00529B'];
+        var flotPieData = [];
+        var n = 0;
+        @foreach ( $statusAgg as $status => $val )
+            var pieElem = { 
+                label: "{{ $status }}", 
+                data: [
+                    [1,"{{ $val->count() }}"]
+                ],
+                color: pieColor[n]
+            }
+            flotPieData.push(pieElem);
+            n += 1;
+        @endforeach
 
         var plot = $.plot('#flotPie', flotPieData, {
 			series: {
 				pie: {
-					show: true,
-					combine: {
-						color: '#999',
-						threshold: 0.1
-					}
+                    show: true,
+                    radius: 0.75,
+                    label: {
+                        show: true,
+                        radius: 1,
+                        formatter: function (label, series) {
+                            return '<div style="font-size:7.5pt;text-align:center;padding:2px;color:' + series.color + '">' + label + '<br/><strong style="font-size:10pt;">' + series.data[0][1] + '</strong></div>';
+                        }
+                    }
 				}
 			},
 			legend: {
