@@ -19,13 +19,19 @@ class CovidSoetta
 			->whereNotNull('idTanggap')
 			->pluck('idTanggap');
 
-		$covids = CovidHeader::details()
+		$covids = CovidHeader::with('latest_status')
+			->with('validasi')
 			->where('kantor_permohonan', '050100')
 			->where('status_bebas','Y')
 			->whereNotIn('idTanggap',$linkedImpor)
 			->get();
 
-		return $covids;
+		$notArchived = $covids->filter(function ($value, $key)
+		{
+			return $value->latest_status->kode_status != '313';
+		})->values();
+
+		return $notArchived;
 	}
 
 	public static function get($idTanggap)

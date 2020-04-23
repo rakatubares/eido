@@ -29,6 +29,7 @@
 					<th>SKMK</th>
 					<th>Indikasi</th>
 					<th width="280px">Action</th>
+					<th>stat</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -56,7 +57,9 @@ $(document).ready(function() {
 				method: "GET",
 				data: { _token: "{{ csrf_token() }}" },
 				success: function(data) {
+					console.log(data);
 					data.forEach(function(dat) {
+						// console.log(dat.latest_status.kode_status);
 						lsValidasi = []
 						dat.validasi.forEach(function(val) {
 							lsValidasi.push(val.keterangan);
@@ -74,6 +77,7 @@ $(document).ready(function() {
 								<td class="center">
 									<a class="btn btn-primary btn-xs" href="covid/${dat.idTanggap}">Detail</a>
 								</td>
+								<td>${dat.latest_status.kode_status}</td>
 							</tr>
 						`;
 						$('#table-data tbody').append(rows);

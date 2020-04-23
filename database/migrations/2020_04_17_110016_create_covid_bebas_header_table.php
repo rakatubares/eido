@@ -25,10 +25,10 @@ class CreateCovidBebasHeaderTable extends Migration
 
             $table->unsignedInteger('jenis_entitas')->nullable()->index();
             $table->string('npwp_entitas', 32)->nullable()->index();
-            $table->string('nama_entitas', 64)->nullable()->index();
+            $table->string('nama_entitas', 128)->nullable()->index();
             $table->text('alamat_entitas')->nullable();
 
-            $table->string('nama_importir', 64)->nullable()->index();
+            $table->string('nama_importir', 128)->nullable()->index();
             $table->string('npwp_importir', 32)->nullable()->index();
             $table->text('alamat_importir')->nullable();
 
