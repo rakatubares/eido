@@ -21,7 +21,7 @@ class Status extends Model
      * @var array
      */
     protected $fillable = [
-        'impor_id', 'kd_status', 'jns_dok_impor', 'no_dok_impor', 'detail',
+        'impor_id', 'kd_status', 'jns_dok_impor', 'no_dok_impor', 'tgl_dok_impor', 'detail',
     ];
 
     /**

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use DateTime;
 use Illuminate\Http\Request;
 use App\Status;
 use App\Impor;
@@ -33,6 +34,11 @@ class StatusController extends Controller
 
         $input = $request->all();
         $input['impor_id'] = $idImpor;
+        if (isset($input['no_dok_impor']) && $input['no_dok_impor'] != "" && isset($input['tgl_dok_impor']) && $input['tgl_dok_impor'] != "") {
+            $input['tgl_dok_impor'] = DateTime::createFromFormat('d-m-Y', $input['tgl_dok_impor'])->format('Y-m-d');
+        } else {
+            $input['tgl_dok_impor'] = null;
+        }
         
         Status::create($input);
 
@@ -67,6 +73,9 @@ class StatusController extends Controller
         for ($i=0; $i < count($histories); $i++) { 
             $histories[$i]->time = $histories[$i]->created_at->timezone('Asia/Jakarta')->format('d-m-Y H:i:s');
             $histories[$i]->status = $histories[$i]->uraian_status->ur_status;
+            if ($histories[$i]->tgl_dok_impor != null) {
+                $histories[$i]->tgl_dok_impor = DateTime::createFromFormat('Y-m-d', $histories[$i]->tgl_dok_impor)->format('d-m-Y');
+            }
         }
 
         $status = Impor::find($idImpor)->status->ur_status;

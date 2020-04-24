@@ -280,7 +280,13 @@ textarea {
 							<div class="tm-box">
 								<p class="text-muted mb-none">{{ $history->created_at->timezone('Asia/Jakarta')->format('d-m-Y H:i:s') }}</p>
 								<p>
-									{{ $history->uraian_status->ur_status }} {{ $history->no_dok_impor }}
+									{{ $history->uraian_status->ur_status }}
+									@if( $history->no_dok_impor != null )
+									<br>{{ $history->jns_dok_impor }} {{ $history->no_dok_impor }}
+									@endif
+									@if( $history->tgl_dok_impor != null )
+										tgl {{ $history->tgl_dok_impor }}
+									@endif
 								</p>
 								@if( $history->detail != null )
 								<p>
@@ -296,6 +302,7 @@ textarea {
 		</div>
 	</div>
 
+	@if( $importasi->status->ur_status != 'SELESAI' )
 	@can('status-create')
 	<!-- Form Update Status -->
 	<div id="panel-update-status" class="panel">
@@ -322,6 +329,17 @@ textarea {
 						</div>
 					</div>
 					<div class="col-sm-12 col-md-12 mb-md">
+						<label class="col-sm-12 col-md-3 control-label">Tgl Dok</label>
+						<div class="col-sm-12 col-md-9">
+							<div class="input-group">
+								<span class="input-group-addon">
+									<i class="fa fa-calendar"></i>
+								</span>
+								{!! Form::text('tgl_dok_impor', null, array('placeholder' => 'Tgl Dokumen','class' => 'form-control','data-plugin-datepicker','data-plugin-options' => '{ "format": "dd-mm-yyyy"}')) !!}
+							</div>
+						</div>
+					</div>
+					<div class="col-sm-12 col-md-12 mb-md">
 						<div class="col-sm-12">
 							{!! Form::textarea('detail', null, array('placeholder' => 'Keterangan','class' => 'form-control')) !!}
 							<div id="error_npwp" class="error_text"></div>
@@ -336,6 +354,7 @@ textarea {
 		</div>
 	</div>
 	@endcan
+	@endif
 </section>
 
 @can('impor-edit')
@@ -1024,7 +1043,11 @@ $(document).ready(function() {
 					$('#timeline-status').empty();
 					(data.histories).forEach(function(history) {
 						if (history.no_dok_impor != null) {
-							var dok = history.no_dok_impor;
+							if (history.tgl_dok_impor != null) {
+								var dok = `<br>${history.jns_dok_impor} ${history.no_dok_impor} tgl ${history.tgl_dok_impor}`;
+							} else {
+								var dok = `<br>${history.jns_dok_impor} ${history.no_dok_impor}`;
+							}
 						} else {
 							var dok = '';
 						}
@@ -1049,6 +1072,9 @@ $(document).ready(function() {
 						$('#timeline-status').append(stat);
 					});
 					$('#display_current_stat').html(data.status);
+					if (data.status == 'SELESAI') {
+						$('#panel-update-status').remove();
+					}
 				}
 			});
 		}
