@@ -316,11 +316,11 @@ $(document).ready(function() {
 						if (dat.bebas == 1 && dat.check_bebas !=1) {
 							bebas = 'SKEP Pembebasan';
 						}
-						var syarat = [rekomendasi, bebas].filter(Boolean).join('<br>');
+						var syarat = [rekomendasi, bebas].filter(Boolean).join('; ');
 						var rows = `
 							<tr>
 								<td>${dat.no_permohonan}<br>${dat.tgl_permohonan}</td>
-								<td>${dat.awb}${duplicate}</td>
+								<td>${dat.awb}${duplicate}<br>${dat.tgl_awb}</td>
 								<td>${dat.importir}</td>
 								<td>${dat.officer.name}</td>
 								<td>${syarat}</td>
