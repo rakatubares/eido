@@ -19,7 +19,7 @@ class CreateStatusTable extends Migration
             $table->unsignedSmallInteger('kd_status')->index();
             $table->string('jns_dok_impor', 32)->nullable()->index();
             $table->string('no_dok_impor', 32)->nullable()->index();
-            $table->string('detail', 64)->nullable()->index();
+            $table->text('detail')->nullable();
             $table->timestamps();
             $table->foreign('impor_id')->references('id')->on('impor');
             $table->foreign('kd_status')->references('kd_status')->on('dim_status');

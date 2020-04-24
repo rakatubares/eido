@@ -28,7 +28,7 @@ class CovidSoetta
 
 		$notArchived = $covids->filter(function ($value, $key)
 		{
-			return $value->latest_status->kode_status != '313';
+			return !in_array($value->latest_status->kode_status, ['240','311','312','313']);
 		})->values();
 
 		return $notArchived;

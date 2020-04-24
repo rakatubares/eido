@@ -28,8 +28,8 @@
 					<th>Importir</th>
 					<th>SKMK</th>
 					<th>Indikasi</th>
-					<th width="280px">Action</th>
 					<th>stat</th>
+					<th width="280px">Action</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -74,10 +74,10 @@ $(document).ready(function() {
 								<td>${dat.nama_importir}</td>
 								<td>${dat.no_skmk}<br>${dat.tgl_skmk}</td>
 								<td>${validasi}</td>
+								<td>${dat.latest_status.kode_status}</td>
 								<td class="center">
 									<a class="btn btn-primary btn-xs" href="covid/${dat.idTanggap}">Detail</a>
 								</td>
-								<td>${dat.latest_status.kode_status}</td>
 							</tr>
 						`;
 						$('#table-data tbody').append(rows);
@@ -86,10 +86,10 @@ $(document).ready(function() {
 					$('#table-data').dataTable({
 						columnDefs: [
 							{width: "15%", targets: 4},
-							{width: "5%", targets: 6},
-							{sortable: false, targets: 6},
+							{width: "5%", targets: 7},
+							{sortable: false, targets: 7},
 							{visible: false, targets: 1},
-							{searchable: false, targets: 6}
+							{searchable: false, targets: 7}
 						],
 						order: [[ 1, "asc" ]]
 					});

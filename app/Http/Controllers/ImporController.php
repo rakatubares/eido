@@ -52,7 +52,8 @@ class ImporController extends Controller
      */
     public function list()
     {
-        $importasi = Impor::detail()->get();
+        // $importasi = Impor::detail()->get();
+        $importasi = ImporDetail::list();
  
         return $importasi;
     }

@@ -46,6 +46,7 @@
 					<th>Kekurangan</th>
 					<th>Status</th>
 					<th>kd_status</th>
+					<th>wk_status</th>
 					<th width="280px">Action</th>
 				</tr>
 			</thead>
@@ -324,8 +325,9 @@ $(document).ready(function() {
 								<td>${dat.importir}</td>
 								<td>${dat.officer.name}</td>
 								<td>${syarat}</td>
-								<td>${dat.status.ur_status}</td>
-								<td>${dat.status.kd_status}</td>
+								<td>${dat.latest_status.ur_status}<br>${dat.latest_status.waktu}</td>
+								<td>${dat.latest_status.kd_status}</td>
+								<td>${dat.latest_status.waktu}</td>
 								<td class="center">
 									<a class="btn btn-primary btn-xs" href="importasi/${dat.id}">Detail</a>
 								</td>
@@ -336,13 +338,13 @@ $(document).ready(function() {
 					
 					$('#table-data').dataTable({
 						columnDefs: [
-							{width: "5%", targets: 7},
-							{sortable: false, targets: 7},
-							{visible: false, targets: 6},
-							{searchable: false, targets: [6,7]},
+							{width: "5%", targets: 8},
+							{sortable: false, targets: 8},
+							{visible: false, targets: [6,7]},
+							{searchable: false, targets: [6,7,8]},
 							{orderData: [6], targets: 5}
 						],
-						order: [[ 5, "asc" ]]
+						order: [[ 6, "asc" ],[7, "asc"]]
 					});
 				}
 			});

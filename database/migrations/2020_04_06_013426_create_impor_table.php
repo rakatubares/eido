@@ -44,7 +44,8 @@ class CreateImporTable extends Migration
             $table->unsignedBigInteger('created_by')->index();
             $table->unsignedBigInteger('updated_by')->nullable()->index();
 
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'));
             $table->softDeletes('deleted_at', 0);
 
             $table->foreign('status_importir')->references('id')->on('dim_jenis_importir');

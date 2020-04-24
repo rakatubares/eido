@@ -56,12 +56,12 @@ class CreateCovidBebasHeaderTable extends Migration
             $table->float('ndpbm')->nullable();
 
             $table->string('field_tpb', 32)->nullable()->index();
-            $table->string('area_pemasukan_tpb', 32)->nullable()->index();
+            $table->string('area_pemasukan_tpb', 128)->nullable()->index();
             $table->string('pelabuhan_masuk', 8)->nullable()->index();
             $table->string('negara_asal', 8)->nullable()->index();
 
-            $table->string('mekanisme', 32)->nullable()->index();
-            $table->string('tindak_lanjut', 32)->nullable()->index();
+            $table->string('mekanisme', 128)->nullable()->index();
+            $table->string('tindak_lanjut', 128)->nullable()->index();
             $table->string('skema_pmk', 8)->nullable()->index();
 
             $table->unsignedBigInteger('bm_bebas')->nullable();

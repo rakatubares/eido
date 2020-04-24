@@ -106,7 +106,27 @@ class Impor extends Model
      */
     public function history()
     {
-        return $this->hasMany(Status::class, 'impor_id');
+        return $this->hasMany(Status::class);
+    }
+
+    /**
+     * Get latest stat.
+     */
+    public function history_status()
+    {
+        $history_status = $this->belongsToMany(
+                'App\DimStatus',
+                'status',
+                'impor_id',
+                'kd_status',
+                'id',
+                'kd_status'
+            )
+            ->withPivot('created_at', 'kd_status')
+            ->orderBy('pivot_created_at', 'asc')
+            ->orderBy('pivot_kd_status', 'asc');
+
+        return $history_status;
     }
 
     /**
