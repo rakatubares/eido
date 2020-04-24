@@ -77,6 +77,7 @@ getFormOptions();
 // Fill form data for edit
 function fillForm(data) {
 	$('#formEdit input[name="idTanggap"]').val(data['idTanggap']);
+	$('#formEdit input[name="awb_duplicate"]').val(data['awb_duplicate']);
 	$('#formEdit input[name="awb"]').val(data['awb']);
 	$('#formEdit input[name="tgl_awb"]').val(data['tgl_awb']);
 	$('#formEdit input[name="no_permohonan"]').val(data['no_permohonan']);

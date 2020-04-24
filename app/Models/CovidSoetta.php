@@ -57,13 +57,19 @@ class CovidSoetta
 			if ($cekAwb == null) {
 				$form = 'insert';
 			} else {
-				$form = 'update';
-				$imporData->idImpor = $cekAwb->id;
+				if ($cekAwb->no_permohonan == null) {
+					$form = 'update';
+					$imporData->idImpor = $cekAwb->id;
+					$imporData->awb_duplicate = $cekAwb->awb_duplicate;
+				} else {
+					$form = 'insert';
+				}
 			}
 		} else {
 			if ($cekCovid->idTanggap == null) {
 				$form = 'update';
 				$imporData->idImpor = $cekCovid->id;
+				$imporData->awb_duplicate = $cekCovid->awb_duplicate;
 			} else {
 				$form = 'ignore';
 			}

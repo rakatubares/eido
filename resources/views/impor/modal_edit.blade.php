@@ -10,6 +10,7 @@
 				<input name="formType" type="hidden">
 				<input id="dataId" type="hidden">
 				<input id="idTanggap" name="idTanggap" type="hidden">
+				<input name="awb_duplicate" type="hidden">
 				<div class="form-group mt-lg">
 					<div class="col-xs-12 col-sm-12 col-md-12 mb-md">
 						<label class="col-sm-12 col-md-2 control-label">AWB</label>
