@@ -314,19 +314,19 @@ textarea {
 						<label class="col-sm-12 col-md-2 control-label">Status</label>
 						<div class="col-sm-12 col-md-10">
 							{!! Form::select('kd_status', $statOptions->pluck('ur_status','kd_status'),null, array('class' => 'form-control')) !!}
-							<div id="error_npwp" class="error_text"></div>
+							<div id="error_kd_status" class="error_text"></div>
 						</div>
 					</div>
 					<div class="col-sm-12 col-md-12 mb-md">
 						<label class="col-sm-12 col-md-2 control-label">Dok</label>
 						<div class="col-sm-12 col-md-4">
 							{!! Form::select('jns_dok_impor', ['RH'=>'RH','PIB'=>'PIB','CN'=>'CN','PIBK'=>'PIBK','CD'=>'CD','Lainnya'=>'Lainnya'],null, array('class' => 'form-control')) !!}
-							<div id="error_npwp" class="error_text"></div>
 						</div>
 						<div class="col-sm-12 col-md-6">
 							{!! Form::text('no_dok_impor', null, array('placeholder' => 'No Dokumen','class' => 'form-control')) !!}
-							<div id="error_npwp" class="error_text"></div>
 						</div>
+						<div id="error_jns_dok_impor" class="error_text"></div>
+						<div id="error_no_dok_impor" class="error_text"></div>
 					</div>
 					<div class="col-sm-12 col-md-12 mb-md">
 						<label class="col-sm-12 col-md-3 control-label">Tgl Dok</label>
@@ -337,12 +337,12 @@ textarea {
 								</span>
 								{!! Form::text('tgl_dok_impor', null, array('placeholder' => 'Tgl Dokumen','class' => 'form-control','data-plugin-datepicker','data-plugin-options' => '{ "format": "dd-mm-yyyy"}')) !!}
 							</div>
+							<div id="error_tgl_dok_impor" class="error_text"></div>
 						</div>
 					</div>
 					<div class="col-sm-12 col-md-12 mb-md">
 						<div class="col-sm-12">
 							{!! Form::textarea('detail', null, array('placeholder' => 'Keterangan','class' => 'form-control')) !!}
-							<div id="error_npwp" class="error_text"></div>
 						</div>
 					</div>
 				</div>
@@ -1000,6 +1000,12 @@ $(document).ready(function() {
 		});
 
 		///// Display Status Form /////
+		// Clear form status validation
+		function clearStatusValidation() {
+			$("#formStatus .form-control").removeClass("is-invalid is-valid");
+			$("#formStatus .error_text").empty();
+		}
+
 		// Show form
 		$(document).on('click', '#btn-status-update', function(e) {
 			e.preventDefault();
@@ -1016,11 +1022,14 @@ $(document).ready(function() {
 			$('#btn-status-update').show();
 			$('#formStatus').hide();
 			$('#formStatus').trigger("reset");
+			clearStatusValidation();
 		}
 
 		// Submit form
 		$(document).on('click', '#btn-status-submit', function(e) {
 			e.preventDefault();
+			clearStatusValidation();
+
 			var data = $('#formStatus').serializeArray();
 			$.ajax({
 				url: '{{ route("status.store", $importasi->id) }}',
@@ -1029,6 +1038,19 @@ $(document).ready(function() {
 				success: function() {
 					closeForm();
 					displayStatus();
+				},
+				error: function (response) {
+					var errors = response["responseJSON"]["errors"];
+					for (var type in errors) {
+						var messages = errors[type];
+						console.log(type);
+						console.log(messages);
+						
+						$(`.form-control[name='${type}`).addClass("is-invalid");
+						for (var idx in messages) {
+							$(`#error_${type}`).html(`<p class="text-danger">${messages[idx]}</p>`);
+						}
+					}
 				}
 			});
 		});

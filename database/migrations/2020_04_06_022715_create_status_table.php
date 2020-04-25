@@ -20,7 +20,8 @@ class CreateStatusTable extends Migration
             $table->string('jns_dok_impor', 32)->nullable()->index();
             $table->string('no_dok_impor', 32)->nullable()->index();
             $table->text('detail')->nullable();
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'));
             $table->foreign('impor_id')->references('id')->on('impor');
             $table->foreign('kd_status')->references('kd_status')->on('dim_status');
         });

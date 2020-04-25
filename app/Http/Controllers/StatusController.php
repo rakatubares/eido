@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use DateTime;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use App\Status;
 use App\Impor;
 
@@ -28,9 +29,26 @@ class StatusController extends Controller
     public function store(Request $request, $idImpor)
     {
         // Validation
-        $this->validate($request, [
-            'kd_status' => 'required|numeric',
-        ]);
+        $customMessages = [
+            'no_dok_impor.required_if' => 'Isikan no dokumen.',
+            'tgl_dok_impor.required_with' => 'Isikan tgl dokumen.',
+        ];
+
+        Validator::make(
+            $request->all(), 
+            [
+                'kd_status' => ['required','numeric'],
+                'no_dok_impor' => ['nullable','required_if:kd_status,22,41,50'],
+                'tgl_dok_impor' => ['nullable','required_with:no_dok_impor'],
+            ],
+            $customMessages
+        )->validate();
+
+        // $this->validate($request, [
+        //     'kd_status' => ['required','numeric'],
+        //     'no_dok_impor' => ['nullable','required_if:kd_status,22,41,50'],
+        //     'tgl_dok_impor' => ['nullable','required_with:no_dok_impor'],
+        // ]);
 
         $input = $request->all();
         $input['impor_id'] = $idImpor;
