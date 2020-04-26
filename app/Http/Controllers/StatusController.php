@@ -44,12 +44,6 @@ class StatusController extends Controller
             $customMessages
         )->validate();
 
-        // $this->validate($request, [
-        //     'kd_status' => ['required','numeric'],
-        //     'no_dok_impor' => ['nullable','required_if:kd_status,22,41,50'],
-        //     'tgl_dok_impor' => ['nullable','required_with:no_dok_impor'],
-        // ]);
-
         $input = $request->all();
         $input['impor_id'] = $idImpor;
         if (isset($input['no_dok_impor']) && $input['no_dok_impor'] != "" && isset($input['tgl_dok_impor']) && $input['tgl_dok_impor'] != "") {
@@ -87,7 +81,7 @@ class StatusController extends Controller
 
     public function list(Request $request, $idImpor)
     {
-        $histories = Status::where('impor_id',$idImpor)->get();
+        $histories = Status::where('impor_id',$idImpor)->orderBy('created_at')->get();
         for ($i=0; $i < count($histories); $i++) { 
             $histories[$i]->time = $histories[$i]->created_at->timezone('Asia/Jakarta')->format('d-m-Y H:i:s');
             $histories[$i]->status = $histories[$i]->uraian_status->ur_status;

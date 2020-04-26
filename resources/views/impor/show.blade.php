@@ -320,7 +320,7 @@ textarea {
 					<div class="col-sm-12 col-md-12 mb-md">
 						<label class="col-sm-12 col-md-2 control-label">Dok</label>
 						<div class="col-sm-12 col-md-4">
-							{!! Form::select('jns_dok_impor', ['RH'=>'RH','PIB'=>'PIB','CN'=>'CN','PIBK'=>'PIBK','CD'=>'CD','Lainnya'=>'Lainnya'],null, array('class' => 'form-control')) !!}
+							{!! Form::select('jns_dok_impor', ['RH'=>'RH','Lainnya'=>'Lainnya'],null, array('class' => 'form-control')) !!}
 						</div>
 						<div class="col-sm-12 col-md-6">
 							{!! Form::text('no_dok_impor', null, array('placeholder' => 'No Dokumen','class' => 'form-control')) !!}
@@ -1006,6 +1006,29 @@ $(document).ready(function() {
 			$("#formStatus .error_text").empty();
 		}
 
+		// Select document type
+		function selectType(input) {
+			$('#formStatus select[name="jns_dok_impor"]').empty();
+
+			var status = input.val();
+			if (status == 22) {
+				var types = ['RH', 'Lainnya'];
+			} else {
+				var types = ['PIB', 'CN', 'PIBK', 'CD', 'Lainnya'];
+			}
+
+			var options = ''
+			types.forEach(function(type) {
+				var option = `<option value="${type}">${type}</option>`;
+				options = options.concat(option);
+			});
+
+			$('#formStatus select[name="jns_dok_impor"]').html(options);
+		}
+		$(document).on('change', '#formStatus select[name="kd_status"]', function() {
+			selectType($(this));
+		});
+
 		// Show form
 		$(document).on('click', '#btn-status-update', function(e) {
 			e.preventDefault();
@@ -1043,8 +1066,6 @@ $(document).ready(function() {
 					var errors = response["responseJSON"]["errors"];
 					for (var type in errors) {
 						var messages = errors[type];
-						console.log(type);
-						console.log(messages);
 						
 						$(`.form-control[name='${type}`).addClass("is-invalid");
 						for (var idx in messages) {

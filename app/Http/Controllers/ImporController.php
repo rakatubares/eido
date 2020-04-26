@@ -209,7 +209,7 @@ class ImporController extends Controller
 		}
 		
 		// Get document history
-        $histories = Status::where('impor_id',$id)->get();
+        $histories = Status::where('impor_id',$id)->orderBy('created_at')->get();
         
         // Get attachments
         $attachments = UploadFiles::where('impor_id',$id)->get();
