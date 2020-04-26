@@ -45,4 +45,6 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('covid/list','CovidSoettaController@list')->name('covid.list');
     Route::get('covid/{id_covid}','CovidSoettaController@show')->name('covid.show');
     Route::post('covid/{id_covid}/monitor','CovidSoettaController@monitor')->name('covid.monitor');
+    Route::get('covid_all','CovidSoettaController@index_all')->name('covid.all');
+    Route::get('covid_all/list','CovidSoettaController@list_all')->name('covid.all_list');
 });

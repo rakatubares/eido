@@ -116,4 +116,13 @@ class CovidSoetta
 			'data'=> $imporData
 		];
 	}
+
+	public static function list_all()
+	{
+		$covids = CovidHeader::withTrashed()
+			->with('validasi')
+			->get();
+		
+		return $covids;
+	}
 }

@@ -12,15 +12,15 @@ class CovidSoettaController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    // function __construct()
-    // {
-    //      $this->middleware('permission:covid-soetta-list|covid-soetta-edit|covid-soetta-delete', ['only' => ['index','list','show','detail']]);
-    //      $this->middleware('permission:covid-soetta-edit', ['only' => ['edit','update']]);
-    //      $this->middleware('permission:covid-soetta-delete', ['only' => ['destroy']]);
-    // }
+    function __construct()
+    {
+         $this->middleware('permission:covid-list|covid-edit|covid-delete', ['only' => ['index','list','show','monitor','index_all','list_all']]);
+         $this->middleware('permission:covid-edit', ['only' => ['show','monitor']]);
+         $this->middleware('permission:covid-delete', ['only' => ['destroy']]);
+    }
 
     /**
-     * Display page.
+     * Display page.aju covid baru
      *
      * @return \Illuminate\Http\Response
      */
@@ -48,5 +48,22 @@ class CovidSoettaController extends Controller
     {
         $test = CovidSoetta::monitor($id);
         return $test;
+    }
+
+    /**
+     * Display page.semua aju covid
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function index_all(Request $request)
+    {
+        return view('covid.all');
+    }
+
+    // Get entire data list
+    public function list_all()
+    {
+        $covids = CovidSoetta::list_all();
+        return $covids;
     }
 }
