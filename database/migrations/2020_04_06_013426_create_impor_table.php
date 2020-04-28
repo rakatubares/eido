@@ -19,7 +19,7 @@ class CreateImporTable extends Migration
             $table->string('awb', 64)->index();
             $table->date('tgl_awb')->nullable()->index();
 
-            $table->string('importir', 64)->index();
+            $table->string('importir', 128)->index();
             $table->string('npwp', 32)->nullable()->index();
             $table->unsignedBigInteger('status_importir')->index();
 
