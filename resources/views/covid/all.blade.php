@@ -68,7 +68,6 @@
 			<thead>
 				<tr>
 					<th>Permohonan</th>
-					<th>Tgl Permohonan</th>
 					<th>AWB</th>
 					<th>Importir</th>
 					<th>Kantor Mohon</th>
@@ -98,50 +97,59 @@ $(document).ready(function() {
 	(function( $ ) {
 		///// Display DataTable /////
 		function showData() {
-			$.ajax({
-				url: "{{ route('covid.all_list') }}",
-				method: "GET",
-				data: { _token: "{{ csrf_token() }}" },
-				success: function(data) {
-					data.forEach(function(dat) {
-						lsValidasi = []
-						dat.validasi.forEach(function(val) {
-							lsValidasi.push(val.keterangan);
-						});
-						var validasi = lsValidasi.join('; ');
-
-						var rows = `
-							<tr>
-								<td>${dat.no_permohonan}<br>${dat.tgl_permohonan}</td>
-								<td>${dat.tgl_permohonan}</td>
-								<td>${dat.awb}<br>${dat.tgl_awb}</td>
-								<td>${dat.nama_importir}</td>
-								<td>${dat.kantor_permohonan}</td>
-								<td>${dat.kantor_pemasukan}</td>
-								<td>${validasi}</td>
-								<td class="center">
-									<a class="btn btn-primary btn-xs" href="covid/${dat.idTanggap}">Detail</a>
-								</td>
-							</tr>
-						`;
-						$('#table-data tbody').append(rows);
-					});
-					
-					$('#table-data').dataTable({
-						columnDefs: [
-							{width: "5%", targets: [4,5]},
-							{width: "5%", targets: 7},
-							{sortable: false, targets: 7},
-							{visible: false, targets: 1},
-							{searchable: false, targets: 7}
-						],
-						order: [[ 1, "desc" ]],
-						pagingType: "full_numbers"
-					});
-
-					$('#table-data_wrapper .dataTables_paginate a').removeClass('paginate_button');
-					$('#table-data_wrapper .dataTables_paginate a').addClass('paginate');
-				}
+			$('#table-data').DataTable({
+				processing: true,
+				serverSide: true,
+				ajax: '{{ route('covid.all_list') }}',
+				columns: [
+					{ 
+						data: 'tgl_permohonan',
+						render: function (data, type, row) {
+							return row.no_permohonan + '<br>' + row.tgl_permohonan
+						}
+					},
+					{ 
+						data: 'tgl_awb',
+						render: function (data, type, row) {
+							return row.awb + '<br>' + row.tgl_awb
+						}
+					},
+					{ data: 'nama_importir' },
+					{ data: 'kantor_permohonan' },
+					{ data: 'kantor_pemasukan' },
+					{ 
+						data: 'validasi',
+						render: function (data, type, row) {
+							if (data.length > 0) {
+								var lsValidasi = []
+								data.forEach(function(val) {
+									lsValidasi.push(val.keterangan);
+								});
+								var validasi = lsValidasi.join('; ');
+							} else {
+								var validasi = ''
+							}
+							return validasi
+						}
+					},
+					{ 
+						data: 'idTanggap',
+						render: function (data, type, row) {
+							return `<a class="btn btn-primary btn-xs" href="covid/${data}">Detail</a>`
+						}
+					},
+					{ data: 'no_permohonan' },
+					{ data: 'awb' }
+				],
+				columnDefs: [
+					{width: "5%", targets: [3,4,6]},
+					{sortable: false, targets: [5,6,7,8]},
+					{searchable: false, targets: [5,6]},
+					{visible: false, targets: [7,8]},
+					{className: "center", targets: [6] }
+				],
+				order: [[ 0, "desc" ]],
+				pagingType: "full_numbers"
 			});
 		};
 		showData();

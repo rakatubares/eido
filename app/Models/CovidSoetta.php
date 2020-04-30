@@ -120,6 +120,7 @@ class CovidSoetta
 	public static function list_all()
 	{
 		$covids = CovidHeader::withTrashed()
+			->select('idTanggap', 'awb', 'tgl_awb', 'no_permohonan', 'tgl_permohonan', 'nama_importir', 'kantor_permohonan', 'kantor_pemasukan')
 			->with('validasi')
 			->get();
 		

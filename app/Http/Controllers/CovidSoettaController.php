@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\CovidSoetta;
+use DataTables;
 
 class CovidSoettaController extends Controller
 {
@@ -64,6 +65,6 @@ class CovidSoettaController extends Controller
     public function list_all()
     {
         $covids = CovidSoetta::list_all();
-        return $covids;
+        return Datatables::of($covids)->make(true);
     }
 }
