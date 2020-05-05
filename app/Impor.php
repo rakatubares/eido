@@ -142,11 +142,19 @@ class Impor extends Model
                 'id',
                 'kd_status'
             )
-            ->withPivot('created_at', 'kd_status')
+            ->withPivot('created_at', 'kd_status', 'jns_dok_impor')
             ->orderBy('pivot_kd_status', 'desc')
             ->orderBy('pivot_created_at', 'asc');
 
         return $latest_status;
+    }
+
+    /**
+     * Get dokumen penutup
+     */
+    public function dokumen_penutup()
+    {
+        # code...
     }
 
     /**

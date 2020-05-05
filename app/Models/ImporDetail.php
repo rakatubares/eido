@@ -68,4 +68,30 @@ class ImporDetail
 			return $cekAwb;
 		}
 	}
+
+	public static function getDokumenPenutup()
+	{
+		$importasi = Impor::select('id', 'awb')
+			->with('history')
+			->get();
+
+		for ($i=0; $i < count($importasi); $i++) { 
+			$stat_selesai = $importasi[$i]->history->where('kd_status',50)->last();
+			if ($stat_selesai != null) {
+				$dok = $stat_selesai['jns_dok_impor'];
+			} else {
+				$dok = null;
+			}
+			$importasi[$i]->stat_selesai = $stat_selesai;
+			$importasi[$i]->dok = $dok;
+		};
+
+		$filtered = $importasi->whereNotNull('dok');
+		$grouped = $filtered->groupBy('dok');
+		$count = $grouped->map(function ($item, $key) {
+			return collect($item)->count();
+		});
+
+		return $count;
+	}
 }

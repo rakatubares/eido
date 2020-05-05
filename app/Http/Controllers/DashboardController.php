@@ -7,6 +7,7 @@ use DatePeriod;
 use DateInterval;
 use DB;
 use Illuminate\Http\Request;
+use App\Models\ImporDetail;
 use App\Impor;
 
 class DashboardController extends Controller
@@ -41,7 +42,10 @@ class DashboardController extends Controller
             $total['selesai'] = $lsImpor->where('status.ur_status', 'SELESAI')->count();
 
             // total by status
-            $statusAgg = $lsImpor->where('status.ur_status', '!=', 'SELESAI')->groupBy('status.ur_status');
+            $groupStatus = $lsImpor->where('status.ur_status', '!=', 'SELESAI')->groupBy('status.ur_status');
+            $statusAgg = $groupStatus->map(function ($item, $key) {
+                return collect($item)->count();
+            });
 
             // total new and completed documents by date
             $minDate = $lsImpor->min('created_at')->format('Y-m-d');
@@ -80,8 +84,11 @@ class DashboardController extends Controller
                     (isset($dateAgg['complete'][$d]) ? ($dateAgg['complete'][$d])->count() : null)
                 ];
             }
+
+            // dokumen penutup
+            $dokPenutup = ImporDetail::getDokumenPenutup();
         
-            return view('dashboard',compact('total','statusAgg','dateAgg','dateRange','neCoChart'));
+            return view('dashboard',compact('total','statusAgg','dateAgg','dateRange','neCoChart','dokPenutup'));
         } else {
             return redirect()->route('impor.index');
         }
@@ -98,5 +105,11 @@ class DashboardController extends Controller
         $total['outstanding'] = Impor::status()->where('ur_terakhir', '!=', 'SELESAI')->count();
         $total['selesai'] = Impor::status()->where('ur_terakhir', 'SELESAI')->count();
         return $total;
+    }
+
+    public function dokumenPenutup()
+    {
+        $dokPenutup = ImporDetail::getDokumenPenutup();
+        return $dokPenutup;
     }
 }

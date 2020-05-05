@@ -11,6 +11,7 @@
 @endsection
 
 @section('content')
+
 <div class="row">
     <div class="col-md-4">
         <section class="panel panel-featured-left panel-featured-primary">
@@ -100,12 +101,31 @@
                         <a href="#" class="fa fa-caret-down"></a>
                     </div>
 
+                    <h2 class="panel-title">Dokumen Selesai</h2>
+                    <p class="panel-subtitle">Jumlah per dokumen impor</p>
+                </header>
+                <div class="panel-body">
+
+                    <!-- Flot: Pie -->
+                    <div class="chart chart-md" id="dokPenutupPie"></div>
+                </div>
+            </section>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <section class="panel">
+                <header class="panel-heading">
+                    <div class="panel-actions">
+                        <a href="#" class="fa fa-caret-down"></a>
+                    </div>
+
                     <h2 class="panel-title">Dokumen Harian</h2>
                     <p class="panel-subtitle">Jumlah yang masuk dan selesai per hari</p>
                 </header>
                 <div class="panel-body">
 
-                    <!-- Flot: Pie -->
+                    <!-- Flot: Bar -->
                     <div class="chart chart-md" id="neCoBar"></div>
                 </div>
             </section>
@@ -134,44 +154,54 @@ $(document).ready(function() {
         function gd(date) {
             return new Date(date);
         }
-        // Pie chart total outstanding
-        var pieColor = ['#F47A1F', '#FDBB2F', '#377B2B', '#7AC142', '#007CC3', '#00529B'];
-        var flotPieData = [];
-        var n = 0;
-        @foreach ( $statusAgg as $status => $val )
-            var pieElem = { 
-                label: "{{ $status }}", 
-                data: [
-                    [1,"{{ $val->count() }}"]
-                ],
-                color: pieColor[n]
-            }
-            flotPieData.push(pieElem);
-            n += 1;
-        @endforeach
 
-        var plot = $.plot('#flotPie', flotPieData, {
-			series: {
-				pie: {
-                    show: true,
-                    radius: 0.75,
-                    label: {
+        // Pie chart total outstanding
+        function makePie(data, idPie) {
+            var pieColor = ['#F47A1F', '#FDBB2F', '#377B2B', '#7AC142', '#007CC3', '#00529B'];
+            var flotPieData = [];
+            var n = 0;
+
+            jQuery.each(data, function(key, val) {
+                var pieElem = { 
+                    label: key, 
+                    data: [
+                        [1,data[key]]
+                    ],
+                    color: pieColor[n]
+                }
+                flotPieData.push(pieElem);
+                n += 1;
+            });
+
+            var plot = $.plot(idPie, flotPieData, {
+                series: {
+                    pie: {
                         show: true,
-                        radius: 1,
-                        formatter: function (label, series) {
-                            return '<div style="font-size:7.5pt;text-align:center;padding:2px;color:' + series.color + '">' + label + '<br/><strong style="font-size:10pt;">' + series.data[0][1] + '</strong></div>';
+                        radius: 0.75,
+                        label: {
+                            show: true,
+                            radius: 1,
+                            formatter: function (label, series) {
+                                return '<div style="font-size:7.5pt;text-align:center;padding:2px;color:' + series.color + '">' + label + '<br/><strong style="font-size:10pt;">' + series.data[0][1] + '</strong></div>';
+                            }
                         }
                     }
-				}
-			},
-			legend: {
-				show: false
-			},
-			grid: {
-				hoverable: true,
-				clickable: true
-			}
-		});
+                },
+                legend: {
+                    show: false
+                },
+                grid: {
+                    hoverable: true,
+                    clickable: true
+                }
+            });
+        }
+
+        var status = {!! json_encode($statusAgg->toArray(), JSON_HEX_TAG) !!};
+        makePie(status, '#flotPie');
+
+        var dok = {!! json_encode($dokPenutup->toArray(), JSON_HEX_TAG) !!};
+        makePie(dok, '#dokPenutupPie');
 
         // Bar chart
         var newDocData = [
@@ -204,8 +234,15 @@ $(document).ready(function() {
                 timeformat: "%d %b"
             }
         });
-        console.log(newDocData);
-        console.log(comDocData);
+
+        $.ajax({
+            url: '{{ route("dash.dok") }}',
+            type: 'GET',
+            data: { _token: "{{ csrf_token() }}" },
+            success: function (params) {
+                console.log(params);
+            }
+        });
 	}).apply( this, [ jQuery ]);
 });
 </script>

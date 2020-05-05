@@ -23,6 +23,8 @@ Route::group(['middleware' => ['auth']], function() {
     Route::resource('users','UserController');
     Route::post('users/all','UserController@lists')->name('users.all');
 
+    Route::get('dashboard/dok','DashboardController@dokumenPenutup')->name('dash.dok');
+
     Route::get('importasi','ImporController@index')->name('impor.index');
     Route::post('importasi/list','ImporController@list')->name('impor.list');
     Route::post('importasi','ImporController@store')->name('impor.store');
