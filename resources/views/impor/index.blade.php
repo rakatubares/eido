@@ -325,9 +325,9 @@ $(document).ready(function() {
 								<td>${dat.importir}</td>
 								<td>${dat.officer.name}</td>
 								<td>${syarat}</td>
-								<td>${dat.latest_status.ur_status}<br>${dat.latest_status.waktu}</td>
-								<td>${dat.latest_status.kd_status}</td>
-								<td>${dat.latest_status.waktu}</td>
+								<td>${dat.status.ur_status}<br>${dat.status.waktu}</td>
+								<td>${dat.status.kd_status}</td>
+								<td>${dat.status.waktu}</td>
 								<td class="center">
 									<a class="btn btn-primary btn-xs" href="importasi/${dat.id}">Detail</a>
 								</td>

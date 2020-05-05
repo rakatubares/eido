@@ -23,17 +23,17 @@ class ImporDetail
 				'check_bebas',
 				'officer_id'
 			)
-			->with('history_status')
+			->with('latest_status')
 			->with('officer')
 			->get();
 
 		for ($i=0; $i < count($importasi); $i++) { 
-			$history = $importasi[$i]->history_status;
-			$importasi[$i]->latest_status = $history->last();
-			$importasi[$i]->latest_status->waktu = Carbon::createFromFormat(
-					'Y-m-d H:i:s', $importasi[$i]->latest_status->pivot->created_at
+			$history = $importasi[$i]->latest_status;
+			$importasi[$i]->status = $history->first();
+			$importasi[$i]->status->waktu = Carbon::createFromFormat(
+					'Y-m-d H:i:s', $importasi[$i]->status->pivot->created_at
 				)->format('Y-m-d');
-			unset($importasi[$i]->history_status);
+			unset($importasi[$i]->latest_status);
 		}
 
 		return $importasi;

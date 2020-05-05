@@ -110,7 +110,7 @@ class Impor extends Model
     }
 
     /**
-     * Get latest stat.
+     * Get docs' history.
      */
     public function history_status()
     {
@@ -127,6 +127,26 @@ class Impor extends Model
             ->orderBy('pivot_kd_status', 'asc');
 
         return $history_status;
+    }
+
+    /**
+     * Get latest status
+     */
+    public function latest_status()
+    {
+        $latest_status = $this->belongsToMany(
+                'App\DimStatus',
+                'status',
+                'impor_id',
+                'kd_status',
+                'id',
+                'kd_status'
+            )
+            ->withPivot('created_at', 'kd_status')
+            ->orderBy('pivot_kd_status', 'desc')
+            ->orderBy('pivot_created_at', 'asc');
+
+        return $latest_status;
     }
 
     /**
