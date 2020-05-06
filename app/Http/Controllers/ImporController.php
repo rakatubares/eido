@@ -314,6 +314,13 @@ class ImporController extends Controller
             $input['tgl_bebas'] = null;
         }
 
+        // Check AWB
+        $before = Impor::find($id);
+        if ($before->awb != $input['awb']) {
+            $input['awb_exist'] = null;
+            $input['awb_consol'] = null;
+        }
+
         // Save lampiran
         if (isset($request->lampiran)) {
             $test = [];

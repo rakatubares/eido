@@ -34,6 +34,7 @@ class Impor extends Model
         'check_rekomendasi', 'dok_rekomendasi', 'tgl_rekomendasi',
         'bebas', 'check_bebas', 'dok_bebas', 'tgl_bebas',
         'rekomendasi_clearance', 'status_terakhir', 'officer_id',
+        'awb_exist', 'awb_consol',
     ];
 
     /**

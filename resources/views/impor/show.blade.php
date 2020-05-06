@@ -957,6 +957,7 @@ $(document).ready(function() {
 			} else {
 				$('section#display-data #display_perkiraan_clearance').empty();
 			}
+			$('section#display-data #display_officer').html(data.officer.name);
 
 			if (data.attachments != null) {
 				$('section#display-data #list-lampiran').empty();
