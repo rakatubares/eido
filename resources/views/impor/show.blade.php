@@ -87,6 +87,20 @@ textarea {
 			</div>
 		</div>
 		@endif
+		@if ($importasi->awb_exist === 0)
+		<div class="col-sm-12 col-md-4">
+			<div id="notif-awb" class="alert alert-warning mx-1">
+				AWB tidak ditemukan.
+			</div>
+		</div>
+		@endif
+		@if ($importasi->awb_consol == 1)
+		<div class="col-sm-12 col-md-4">
+			<div id="notif-consol" class="alert alert-warning mx-1">
+				AWB konsolidasi.
+			</div>
+		</div>
+		@endif
 	</div>
 </section>
 @endif

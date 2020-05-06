@@ -21,7 +21,9 @@ class ImporDetail
 				'check_rekomendasi',
 				'bebas',
 				'check_bebas',
-				'officer_id'
+				'officer_id',
+				'awb_exist',
+				'awb_consol'
 			)
 			->with('latest_status')
 			->with('officer')

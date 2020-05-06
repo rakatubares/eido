@@ -303,9 +303,12 @@ $(document).ready(function() {
 				method: "POST",
 				data: { _token: "{{ csrf_token() }}" },
 				success: function(data) {
+					console.log(data);
 					data.forEach(function(dat) {
 						var rekomendasi = null;
 						var bebas = null;
+						var awb_exist = null;
+						var awb_consol = null;
 						if (dat.awb_duplicate != 0) {
 							var duplicate = ` - ${dat.awb_duplicate}`;
 						} else {
@@ -317,7 +320,13 @@ $(document).ready(function() {
 						if (dat.bebas == 1 && dat.check_bebas !=1) {
 							bebas = 'SKEP Pembebasan';
 						}
-						var syarat = [rekomendasi, bebas].filter(Boolean).join('; ');
+						if (dat.awb_exist === 0) {
+							awb_exist = 'AWB  tidak ditemukan';
+						}
+						if (dat.awb_consol === 1) {
+							awb_consol = 'AWB  konsolidasi';
+						}
+						var syarat = [rekomendasi, bebas, awb_exist, awb_consol].filter(Boolean).join('; ');
 						var rows = `
 							<tr>
 								<td>${dat.no_permohonan}<br>${dat.tgl_permohonan}</td>
