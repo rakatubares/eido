@@ -38,14 +38,6 @@ class DashboardController extends Controller
                 $impor->created_date = $impor->created_at->format('Y-m-d');
                 $impor->updated_date = $impor->updated_at->format('Y-m-d');
             }
-            $total['outstanding'] = $lsImpor->where('status.ur_status', '!=', 'SELESAI')->count();
-            $total['selesai'] = $lsImpor->where('status.ur_status', 'SELESAI')->count();
-
-            // total by status
-            $groupStatus = $lsImpor->where('status.ur_status', '!=', 'SELESAI')->groupBy('status.ur_status');
-            $statusAgg = $groupStatus->map(function ($item, $key) {
-                return collect($item)->count();
-            });
 
             // total new and completed documents by date
             $minDate = $lsImpor->min('created_at')->format('Y-m-d');
@@ -85,8 +77,13 @@ class DashboardController extends Controller
                 ];
             }
 
-            // dokumen penutup
+            // dokumen outstanding
+            $statusAgg = ImporDetail::getDokumenOutstanding();
+            $total['outstanding'] = $statusAgg->sum();
+
+            // dokumen selesai
             $dokPenutup = ImporDetail::getDokumenPenutup();
+            $total['selesai'] = $dokPenutup->sum();
         
             return view('dashboard',compact('total','statusAgg','dateAgg','dateRange','neCoChart','dokPenutup'));
         } else {
@@ -107,9 +104,9 @@ class DashboardController extends Controller
         return $total;
     }
 
-    public function dokumenPenutup()
+    public function test()
     {
-        $dokPenutup = ImporDetail::getDokumenPenutup();
-        return $dokPenutup;
+        $test = ImporDetail::getDokumenOutstanding();
+        return $test;
     }
 }

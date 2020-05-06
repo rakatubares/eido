@@ -94,4 +94,28 @@ class ImporDetail
 
 		return $count;
 	}
+
+	public static function getDokumenOutstanding()
+	{
+		$importasi = Impor::select('id')
+			->with('latest_status')
+			->get();
+
+		for ($i=0; $i < count($importasi); $i++) { 
+			$history = $importasi[$i]->latest_status;
+			$status = $history->first()->ur_status;
+			$importasi[$i]->status = $history->first()->ur_status;
+			unset($importasi[$i]->latest_status);
+		}
+
+		$filtered = $importasi->filter(function ($impor) {
+			return $impor->status != 'SELESAI';
+		});
+		$grouped = $filtered->groupBy('status');
+		$count = $grouped->map(function ($item, $key) {
+			return collect($item)->count();
+		});
+
+		return $count;
+	}
 }
