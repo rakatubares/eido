@@ -235,14 +235,14 @@ $(document).ready(function() {
             }
         });
 
-        $.ajax({
-            url: '{{ route("dash.test") }}',
-            type: 'GET',
-            data: { _token: "{{ csrf_token() }}" },
-            success: function (params) {
-                console.log(params);
-            }
-        });
+        // $.ajax({
+        //     url: '{{ route("dash.test") }}',
+        //     type: 'GET',
+        //     data: { _token: "{{ csrf_token() }}" },
+        //     success: function (params) {
+        //         console.log(params);
+        //     }
+        // });
 	}).apply( this, [ jQuery ]);
 });
 </script>

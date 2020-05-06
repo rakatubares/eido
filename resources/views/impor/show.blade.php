@@ -251,7 +251,17 @@ textarea {
 		
 		<div class="text-right mr-lg">
 		@can('impor-edit')
-			<a id="{{ $importasi->id }}" class="btn btn-primary btnEdit" href="#modalForm">Edit <i class="fa fa-edit"></i></a>
+			@hasrole('License Officer')
+				@hasrole('Admin')
+					<a id="{{ $importasi->id }}" class="btn btn-primary btnEdit" href="#modalForm">Edit <i class="fa fa-edit"></i></a>
+				@else
+					@if( Auth::user()->id == $importasi->officer->id )
+						<a id="{{ $importasi->id }}" class="btn btn-primary btnEdit" href="#modalForm">Edit <i class="fa fa-edit"></i></a>
+					@endif
+				@endhasrole
+			@else
+				<a id="{{ $importasi->id }}" class="btn btn-primary btnEdit" href="#modalForm">Edit <i class="fa fa-edit"></i></a>
+			@endhasrole
 		@endcan
 		@can('impor-delete')
 			<a id="{{ $importasi->id }}" class="btn btn-danger btnDelete" href="#modalDelete">Hapus <i class="fa fa-trash-o"></i></a>
@@ -411,11 +421,6 @@ textarea {
 							{!! Form::text('importir', null, array('placeholder' => 'Nama importir','class' => 'form-control')) !!}
 							<div id="error_importir" class="error_text"></div>
 						</div>
-						<!-- <label class="col-sm-12 col-md-2 control-label">NPWP</label>
-						<div class="col-sm-12 col-md-3">
-							{!! Form::text('npwp', null, array('placeholder' => 'NPWP importir','class' => 'form-control')) !!}
-							<div id="error_npwp" class="error_text"></div>
-						</div> -->
 					</div>
 					<div class="col-xs-12 col-sm-12 col-md-12 mb-md">
 						<label class="col-sm-12 col-md-2 control-label">Status</label>
