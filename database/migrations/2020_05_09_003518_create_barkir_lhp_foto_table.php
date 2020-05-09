@@ -16,7 +16,7 @@ class CreateBarkirLhpFotoTable extends Migration
         Schema::create('barkir_lhp_foto', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('lhp_id')->index();
-            $table->string('url', 256)->index();
+            $table->string('url', 170)->index();
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->default(DB::raw('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'));
 
