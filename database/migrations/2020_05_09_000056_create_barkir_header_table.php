@@ -52,26 +52,26 @@ class CreateBarkirHeaderTable extends Migration
             $table->unsignedInteger('jumlah_barang')->nullable();
             $table->string('valuta', 8)->nullable()->index();
 
-            $table->float('ndpbm_aju')->nullable();
-            $table->float('fob_aju')->nullable();
-            $table->float('freight_aju')->nullable();
-            $table->float('asuransi_aju')->nullable();
-            $table->float('cif_aju')->nullable();
-            $table->float('nilai_pabean_aju')->nullable();
-            $table->float('total_pungutan_aju')->nullable();
-            $table->float('total_dibayar_aju')->nullable();
+            $table->unsignedDecimal('ndpbm_aju', 20, 2)->nullable();
+            $table->unsignedDecimal('fob_aju', 20, 2)->nullable();
+            $table->unsignedDecimal('freight_aju')->nullable();
+            $table->unsignedDecimal('asuransi_aju', 20, 2)->nullable();
+            $table->unsignedDecimal('cif_aju', 20, 2)->nullable();
+            $table->unsignedDecimal('nilai_pabean_aju', 20, 2)->nullable();
+            $table->unsignedDecimal('total_pungutan_aju', 20, 2)->nullable();
+            $table->unsignedDecimal('total_dibayar_aju', 20, 2)->nullable();
 
-            $table->float('ndpbm_penetapan')->nullable();
-            $table->float('fob_penetapan')->nullable();
-            $table->float('freight_penetapan')->nullable();
-            $table->float('asuransi_penetapan')->nullable();
-            $table->float('cif_penetapan')->nullable();
-            $table->float('nilai_pabean_penetapan')->nullable();
-            $table->float('total_pungutan_penetapan')->nullable();
-            $table->float('total_dibayar_penetapan')->nullable();
+            $table->unsignedDecimal('ndpbm_penetapan', 20, 2)->nullable();
+            $table->unsignedDecimal('fob_penetapan', 20, 2)->nullable();
+            $table->unsignedDecimal('freight_penetapan', 20, 2)->nullable();
+            $table->unsignedDecimal('asuransi_penetapan', 20, 2)->nullable();
+            $table->unsignedDecimal('cif_penetapan', 20, 2)->nullable();
+            $table->unsignedDecimal('nilai_pabean_penetapan', 20, 2)->nullable();
+            $table->unsignedDecimal('total_pungutan_penetapan', 20, 2)->nullable();
+            $table->unsignedDecimal('total_dibayar_penetapan', 20, 2)->nullable();
 
-            $table->float('bruto')->nullable();
-            $table->float('netto')->nullable();
+            $table->unsignedDecimal('bruto', 20, 2)->nullable();
+            $table->unsignedDecimal('netto', 20, 2)->nullable();
 
             $table->string('pdtt', 128)->nullable()->index();
 
