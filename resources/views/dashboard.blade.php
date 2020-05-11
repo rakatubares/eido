@@ -131,6 +131,42 @@
             </section>
         </div>
     </div>
+    <div class="row">
+        <div class="col-md-6">
+            <section class="panel">
+                <header class="panel-heading">
+                    <div class="panel-actions">
+                        <a href="#" class="fa fa-caret-down"></a>
+                    </div>
+
+                    <h2 class="panel-title">HS Terbesar</h2>
+                    <p class="panel-subtitle">10 HS barang dengan total nilai pabean terbesar</p>
+                </header>
+                <div class="panel-body">
+
+                    <!-- Flot: Bar -->
+                    <div class="chart chart-md" id="hsBar"></div>
+                </div>
+            </section>
+        </div>
+        <div class="col-md-6">
+            <section class="panel">
+                <header class="panel-heading">
+                    <div class="panel-actions">
+                        <a href="#" class="fa fa-caret-down"></a>
+                    </div>
+
+                    <h2 class="panel-title">Negara Terbesar</h2>
+                    <p class="panel-subtitle">10 negara asal dengan total nilai pabean terbesar</p>
+                </header>
+                <div class="panel-body">
+
+                    <!-- Flot: Bar -->
+                    <div class="chart chart-md" id="negaraBar"></div>
+                </div>
+            </section>
+        </div>
+    </div>
 </div>
 @endsection
 
@@ -144,6 +180,7 @@
 <script src="{{ asset('vendor/flot/jquery.flot.categories.js') }}"></script>
 <script src="{{ asset('vendor/flot/jquery.flot.resize.js') }}"></script>
 <script src="{{ asset('vendor/flot/jquery.flot.orderBars.js') }}"></script>
+<script src="{{ asset('vendor/flot/jquery.flot.axislabels.js') }}"></script>
 @endsection
 
 @section('pagescript')
@@ -203,7 +240,7 @@ $(document).ready(function() {
         var dok = {!! json_encode($dokPenutup->toArray(), JSON_HEX_TAG) !!};
         makePie(dok, '#dokPenutupPie');
 
-        // Bar chart
+        // Chart dokumen harian
         var newDocData = [
             @foreach ( $neCoChart as $key => $val )
                 [gd("{{ $val[0] }}"),"{{ $val[1] }}"],
@@ -235,14 +272,89 @@ $(document).ready(function() {
             }
         });
 
-        // $.ajax({
-        //     url: '{{ route("dash.test") }}',
-        //     type: 'GET',
-        //     data: { _token: "{{ csrf_token() }}" },
-        //     success: function (params) {
-        //         console.log(params);
-        //     }
-        // });
+        // Chart HS
+        function makeHBar(data, idChart, yLabel) {
+            var chartData = [];
+            var chartLabel =[];
+
+            jQuery.each(data, function(key, val) {
+                var dataElem = [val['nilai'], key];
+                chartData.push(dataElem);
+
+                var dataLabel = [key, val['label']];
+                chartLabel.push(dataLabel);
+            });
+            chartData = [chartData];
+
+            var hsOptions = {
+                series: {
+                    bars: {
+                        show: 'bars',
+                        barWidth: 0.6,
+                        horizontal: true
+                    }
+                },
+                bars: {
+                    align: "center",
+                    lineWidth: 1,
+                    order: 1
+                },
+                yaxis: {
+                    show : true,
+                    axisLabel: yLabel,
+                    position: 'left',
+                    ticks: chartLabel
+                },
+                xaxis: {
+                    show: true,
+                    axisLabel: 'Total nilai pabean (dalam juta Rp)'
+                },
+                grid: {
+                    borderWidth: {
+                        top: 0,
+                        right: 0,
+                        bottom: 1,
+                        left: 1
+                    }
+                }
+            };
+            var somePlot = $.plot($(idChart), chartData, hsOptions);
+            
+            var ctx = somePlot.getCanvas().getContext("2d");
+            var series = somePlot.getData();
+            var xaxis = somePlot.getXAxes()[0];
+            var yaxis = somePlot.getYAxes()[0];
+            var offset = somePlot.getPlotOffset();
+            ctx.font = "12px 'Segoe UI'";
+            ctx.fillStyle = "black";
+            for (var i = 0; i < series.length; i++){
+                var seriesData = series[i].data;
+                for (let d = 0; d < seriesData.length; d++) {
+                    var text = seriesData[d][0];
+                    var metrics = ctx.measureText(text);
+                    var xPos = offset.left + 5;
+                    var yPos = yaxis.p2c(seriesData[d][1]) + offset.top + 5;
+                    ctx.fillText(text, xPos, yPos);
+                }
+            }
+        }
+
+        var topHs = {!! json_encode($topHs->toArray(), JSON_HEX_TAG) !!};
+        makeHBar(topHs, '#hsBar', 'Kode HS');
+
+        var topNegara = {!! json_encode($topNegara->toArray(), JSON_HEX_TAG) !!};
+        makeHBar(topNegara, '#negaraBar', 'Negara');
+        
+
+        // DATA TESTING
+        $.ajax({
+            url: '{{ route("dash.test") }}',
+            type: 'GET',
+            data: { _token: "{{ csrf_token() }}" },
+            success: function (params) {
+                console.log(params);
+            }
+        });
 	}).apply( this, [ jQuery ]);
 });
 </script>

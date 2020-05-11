@@ -8,6 +8,7 @@ use DateInterval;
 use DB;
 use Illuminate\Http\Request;
 use App\Models\ImporDetail;
+use App\Models\Barkir;
 use App\Impor;
 
 class DashboardController extends Controller
@@ -84,8 +85,14 @@ class DashboardController extends Controller
             // dokumen selesai
             $dokPenutup = ImporDetail::getDokumenPenutup();
             $total['selesai'] = $dokPenutup->sum();
+
+            // top hs
+            $topHs = Barkir::topHs();
+
+            // top negara
+            $topNegara = Barkir::topNegara();
         
-            return view('dashboard',compact('total','statusAgg','dateAgg','dateRange','neCoChart','dokPenutup'));
+            return view('dashboard',compact('total','statusAgg','dateAgg','dateRange','neCoChart','dokPenutup','topHs','topNegara'));
         } else {
             return redirect()->route('impor.index');
         }
@@ -106,7 +113,7 @@ class DashboardController extends Controller
 
     public function test()
     {
-        $test = ImporDetail::getDokumenOutstanding();
+        $test = Barkir::topNegara();
         return $test;
     }
 }
